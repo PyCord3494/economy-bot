@@ -1,0 +1,94 @@
+# economy-related stuff like betting and gambling, etc.
+
+import discord
+from discord.ext import commands
+import pymysql
+import asyncio
+import random
+
+class Slots(commands.Cog):
+	def __init__(self, bot):
+		self.bot = bot
+
+	@commands.command(description="Pay to play the slots!", aliases=['slotmachine', 'slot', 'gamble'], pass_context=True)
+	@commands.cooldown(1, 9, commands.BucketType.user)
+	async def slots(self, ctx, amntBet: int):
+		mentionUser = str(ctx.message.author.mention)
+		discrim = str(ctx.message.author.name + ctx.message.author.discriminator)
+		userId = ctx.author.id
+		chnlId = ctx.channel.id
+		coin = "<:coins:585233801320333313>"
+		
+		if await self.bot.get_cog("Economy").subtractBet(ctx, amntBet) != 0:
+			#emojis = "🍎🍋🍇🍓🍒"
+			emojis = "🍎🍒"
+
+			a = random.choice(emojis)
+			b = random.choice(emojis)
+			c = random.choice(emojis)
+
+			embed = discord.Embed(color=1768431, title="Pit Boss' Casino | Slots", type="rich")
+
+			embed.add_field(name="----------------------------\n| 🎰  [  ]  [  ]  [  ]  🎰 |\n----------------------------", value="_ _")
+			botMsg = await ctx.send(embed=embed)
+			await asyncio.sleep(1.5)
+
+			embed.set_field_at(0, name=f"------------------------------\n| 🎰  {a}  [  ]  [  ]  🎰 |\n------------------------------", value="_ _")
+			await botMsg.edit(embed=embed)
+			await asyncio.sleep(1.5)
+
+			embed.set_field_at(0, name=f"-------------------------------\n| 🎰  {a}  {b}  [  ]  🎰 |\n-------------------------------", value="_ _")
+			await botMsg.edit(embed=embed)
+			await asyncio.sleep(1.5)
+
+			embed.set_field_at(0, name=f"--------------------------------\n| 🎰  {a}  {b}  {c}  🎰 |\n--------------------------------", value="_ _")
+			await botMsg.edit(embed=embed)
+
+			#slotmachine = f"**[ {a} {b} {c} ]\n{ctx.author.name}**,"
+			embed.color = discord.Color(0x23f518)
+			multiplier = self.bot.get_cog("Economy").getMultiplier(ctx)
+			if (a == b == c): # if all match
+				profit = amntBet
+				amntToAdd = amntBet * 2
+				result = "YOU WON"
+				profitStr = f"**{profit}** (+**{int(profit * (multiplier - 1))}**)"
+
+				await self.bot.get_cog("Economy").addWinnings(ctx.author.id, amntToAdd + (profit * (multiplier - 1)))
+
+			elif (a == b) or (a == c) or (b == c): # if two match
+				profit = int(amntBet * 0.5)
+				amntToAdd = int(amntBet * 1.5)
+				result = "YOU WON"
+				profitStr = f"**{profit}** (+**{int(profit * (multiplier - 1))}**)"
+
+				await self.bot.get_cog("Economy").addWinnings(ctx.author.id, amntToAdd + (profit * (multiplier - 1)))
+
+			else: # if no match
+				profit = 0
+				amntToAdd = -amntBet
+				result = "YOU LOST"
+				profitStr = "0"
+
+				embed.color = discord.Color(0xff2020)
+
+			balance = self.bot.get_cog("Economy").getBalance(ctx.author.id)
+			embed.add_field(name=f"**--- {result} ---**", value="_ _", inline=False)	
+			embed.add_field(name="Profit", value=f"{profitStr}{coin}", inline=True)
+			embed.add_field(name="Credits", value=f"**{balance}**{coin}", inline=True)
+
+			await self.bot.get_cog("Totals").addTotals(ctx, amntBet, profit, 0)
+			xp = random.randint(45, 475)
+			embed.set_footer(text=f"Earned {xp} XP!")
+			await self.bot.get_cog("XP").addXP(ctx, xp)
+			await botMsg.edit(embed=embed)
+
+	@slots.error
+	async def slots_handler(self, ctx, error):
+		embed = discord.Embed(color=0xff2020, title="Pit Boss Help Menu")
+		embed.add_field(name = "`Syntax: /slots <bet>`", value = "_ _", inline=False)
+		embed.add_field(name = "__Play slots for a chance to double your money!__", value = "_ _", inline=False)
+		await ctx.send(embed=embed)
+		print(error)
+
+def setup(bot):
+	bot.add_cog(Slots(bot))
