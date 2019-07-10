@@ -41,7 +41,7 @@ class Rewards(commands.Cog):
 			await ctx.send(embed=embed)
 		else:
 			embed = discord.Embed(color=0xff2020)
-			embed.add_field(name="You must donate 10USD or more to use this command", value="To donate, [Click Here](https://www.paypal.me/AutopilotJustin), then contact <@547475078082985990>")
+			embed.add_field(name="You must donate 10USD or more to use this command", value="[Click Here](https://www.paypal.me/AutopilotJustin) to donate, then contact <@547475078082985990>")
 			await ctx.send(embed=embed)
 
 
