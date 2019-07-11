@@ -17,28 +17,35 @@ class Coinflip(commands.Cog):
 			coin = "<:coins:585233801320333313>"
 			sideBet = sideBet.lower()
 			if sideBet == "heads" or sideBet == "tails":
-				coinsides = ['Heads', 'Tails']
-				side = random.choice(coinsides)
+				side = random.choice(['Heads', 'Tails'])
+				
+				multiplier = self.bot.get_cog("Economy").getMultiplier(ctx)
+				embed = discord.Embed(color=0x23f518)
 				if sideBet.lower() == side.lower():
-					profitInt = amntBet
-					moneyToAdd = amntBet * 2
-					multiplier = self.bot.get_cog("Economy").getMultiplier(ctx)
-
-					await self.bot.get_cog("Economy").addWinnings(ctx.author.id, (moneyToAdd + (profitInt * (multiplier - 1))))
-					balance = self.bot.get_cog("Economy").getBalance(ctx.author.id)
-					embed = discord.Embed(color=0x23f518, type="rich")
-					embed.add_field(name=f"Pit Boss' Casino | Coinflip", value=f"The coin landed on {side}\n**--- YOU WON ---**",inline=False)
-					embed.add_field(name="Profit", value=f"**{moneyToAdd}** (+**{moneyToAdd * multiplier}**){coin}", inline=True)
-					embed.add_field(name="Credits", value=f"**{balance}**{coin}", inline=True)
-					await ctx.send(embed=embed)
+					moneyToAdd = int(amntBet * 2)
+					profitInt = moneyToAdd - amntBet
+					profit = f"**{profitInt}** (**+{int(profitInt * (multiplier - 1))}**)"
 
 				else:
-					balance = self.bot.get_cog("Economy").getBalance(ctx.author.id)
-					embed = discord.Embed(color=0xff2020, type="rich")
-					embed.add_field(name=f"Pit Boss' Casino | Coinflip", value=f"The coin landed on {side}",inline=False)
-					embed.add_field(name="-----------------------------------------------------------------", 
-						value = f"Sorry, you didn't win anything.\n**Credits**: {balance}{coin}", inline=False)
-					await ctx.send(embed=embed)
+					moneyToAdd = 0
+					profitInt = moneyToAdd - amntBet
+					profit = f"**{profitInt}**"
+
+					embed.color = discord.Color(0xff2020)
+
+				embed.add_field(name=f"Pit Boss' Casino | Coinflip", value=f"The coin landed on {side}\n_ _",inline=False)
+				giveZeroIfNeg = max(0, profitInt) # will give 0 if profitInt is negative. 
+																				# we don't want it subtracting anything, only adding
+				await self.bot.get_cog("Economy").addWinnings(ctx.author.id, moneyToAdd + (giveZeroIfNeg * (multiplier - 1)))
+				balance = self.bot.get_cog("Economy").getBalance(ctx.author.id)
+				embed.add_field(name="Profit", value=f"{profit}{coin}", inline=True)
+				embed.add_field(name="Credits", value=f"**{balance}**{coin}", inline=True)
+
+				await self.bot.get_cog("Totals").addTotals(ctx, amntBet, moneyToAdd, 4)
+				xp = random.randint(45, 475)
+				embed.set_footer(text=f"Earned {xp} XP!")
+				await self.bot.get_cog("XP").addXP(ctx, xp)
+				await ctx.send(embed=embed)
 
 	@coinflip.error
 	async def coinflip_handler(self, ctx, error):
