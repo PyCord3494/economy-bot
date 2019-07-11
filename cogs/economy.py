@@ -22,14 +22,14 @@ class Economy(commands.Cog):
 
 	def isDonator(self, discordID):
 		db = pymysql.connect(host="twister.hostingspark.net",port=3306, user="hostings_autop",passwd="pwqA!Pp9!1",db="hostings_botdatabase",autocommit=True)
-		cursor = db.cursor()
-		sql = f"""SELECT DonatorCheck
+		cursor = db.cursor() # DonatorCheck is either 0 or 1 (0 for not donator, 1 for donator)
+		sql = f"""SELECT DonatorCheck 
 				  FROM Economy
 				  WHERE DiscordID = '{discordID}';"""
 		cursor.execute(sql)
 		db.commit()
 		getRow = cursor.fetchone()
-		donatorCheck = getRow[0]
+		donatorCheck = getRow[0] # assign donatorCheck to grabbed column DonatorCheck for the row that has {discordID}
 		db.close()
 
 		return donatorCheck
@@ -98,7 +98,7 @@ class Economy(commands.Cog):
 	# 		return 1
 
 
-	async def subtractBet(self, ctx, amntBet):
+	async def subtractBet(self, ctx, amntBet): # subtracts the bet users place when they play games
 		discordId = ctx.author.id
 		db = pymysql.connect(host="twister.hostingspark.net",port=3306, user="hostings_autop",passwd="pwqA!Pp9!1",db="hostings_botdatabase",autocommit=True)
 		cursor = db.cursor()
@@ -110,14 +110,14 @@ class Economy(commands.Cog):
 			cursor.execute(sql)
 			db.commit()
 			db.close()
-			return 1
+			return 1 # return 1 if user has enough $$$ to bet their amount entered
 		else:
 			await ctx.send(f"Incorrect amount, you have: **{balance}**{self.coin}.")
 			db.close()
-			return 0
+			return 0 # return 0 if user trying to bet more $$$ than they have
 
 
-	async def addWinnings(self, discordId, winnings):
+	async def addWinnings(self, discordId, winnings): # add the amount won 
 		db = pymysql.connect(host="twister.hostingspark.net",port=3306, user="hostings_autop",passwd="pwqA!Pp9!1",db="hostings_botdatabase",autocommit=True)
 		cursor = db.cursor()
 		
@@ -145,28 +145,25 @@ class Economy(commands.Cog):
 		return balance
 
 	@commands.command()
-	async def top(self, ctx):
+	async def top(self, ctx): # scoreboard to display top 10 richest individuals
 		db = pymysql.connect(host="twister.hostingspark.net",port=3306, user="hostings_autop",passwd="pwqA!Pp9!1",db="hostings_botdatabase",autocommit=True)
 		cursor = db.cursor()
 		sql = f"""SELECT DiscordID, Credits
 				  FROM Economy
-				  Limit 10"""
-		cursor.execute(sql)
+				  Limit 10""" # Limit = 10 to only get 10 people
+		cursor.execute(sql) 
 		db.commit()
-		records = cursor.fetchall()
+		records = cursor.fetchall() # get all rows (10 total)
 		db.close()
-
-		embed = discord.Embed(color=1768431)
 
 		topUsers = ""
 		count = 1
-		for x in records:
-			print(x[0])
-			user = await self.bot.fetch_user(x[0]) 
+		for x in records: 
+			user = await self.bot.fetch_user(x[0]) # grab the user from the current record
 			topUsers += f"{count}. < {user.name} > - {x[1]}\n"
-			count += 1
+			count += 1 # number the users from 1 - 10
 
-		await ctx.send(f"```MD\nTop 10\n======\n{topUsers}```")
+		await ctx.send(f"```MD\nTop 10\n======\n{topUsers}```") # send the list with the top 10
 
 
 
