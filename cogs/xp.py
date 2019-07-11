@@ -93,20 +93,6 @@ class XP(commands.Cog):
 			await ctx.author.remove_roles(role)
 
 
-
-
-	@commands.command(pass_context=True)
-	async def givexp(self, ctx, discordId: str, xp: int):
-		db = pymysql.connect(host="twister.hostingspark.net",port=3306, user="hostings_autop",passwd="pwqA!Pp9!1",db="hostings_botdatabase",autocommit=True)
-		cursor = db.cursor()
-		sql = f"""Update Economy
-				  SET XP = XP + {xp}, TotalXP = TotalXP + {xp}
-				  WHERE DiscordID = '{discordId}';"""
-		cursor.execute(sql)
-		db.commit()
-		await self.levelUp(ctx, db, discordId)
-		db.close()
-
 		
 def setup(bot):
 	bot.add_cog(XP(bot))
