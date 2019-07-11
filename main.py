@@ -100,4 +100,4 @@ if __name__ == '__main__':
         except Exception as error:
             print(f"{extension} could not be loaded. [{error}]")
     # bot.loop.create_task(background_loop())
-    bot.run("NTg1MjM1MDAwNDU5MjY0MDA1.XPWglw.gvD1cmmSrOTbB5mX5f1FrSq_NF8")
+    bot.run("NTg1MjI3NDI2NjE1Nzg3NTQw.XPWZpQ.GxYOpdP2MeLwN9BFhsxMo9kbqOs")
