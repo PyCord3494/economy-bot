@@ -13,7 +13,7 @@ class Shop(commands.Cog):
 	@commands.group(invoke_without_command=True)
 	async def shop(self, ctx):
 		if ctx.invoked_subcommand is None:
-			if utils.check_roles(["Donator"], [y.name for y in ctx.message.author.roles]):
+			if self.bot.get_cog("Economy").isDonator(ctx.author.id) == 1:
 				await ctx.send("```ML\nID            ITEMS                COST\n"
 									+ "----------------------------------------\n"
 									+ "1            1 crate               1,000\n"
