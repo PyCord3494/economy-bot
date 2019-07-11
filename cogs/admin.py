@@ -9,7 +9,7 @@ class Admin(commands.Cog):
 	# immediately stop the bot
 	@commands.command(hidden = True)
 	@has_permissions(administrator=True)
-	async def end(self):
+	async def end(self, ctx):
 		await self.bot.logout()
 
 	@commands.command(hidden = True)
