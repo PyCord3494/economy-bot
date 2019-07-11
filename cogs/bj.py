@@ -271,14 +271,14 @@ class bj(commands.Cog):
 			moneyToAdd = 0 # nothing to add since loss
 			profitInt = -amntBet # profit = amntWon - amntBet; amntWon = 0 in this case
 			result = "YOU LOST"
-			profit = f"**{moneyToAdd}**"
+			profit = f"**{profitInt}**"
 
 		
 		elif winner == 0:
 			moneyToAdd = amntBet # add back their bet they placed since it was pushed (tied)
 			profitInt = 0 # they get refunded their money (so they don't make or lose money)
 			result = "PUSHED"
-			profit = f"**{moneyToAdd}**"
+			profit = f"**{profitInt}**"
 
 
 		giveZeroIfNeg = max(0, profitInt) # will give 0 if profit is negative. 
