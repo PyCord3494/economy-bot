@@ -19,27 +19,35 @@ class rps(commands.Cog):
 
 				if userChoice == botChoice:
 					winner = 0
+					file = discord.File("./images/rps/tie.png", filename="image.png")
 
 				elif userChoice == "rock" and botChoice == "scissors":
 					winner = 1
+					file = discord.File("./images/rps/rockwon.png", filename="image.png")
 
 				elif userChoice == "paper" and botChoice == "rock":
 					winner = 1
+					file = discord.File("./images/rps/paperwon.png", filename="image.png")
 
 				elif userChoice == "scissors" and botChoice == "paper":
 					winner = 1
+					file = discord.File("./images/rps/scissorswon.png", filename="image.png")
 
 				elif userChoice == "rock" and botChoice == "paper":	
 					winner = -1
+					file = discord.File("./images/rps/rocklost.png", filename="image.png")
 
 				elif userChoice == "paper" and botChoice == "scissors":
 					winner = -1
+					file = discord.File("./images/rps/paperlost.png", filename="image.png")
 
 				elif userChoice == "scissors" and botChoice == "rock":
 					winner = -1
+					file = discord.File("./images/rps/scissorslost.png", filename="image.png")
 
 				multiplier = self.bot.get_cog("Economy").getMultiplier(ctx)
 				embed = discord.Embed(color=0xff2020)
+				embed.set_thumbnail(url="attachment://image.png")
 				if winner == 1:
 					moneyToAdd = amntBet * 2 
 					profitInt = moneyToAdd - amntBet
@@ -73,7 +81,7 @@ class rps(commands.Cog):
 				xp = random.randint(50, 500)
 				embed.set_footer(text=f"Earned {xp} XP!")
 				await self.bot.get_cog("XP").addXP(ctx, xp)
-				await ctx.send(content=f"{ctx.message.author.mention}", embed=embed)
+				await ctx.send(content=f"{ctx.message.author.mention}", file=file, embed=embed)
 
 
 
