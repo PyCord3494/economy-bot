@@ -261,25 +261,25 @@ class bj(commands.Cog):
 
 		if winner == 1:
 			profitInt = amntBet
-			amntWon = amntBet * 2
+			moneyToAdd = amntBet * 2
 			result = "YOU WON"
 			multiplier = self.bot.get_cog("Economy").getMultiplier(ctx)
 			profit = f"**{profitInt}** (+**{int(profitInt * (multiplier - 1))}**)"
 			self.embed.color = discord.Color(0x23f518)
-			await self.bot.get_cog("Totals").addTotals(ctx, amntBet, amntWon, 1)
-			await self.bot.get_cog("Economy").addWinnings(ctx.author.id, (amntWon + (profitInt * (multiplier - 1))))
+			await self.bot.get_cog("Totals").addTotals(ctx, amntBet, moneyToAdd, 1)
+			await self.bot.get_cog("Economy").addWinnings(ctx.author.id, (moneyToAdd + (profitInt * (multiplier - 1))))
 
 		elif winner == -1:
-			amntWon = -amntBet
+			moneyToAdd = -amntBet
 			await self.bot.get_cog("Totals").addTotals(ctx, amntBet, 0, 1)
 			result = "YOU LOST"
-			profit = f"**{amntWon}**"
+			profit = f"**{moneyToAdd}**"
 		
 		elif winner == 0:
-			amntWon = 0
+			moneyToAdd = 0
 			await self.bot.get_cog("Totals").addTotals(ctx, amntBet, amntBet, 1)
 			result = "PUSHED"
-			profit = f"**{amntWon}**"
+			profit = f"**{moneyToAdd}**"
 			await self.bot.get_cog("Economy").addWinnings(ctx.author.id, amntBet)
 
 
