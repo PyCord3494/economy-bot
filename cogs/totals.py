@@ -15,7 +15,7 @@ class Totals(commands.Cog):
 		db = pymysql.connect(host="twister.hostingspark.net",port=3306, user="hostings_autop",passwd="pwqA!Pp9!1",db="hostings_botdatabase",autocommit=True)
 		cursor = db.cursor()
 
-		sql = f"""SELECT Paid, Won, Profit, Games, Slots, Blackjack, Crash, Roulette
+		sql = f"""SELECT Paid, Won, Profit, Games, Slots, Blackjack, Crash, Roulette, Coinflip, RPS
 				  FROM Totals
 				  WHERE DiscordID = '{ctx.author.id}';"""
 		cursor.execute(sql)
@@ -30,6 +30,8 @@ class Totals(commands.Cog):
 		blackjack = getRow[5]
 		crash = getRow[6]
 		roulette = getRow[7]
+		coinflip = getRow[8]
+		rps = getRow[9]
 
 		db.close()
 
@@ -42,6 +44,8 @@ class Totals(commands.Cog):
 		embed.add_field(name = "Blackjack", value = f"{blackjack}", inline=True)
 		embed.add_field(name = "Crash", value = f"{crash}", inline=True)
 		embed.add_field(name = "Roulette", value = f"{roulette}", inline=True)
+		embed.add_field(name = "Coinflip", value = f"{coinflip}", inline=True)
+		embed.add_field(name = "Rock-Paper-Scissors", value = f"{rps}", inline=True)
 
 		await ctx.send(embed=embed)
 
@@ -80,6 +84,22 @@ class Totals(commands.Cog):
 			elif game == 3:
 				sql = f"""UPDATE Totals
 						  SET Paid = Paid + {spent}, Won = Won + {won}, Profit = Profit + {profit}, Games = Games + 1, Roulette = Roulette + {profit}
+						  WHERE DiscordID = '{ctx.author.id}';"""
+
+				cursor.execute(sql)
+				db.commit()
+
+			elif game == 4:
+				sql = f"""UPDATE Totals
+						  SET Paid = Paid + {spent}, Won = Won + {won}, Profit = Profit + {profit}, Games = Games + 1, Coinflip = Coinflip + {profit}
+						  WHERE DiscordID = '{ctx.author.id}';"""
+
+				cursor.execute(sql)
+				db.commit()
+
+			elif game == 5:
+				sql = f"""UPDATE Totals
+						  SET Paid = Paid + {spent}, Won = Won + {won}, Profit = Profit + {profit}, Games = Games + 1, RPS = RPS + {profit}
 						  WHERE DiscordID = '{ctx.author.id}';"""
 
 				cursor.execute(sql)
