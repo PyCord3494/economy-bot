@@ -12,6 +12,10 @@ class Slots(commands.Cog):
 	def __init__(self, bot):
 		self.bot = bot
 
+	@commands.command(pass_context=True)
+	async def memes(self, ctx, stuff: int):
+		await ctx.send(f"{max(0, stuff)}")
+
 	@commands.command(description="Pay to play the slots!", aliases=['slotmachine', 'slot', 'gamble'], pass_context=True)
 	@commands.cooldown(1, 9, commands.BucketType.user)
 	async def slots(self, ctx, amntBet: int):
@@ -46,33 +50,34 @@ class Slots(commands.Cog):
 			embed.color = discord.Color(0x23f518)
 			multiplier = self.bot.get_cog("Economy").getMultiplier(ctx)
 			if (a == b == c): # if all match
-				profit = amntBet
-				moneyToAdd = amntBet * 2
+				moneyToAdd = int(amntBet * 2)
+				profitInt = moneyToAdd - amntBet
 				result = "YOU WON"
-				profitStr = f"**{profit}** (+**{int(profit * (multiplier - 1))}**)"
+				profit = f"**{profitInt}** (+**{int(profitInt * (multiplier - 1))}**)"
 
-				await self.bot.get_cog("Economy").addWinnings(ctx.author.id, moneyToAdd + (profit * (multiplier - 1)))
 
 			elif (a == b) or (a == c) or (b == c): # if two match
-				profit = int(amntBet * 0.5)
-				moneyToAdd = int(amntBet * 1.5)
+				moneyToAdd = int(amntBet * 1.5) # you win 150% your bet
+				profitInt = moneyToAdd - amntbet
 				result = "YOU WON"
-				profitStr = f"**{profit}** (+**{int(profit * (multiplier - 1))}**)"
+				profit = f"**{profitInt}** (+**{int(profitInt * (multiplier - 1))}**)"
 
-				await self.bot.get_cog("Economy").addWinnings(ctx.author.id, moneyToAdd + (profit * (multiplier - 1)))
 
 			else: # if no match
-				profit = 0
-				moneyToAdd = -amntBet
+				moneyToAdd = 0
+				profitInt = moneyToAdd - amntBet
 				result = "YOU LOST"
-				profitStr = "0"
+				profit = f"**{profitInt}**"
 
 				embed.color = discord.Color(0xff2020)
 
-			await self.bot.get_cog("Economy").addWinnings(ctx.author.id, moneyToAdd + (profit * (multiplier - 1)))
+			giveZeroIfNeg = max(0, profitInt) # will give 0 if profitInt is negative. 
+																				# we don't want it subtracting anything, only adding
+																				
+			await self.bot.get_cog("Economy").addWinnings(ctx.author.id, moneyToAdd + (giveZeroIfNeg * (multiplier - 1)))
 			balance = self.bot.get_cog("Economy").getBalance(ctx.author.id)
 			embed.add_field(name=f"**--- {result} ---**", value="_ _", inline=False)	
-			embed.add_field(name="Profit", value=f"{profitStr}{coin}", inline=True)
+			embed.add_field(name="Profit", value=f"{profit}{coin}", inline=True)
 			embed.add_field(name="Credits", value=f"**{balance}**{coin}", inline=True)
 
 			await self.bot.get_cog("Totals").addTotals(ctx, amntBet, moneyToAdd, 0)

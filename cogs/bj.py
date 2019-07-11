@@ -241,10 +241,8 @@ class bj(commands.Cog):
 		#self.embed.add_field(name = f"{ctx.message.author.name}'s' CARD:", value = f"{pTotal}\n**Score**: {sum(player_num)}", inline=True)
 
 		coin = "<:coins:585233801320333313>"
-		xp = randint(50, 500)
 
 		self.embed.set_field_at(1, name = "Pit Boss' CARD", value = f"{dTotal}\n**Score**: {sum(dealer_num)}", inline=True)
-		self.embed.set_footer(text=f"Earned {xp} XP!")
 		self.embed.color = discord.Color(0xff2020)
 		result = ""
 
@@ -259,37 +257,43 @@ class bj(commands.Cog):
 		# 
 		#########################
 
+		multiplier = self.bot.get_cog("Economy").getMultiplier(ctx)
+
 		if winner == 1:
-			profitInt = amntBet
-			moneyToAdd = amntBet * 2
+			moneyToAdd = amntBet * 2 
+			profitInt = moneyToAdd - amntBet
 			result = "YOU WON"
-			multiplier = self.bot.get_cog("Economy").getMultiplier(ctx)
 			profit = f"**{profitInt}** (+**{int(profitInt * (multiplier - 1))}**)"
+			
 			self.embed.color = discord.Color(0x23f518)
-			await self.bot.get_cog("Totals").addTotals(ctx, amntBet, moneyToAdd, 1)
-			await self.bot.get_cog("Economy").addWinnings(ctx.author.id, (moneyToAdd + (profitInt * (multiplier - 1))))
 
 		elif winner == -1:
-			moneyToAdd = -amntBet
-			await self.bot.get_cog("Totals").addTotals(ctx, amntBet, 0, 1)
+			moneyToAdd = 0 # nothing to add since loss
+			profitInt = -amntBet # profit = amntWon - amntBet; amntWon = 0 in this case
 			result = "YOU LOST"
 			profit = f"**{moneyToAdd}**"
+
 		
 		elif winner == 0:
-			moneyToAdd = 0
-			await self.bot.get_cog("Totals").addTotals(ctx, amntBet, amntBet, 1)
+			moneyToAdd = amntBet # add back their bet they placed since it was pushed (tied)
+			profitInt = 0 # they get refunded their money (so they don't make or lose money)
 			result = "PUSHED"
 			profit = f"**{moneyToAdd}**"
-			await self.bot.get_cog("Economy").addWinnings(ctx.author.id, amntBet)
 
 
-		self.embed.add_field(name="Profit", value=f"{profit}{coin}", inline=True)
-		self.embed.set_field_at(2, name = "_ _", value = f"**--- {result} ---**", inline=False)
-
+		giveZeroIfNeg = max(0, profitInt) # will give 0 if profit is negative. 
+																				# we don't want it subtracting anything, only adding
+		await self.bot.get_cog("Economy").addWinnings(ctx.author.id, moneyToAdd + (giveZeroIfNeg * (multiplier - 1)))
 		balance = self.bot.get_cog("Economy").getBalance(ctx.author.id)
+		self.embed.set_field_at(2, name = f"**--- {result} ---**", value = "_ _", inline=False)
+		self.embed.add_field(name="Profit", value=f"{profit}{coin}", inline=True)
 		self.embed.add_field(name="Credits", value=f"**{balance}**{coin}", inline=True)
-		await self.botMsg.edit(content=f"{ctx.message.author.mention}", embed=self.embed)
+
+		await self.bot.get_cog("Totals").addTotals(ctx, amntBet, moneyToAdd, 1)
+		xp = randint(50, 500)
+		self.embed.set_footer(text=f"Earned {xp} XP!")
 		await self.bot.get_cog("XP").addXP(ctx, xp)
+		await self.botMsg.edit(content=f"{ctx.message.author.mention}", embed=self.embed)
 
 		self.embed = discord.Embed(color=1768431, title="Pit Boss' Casino | Blackjack")	
 		
