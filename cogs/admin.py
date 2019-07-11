@@ -38,7 +38,7 @@ class Admin(commands.Cog):
 
 	@commands.command(hidden = True)
 	@has_permissions(administrator=True)
-	async def makedonator(self, ctx, *, member: discord.Member): # grabs member from input
+	async def givedonator(self, ctx, *, member: discord.Member): # grabs member from input
 		await ctx.send(f"Thanks for donating {member.mention}! Giving you perks now.")
 		donatorRole = discord.utils.get(ctx.guild.roles, name = "Donator")
 		await member.add_roles(donatorRole)
