@@ -61,48 +61,36 @@ class Totals(commands.Cog):
 				sql = f"""UPDATE Totals
 						  SET Paid = Paid + {spent}, Won = Won + {won}, Profit = Profit + {profit}, Games = Games + 1, Slots = Slots + {profit}
 						  WHERE DiscordID = '{ctx.author.id}';"""
-
-				cursor.execute(sql)
-				db.commit()
-
+						  
 			elif game == 1:
 				sql = f"""UPDATE Totals
 						  SET Paid = Paid + {spent}, Won = Won + {won}, Profit = Profit + {profit}, Games = Games + 1, Blackjack = Blackjack + {profit}
 						  WHERE DiscordID = '{ctx.author.id}';"""
 
-				cursor.execute(sql)
-				db.commit()
 
 			elif game == 2:
 				sql = f"""UPDATE Totals
 						  SET Paid = Paid + {spent}, Won = Won + {won}, Profit = Profit + {profit}, Games = Games + 1, Crash = Crash + {profit}
 						  WHERE DiscordID = '{ctx.author.id}';"""
 
-				cursor.execute(sql)
-				db.commit()
-
 			elif game == 3:
 				sql = f"""UPDATE Totals
 						  SET Paid = Paid + {spent}, Won = Won + {won}, Profit = Profit + {profit}, Games = Games + 1, Roulette = Roulette + {profit}
 						  WHERE DiscordID = '{ctx.author.id}';"""
-
-				cursor.execute(sql)
-				db.commit()
 
 			elif game == 4:
 				sql = f"""UPDATE Totals
 						  SET Paid = Paid + {spent}, Won = Won + {won}, Profit = Profit + {profit}, Games = Games + 1, Coinflip = Coinflip + {profit}
 						  WHERE DiscordID = '{ctx.author.id}';"""
 
-				cursor.execute(sql)
-				db.commit()
 
 			elif game == 5:
 				sql = f"""UPDATE Totals
 						  SET Paid = Paid + {spent}, Won = Won + {won}, Profit = Profit + {profit}, Games = Games + 1, RPS = RPS + {profit}
 						  WHERE DiscordID = '{ctx.author.id}';"""
 
-				cursor.execute(sql)
+
+			cursor.execute(sql)
 				db.commit()
 
 		except Exception as e:
