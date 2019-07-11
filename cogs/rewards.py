@@ -31,7 +31,7 @@ class Rewards(commands.Cog):
 	@commands.command(pass_context=True)
 	@commands.cooldown(1, 500, commands.BucketType.user)
 	async def donator(self, ctx):
-		if utils.check_roles(["Donator"], [y.name for y in ctx.message.author.roles]):
+		if self.bot.get_cog("Economy").isDonator(ctx.author.id) == 1:
 			donatorReward = await self.getDonatorReward(ctx)
 			await self.bot.get_cog("Economy").addWinnings(ctx.author.id, donatorReward)
 			balance = self.bot.get_cog("Economy").getBalance(ctx.author.id)
