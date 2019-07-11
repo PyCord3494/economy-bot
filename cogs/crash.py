@@ -62,17 +62,17 @@ class Crash(commands.Cog):
 				
 				if self.crash == False: # if they $stop it before it crashes 
 					profitInt = int(self.amntBet * self.multiplier - self.amntBet) 
-					amntWon = int(self.amntBet + profitInt)
+					moneyToAdd = int(self.amntBet + profitInt)
 					profit = f"**{profitInt}** (+**{int(profitInt * (multi - 1))}**)"
 
-					await self.bot.get_cog("Economy").addWinnings(ctx.author.id, (amntWon + (profitInt * (multi - 1))))
+					await self.bot.get_cog("Economy").addWinnings(ctx.author.id, (moneyToAdd + (profitInt * (multi - 1))))
 
 				else: # if game crashes without them $stop'ing it in time
-					amntWon = 0
+					moneyToAdd = 0
 					profit = f"**-{self.amntBet}**"
 					embed.color = discord.Color(0xff2020)
 
-				await self.bot.get_cog("Totals").addTotals(ctx, self.amntBet, amntWon, 2)
+				await self.bot.get_cog("Totals").addTotals(ctx, self.amntBet, moneyToAdd, 2)
 				balance = self.bot.get_cog("Economy").getBalance(ctx.author.id)
 				xp = random.randint(50, 500)
 				await self.bot.get_cog("XP").addXP(ctx, xp)

@@ -34,7 +34,7 @@ class Roulette(commands.Cog):
 		displayRangeBet = ""
 		displayColorBet = ""
 		displayParityBet = ""
-		amntWon = 0
+		moneyToAdd = 0
 		amntLost = 0
 		end = 0
 		result = ""
@@ -238,43 +238,43 @@ class Roulette(commands.Cog):
 					if numberBet == n:
 						winnings += "\nYou guessed the number! You won 35x your bet!"
 						await self.bot.get_cog("Economy").addWinnings(ctx.author.id, amntNumberBet*35)
-						amntWon += amntNumberBet*35
+						moneyToAdd += amntNumberBet*35
 
 					if str(rangeBet) == rangeResult:
 						winnings += "\nYou guessed the range! You won 2x your bet!"
 						await self.bot.get_cog("Economy").addWinnings(ctx.author.id, amntRangeBet*2)
-						amntWon += amntRangeBet*2
+						moneyToAdd += amntRangeBet*2
 
 					if str(colorBet) == colorResult and str(colorBet) != "💚":
 						winnings += "\nYou guessed the color! You won 2x your bet!"
 						await self.bot.get_cog("Economy").addWinnings(ctx.author.id, amntColorBet*2)
-						amntWon += amntColorBet*2
+						moneyToAdd += amntColorBet*2
 					elif str(colorBet) == colorResult and str(colorBet) == "💚":
 						winnings += "\nYou guessed the color green! You won 35x your bet!"
 						await self.bot.get_cog("Economy").addWinnings(ctx.author.id, amntColorBet*35)
-						amntWon += amntColorBet*35
+						moneyToAdd += amntColorBet*35
 
 					if str(parityBet) == parityResult:
 						winnings += "\nYou guessed the parity! You won 2x your bet!"
 						await self.bot.get_cog("Economy").addWinnings(ctx.author.id, amntParityBet*2)
-						amntWon += amntParityBet*2
+						moneyToAdd += amntParityBet*2
 
 					amntLost = amntNumberBet + amntRangeBet + amntColorBet + amntParityBet
 
 
-					if amntWon > amntLost:
+					if moneyToAdd > amntLost:
 						multiplier = await self.bot.get_cog("Economy").getMultiplier(ctx)
-						result = f"You won a grand total of {amntWon} (+{amntWon * multiplier}){self.coin} after betting {amntLost}{self.coin}"
-					elif amntWon < amntLost:
-						if amntWon > 0:
-							result = f"You won {amntWon} (+0){self.coin} after betting {amntLost}{self.coin}"
+						result = f"You won a grand total of {moneyToAdd} (+{moneyToAdd * multiplier}){self.coin} after betting {amntLost}{self.coin}"
+					elif moneyToAdd < amntLost:
+						if moneyToAdd > 0:
+							result = f"You won {moneyToAdd} (+0){self.coin} after betting {amntLost}{self.coin}"
 						else:
 							result = f"You lost {amntLost}{self.coin}"
 					else:
 						result = "You didn't lose or win anything!"
 
 					balance = self.bot.get_cog("Economy").getBalance(ctx.author.id)
-					await self.bot.get_cog("Totals").addTotals(ctx, amntLost, amntWon, 3)
+					await self.bot.get_cog("Totals").addTotals(ctx, amntLost, moneyToAdd, 3)
 					xp = random.randint(50, 500)
 					embed.set_footer(text=f"Earned {xp} XP!")
 					await self.bot.get_cog("XP").addXP(ctx, xp)

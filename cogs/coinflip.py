@@ -21,14 +21,14 @@ class Coinflip(commands.Cog):
 				side = random.choice(coinsides)
 				if sideBet.lower() == side.lower():
 					profitInt = amntBet
-					amntWon = amntBet * 2
+					moneyToAdd = amntBet * 2
 					multiplier = self.bot.get_cog("Economy").getMultiplier(ctx)
 
-					await self.bot.get_cog("Economy").addWinnings(ctx.author.id, (amntWon + (profitInt * (multiplier - 1))))
+					await self.bot.get_cog("Economy").addWinnings(ctx.author.id, (moneyToAdd + (profitInt * (multiplier - 1))))
 					balance = self.bot.get_cog("Economy").getBalance(ctx.author.id)
 					embed = discord.Embed(color=0x23f518, type="rich")
 					embed.add_field(name=f"Pit Boss' Casino | Coinflip", value=f"The coin landed on {side}\n**--- YOU WON ---**",inline=False)
-					embed.add_field(name="Profit", value=f"**{amntWon}** (+**{amntWon * multiplier}**){coin}", inline=True)
+					embed.add_field(name="Profit", value=f"**{moneyToAdd}** (+**{moneyToAdd * multiplier}**){coin}", inline=True)
 					embed.add_field(name="Credits", value=f"**{balance}**{coin}", inline=True)
 					await ctx.send(embed=embed)
 
