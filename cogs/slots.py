@@ -53,14 +53,14 @@ class Slots(commands.Cog):
 				moneyToAdd = int(amntBet * 2)
 				profitInt = moneyToAdd - amntBet
 				result = "YOU WON"
-				profit = f"**{profitInt}** (+**{int(profitInt * (multiplier - 1))}**)"
+				profit = f"**{profitInt}** (**+{int(profitInt * (multiplier - 1))}**)"
 
 
 			elif (a == b) or (a == c) or (b == c): # if two match
 				moneyToAdd = int(amntBet * 1.5) # you win 150% your bet
-				profitInt = moneyToAdd - amntbet
+				profitInt = moneyToAdd - amntBet
 				result = "YOU WON"
-				profit = f"**{profitInt}** (+**{int(profitInt * (multiplier - 1))}**)"
+				profit = f"**{profitInt}** (**+{int(profitInt * (multiplier - 1))}**)"
 
 
 			else: # if no match
