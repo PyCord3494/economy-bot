@@ -91,7 +91,7 @@ class Totals(commands.Cog):
 
 
 			cursor.execute(sql)
-				db.commit()
+			db.commit()
 
 		except Exception as e:
 			print(e)
