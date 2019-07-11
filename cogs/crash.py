@@ -1,4 +1,4 @@
-# economy-related stuff like betting and gambling, etc.
+# Stock market crash game
 
 import discord
 from discord.ext import commands
@@ -18,73 +18,73 @@ class Crash(commands.Cog):
 		self.amntBet = 0
 
 
-	async def do_loop(self, ctx, botMsg, embed):
-		print("begin loop")
+	async def do_loop(self, ctx, botMsg, embed): # keeps the number going and edits the message, until it "crashes"
 		await asyncio.sleep(2)
-		while True:
+		while True: # will keep going until crash
 			self.multiplier += 0.2
 			self.multiplier = round(self.multiplier, 1)
 			#await self.bot.wait_for('message', check=is_stop, timeout=2)
 			embed.set_field_at(0, name = f"Multiplier", value = f"{str(self.multiplier)}x", inline=True)
 			embed.set_field_at(1, name = "Profit", value = f"{str(round(self.multiplier * self.amntBet - self.amntBet))}{self.coin}", inline=True)
 			await botMsg.edit(embed=embed)
-			if self.multiplier == self.crashNum:
+			if self.multiplier == self.crashNum: # if the current multiplier number is the number to crash on 
 				self.crash = True
 				break
-			print("in loop")
-			await asyncio.sleep(2)
-		print("outside loop")	
-		self.task.cancel()
+			await asyncio.sleep(2)	
+		self.task.cancel() # ends the task
 
 
 	@commands.command(pass_context=True)
 	@commands.cooldown(1, 1, commands.BucketType.user)
-	async def crash(self, ctx, bet: int):
-		if await self.bot.get_cog("Economy").subtractBet(ctx, bet) != 0:
+	async def crash(self, ctx, bet: int): # actual command
+		if await self.bot.get_cog("Economy").subtractBet(ctx, bet) != 0: # checks to see if they have {bet} amount
 			self.amntBet = round(bet)
 			self.userId = ctx.author.id
 			#self.crashNum = round(random.uniform(1.2, 2.0), 1)
-			if int(self.crashNum * 10) % 2 == 1:
+			if int(self.crashNum * 10) % 2 == 1: # if crash num is odd (ex: 1.3), make it even (ex: 1.4)
 				self.crashNum = round(self.crashNum + 0.1, 1)
-			await ctx.send(self.crashNum)
+			await ctx.send(self.crashNum) # DEBUG LINE 
+
 			embed = discord.Embed(color=1768431, title="Pit Boss' Casino | Crash")
 			embed.set_footer(text="Use $stop to stop")
 			embed.add_field(name = "Multiplier:", value = f"{str(self.multiplier)}x", inline=True)
 			embed.add_field(name = "Profit", value = f"{str(round(self.multiplier * self.amntBet - self.amntBet))}{self.coin}", inline=True)
 			botMsg = await ctx.send(embed=embed)
-			self.task = self.bot.loop.create_task(self.do_loop(ctx, botMsg, embed))
+
+			self.task = self.bot.loop.create_task(self.do_loop(ctx, botMsg, embed)) # creates loop for the crash game
 			try:
-				await self.task
+				await self.task # performs the loop
 			except:
-				xp = random.randint(50, 500)
+				# all of this will occur once the game is over
+
+				embed = discord.Embed(color=0x23f518, title="Pit Boss' Casino | Crash")
 				multi = self.bot.get_cog("Economy").getMultiplier(ctx)
-				if self.crash == False:
-					profit = round(self.amntBet * self.multiplier - self.amntBet)
-					await self.bot.get_cog("Economy").addWinnings(ctx.author.id, self.amntBet*self.multiplier)
-					balance = self.bot.get_cog("Economy").getBalance(ctx.author.id)
+				
+				if self.crash == False: # if they $stop it before it crashes 
+					profitInt = int(self.amntBet * self.multiplier - self.amntBet) 
+					amntWon = int(self.amntBet + profitInt)
+					profit = f"**{profitInt}** (+**{int(profitInt * (multi - 1))}**)"
 
-					embed = discord.Embed(color=0x23f518, title="Pit Boss' Casino | Crash")
-					embed.set_footer(text=f"Earned {xp} XP!")
-					embed.add_field(name = f"Crashed at", value = f"{str(self.multiplier)}x", inline=True)
-					embed.add_field(name = "Profit", value = f"{str(profit)} (+{profit * multi}){self.coin}", inline=True)
-					embed.add_field(name = "Credits", 
-									value = f"You now have {balance}{self.coin}", inline=False)
-					await botMsg.edit(embed=embed)
-					await self.bot.get_cog("XP").addXP(ctx, xp)
-					await self.bot.get_cog("Totals").addTotals(ctx, self.amntBet, self.amntBet * self.multiplier, 2)
+					await self.bot.get_cog("Economy").addWinnings(ctx.author.id, (amntWon + (profitInt * (multi - 1))))
 
-				elif self.crash == True:
-					balance = self.bot.get_cog("Economy").getBalance(ctx.author.id)
-					embed = discord.Embed(color=0xff2020, title="Pit Boss' Casino | Crash")
-					embed.set_footer(text=f"Earned {xp} XP!")
-					embed.add_field(name = f"Crashed at", value = f"{str(self.multiplier)}x", inline=True)
-					embed.add_field(name = "Profit", value = f"-{str(round(self.amntBet))}{self.coin}", inline=True)
-					embed.add_field(name = "Credits",
+				else: # if game crashes without them $stop'ing it in time
+					amntWon = 0
+					profit = f"**-{self.amntBet}**"
+					embed.color = discord.Color(0xff2020)
+
+				await self.bot.get_cog("Totals").addTotals(ctx, self.amntBet, amntWon, 2)
+				balance = self.bot.get_cog("Economy").getBalance(ctx.author.id)
+				xp = random.randint(50, 500)
+				await self.bot.get_cog("XP").addXP(ctx, xp)
+				embed.set_footer(text=f"Earned {xp} XP!")
+				embed.add_field(name = f"Crashed at", value = f"{str(self.multiplier)}x", inline=True)
+				embed.add_field(name = "Profit", value = f"{profit}", inline=True)
+				embed.add_field(name = "Credits",
 									value = f"You have {balance} credits", inline=False)
-					await botMsg.edit(embed=embed)
-					await self.bot.get_cog("XP").addXP(ctx, xp)
-					await self.bot.get_cog("Totals").addTotals(ctx, self.amntBet, 0, 2)
+				await botMsg.edit(embed=embed)
+
 			finally:
+				# resets all the variables 
 				self.task = None
 				self.multiplier = 1.0
 				self.crashNum = 1.6
@@ -93,72 +93,11 @@ class Crash(commands.Cog):
 
 
 	@commands.command(pass_context=True)
-	async def stop(self, ctx):
+	async def stop(self, ctx): # the command to stop the game before it "crashes"
 		if self.task is not None and self.multiplier != self.crashNum and ctx.author.id == self.userId:
-			self.task.cancel()
+			self.task.cancel() # cancel task if there is a current task, and current multiplier number isn't the crashing number
+							   # and user issuing command is user who started the ga,e
 			print('cancelling')
-		#	await message.channel.send(f"self.stop is {self.stop} and author id is {self.userId}")
-
-	# @commands.command(pass_context=True)
-	# @commands.cooldown(1, 1, commands.BucketType.user)
-	# async def crash(self, ctx, self.amntBet: int):
-	# 		self.coin = "<:coins:585233801320333313>"
-	# 		if self.amntBet >= 10 and self.amntBet <= 250:
-	# 			if await self.bot.get_cog("Economy").subtractBet(ctx, self.amntBet) != 0:
-	# 				self.userId = ctx.author.id
-	# 				self.multiplier = 1.0
-	# 				self.crashNum = round(random.uniform(1.0, 2.0), 1)
-	# 				if int(self.crashNum * 10) % 2 == 1:
-	# 					self.crashNum = round(self.crashNum + 0.1, 1)
-	# 				await ctx.send(self.crashNum)
-	# 				embed = discord.Embed(color=1768431, title="Pit Boss' Casino | Crash")
-	# 				embed.set_footer(text="Use $stop to stop")
-	# 				embed.add_field(name = f"Multiplier:", value = f"{str(self.multiplier)}x", inline=True)
-	# 				embed.add_field(name = "Profit", value = f"{str((self.multiplier * self.amntBet) - self.amntBet)}{self.coin}", inline=True)
-	# 				botMsg = await ctx.send(embed=embed)
-	# 				crash = False
-	# 				self.inLoop = True
-
-					# await asyncio.sleep(1)
-					# while self.stop:
-					# 	self.multiplier += 0.2
-					# 	self.multiplier = round(self.multiplier, 1)
-					# 	#await self.bot.wait_for('message', check=is_stop, timeout=2)
-					# 	embed.set_field_at(0, name = f"Multiplier", value = f"{str(self.multiplier)}x", inline=True)
-					# 	embed.set_field_at(1, name = "Profit", value = f"{str((self.multiplier * self.amntBet) - self.amntBet)}{self.coin}", inline=True)
-					# 	await botMsg.edit(embed=embed)
-					# 	print(self.stop)
-					# 	if self.multiplier == self.crashNum:
-					# 		crash = True
-					# 		break
-					# 	if self.stop not True:
-					# 		await asyncio.sleep(2)
-
-					# self.inLoop = False
-					# if crash == False and self.stop == True:
-					# 	await self.bot.get_cog("Economy").addWinnings(ctx.author.id, self.amntBet*2)
-					# 	balance = self.bot.get_cog("Economy").getBalance(ctx.author.id)
-					# 	embed = discord.Embed(color=0x23f518, title="Pit Boss' Casino | Crash")
-					# 	embed.set_footer(text=f"Earned {round(self.amntBet / 2 * 10)} XP!")
-					# 	embed.add_field(name = f"Crashed at", value = f"{str(self.multiplier)}x", inline=True)
-					# 	embed.add_field(name = "Profit", value = f"-{str(self.amntBet)}{self.coin}", inline=True)
-					# 	embed.add_field(name = "Credits", 
-					# 					value = f"You now have {balance}{self.coin}", inline=False)
-					# 	await botMsg.edit(embed=embed)
-					# elif crash == True and self.stop == False:
-					# 	balance = self.bot.get_cog("Economy").getBalance(ctx.author.id)
-					# 	embed = discord.Embed(color=0xff2020, title="Pit Boss' Casino | Crash")
-					# 	embed.set_footer(text=f"Earned {self.amntBet / 4 * 10} XP!")
-					# 	embed.add_field(name = f"Crashed at", value = f"{str(self.multiplier)}x", inline=True)
-					# 	embed.add_field(name = "Profit", value = f"-{str(self.amntBet)}{self.coin}", inline=True)
-					# 	embed.add_field(name = "Credits",
-					# 					value = f"You have {balance} credits", inline=False)
-					# 	await botMsg.edit(embed=embed)
-					# else:
-					# 	await ctx.send(f"ERROR.")
-
-					# self.stop = False
-
 
 def setup(bot):
 	bot.add_cog(Crash(bot))
