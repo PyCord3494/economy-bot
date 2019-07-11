@@ -28,14 +28,14 @@ class Coinflip(commands.Cog):
 					profitInt = moneyToAdd - amntBet
 					profit = f"**{profitInt}** (**+{int(profitInt * (multiplier - 1))}**)"
 
-					file = discord.File("coinwon.png", filename="image.png")
+					file = discord.File("./images/coinwon.png", filename="image.png")
 
 				else:
 					moneyToAdd = 0
 					profitInt = moneyToAdd - amntBet
 					profit = f"**{profitInt}**"
 
-					file = discord.File("coinlost.png", filename="image.png")
+					file = discord.File("./images/coinlost.png", filename="image.png")
 					embed.color = discord.Color(0xff2020)
 					
 				embed.set_thumbnail(url="attachment://image.png")
