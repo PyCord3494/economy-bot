@@ -20,6 +20,20 @@ class Economy(commands.Cog):
 		embed.add_field(name = f"Credits", value = f"You have **{balance}** credits", inline=False)
 		await ctx.send(embed=embed)
 
+	def isDonator(self, discordID):
+		db = pymysql.connect(host="twister.hostingspark.net",port=3306, user="hostings_autop",passwd="pwqA!Pp9!1",db="hostings_botdatabase",autocommit=True)
+		cursor = db.cursor()
+		sql = f"""SELECT DonatorCheck
+				  FROM Economy
+				  WHERE DiscordID = '{discordID}';"""
+		cursor.execute(sql)
+		db.commit()
+		getRow = cursor.fetchone()
+		donatorCheck = getRow[0]
+		db.close()
+
+		return donatorCheck
+
 
 	def getMultiplier(self, ctx):
 		db = pymysql.connect(host="twister.hostingspark.net",port=3306, user="hostings_autop",passwd="pwqA!Pp9!1",db="hostings_botdatabase",autocommit=True)
