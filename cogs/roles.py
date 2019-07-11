@@ -1,9 +1,9 @@
 import discord
 from discord.ext import commands
 import asyncio
-import utils
 import channels
 import users
+from discord.ext.commands import has_permissions, CheckFailure
 
 
 class Roles(commands.Cog):
@@ -74,36 +74,36 @@ class Roles(commands.Cog):
 
 
     @commands.command(pass_context = True)
+    @has_permissions(administrator=True)
     async def update_roles(self, ctx):
-        if utils.check_roles(["Admins"], [y.name for y in ctx.message.author.roles]): # check the user has the required role
-            # delete existing messages
-            channel = self.bot.get_channel(channels.channel["roles"]) # get the channel to clear the messages from
-            i = 0
-            async for message in channel.history():
-                if i < (1):
-                    i += 1
-                    await message.delete()
-            print("Roles channel cleared\n")
+        # delete existing messages
+        channel = self.bot.get_channel(channels.channel["roles"]) # get the channel to clear the messages from
+        i = 0
+        async for message in channel.history():
+            if i < (1):
+                i += 1
+                await message.delete()
+        print("Roles channel cleared\n")
 
-            # update the roles channel for autoroles
-            embed1 = discord.Embed(title=f"Self-Assignable Role Menu", description=f"React to give yourself a role", color=1768431) # set up embed
-            embed1.add_field(name = f"\u200b", value = f"""
-                💸 : `Buyer & Seller`\n
-                🛍 : `Seller`\n
-                💰 : `Buyer`\n
-                💼 : `Trader`\n
-                🚨 : `Recieve Notifications / Updates`\n
-                🆓 : `Access to Free Stuff Channel`""", inline=False)
-            channel_roles = await channel.send(embed=embed1)
-            # add the emojis to react with
-            await channel_roles.add_reaction("💸")
-            await channel_roles.add_reaction("🛍")
-            await channel_roles.add_reaction("💰")
-            await channel_roles.add_reaction("💼")
-            await channel_roles.add_reaction("🚨")
-            await channel_roles.add_reaction("🆓")
+        # update the roles channel for autoroles
+        embed1 = discord.Embed(title=f"Self-Assignable Role Menu", description=f"React to give yourself a role", color=1768431) # set up embed
+        embed1.add_field(name = f"\u200b", value = f"""
+            💸 : `Buyer & Seller`\n
+            🛍 : `Seller`\n
+            💰 : `Buyer`\n
+            💼 : `Trader`\n
+            🚨 : `Recieve Notifications / Updates`\n
+            🆓 : `Access to Free Stuff Channel`""", inline=False)
+        channel_roles = await channel.send(embed=embed1)
+        # add the emojis to react with
+        await channel_roles.add_reaction("💸")
+        await channel_roles.add_reaction("🛍")
+        await channel_roles.add_reaction("💰")
+        await channel_roles.add_reaction("💼")
+        await channel_roles.add_reaction("🚨")
+        await channel_roles.add_reaction("🆓")
 
-            # ❗ : `Access to Information Channels`\n
+        # ❗ : `Access to Information Channels`\n
 
 
 def setup(bot):
