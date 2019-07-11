@@ -1,6 +1,6 @@
 import discord
 from discord.ext import commands
-import utils
+from discord.ext.commands import has_permissions, CheckFailure
 
 class Admin(commands.Cog):
 	def __init__(self, bot):
@@ -8,20 +8,44 @@ class Admin(commands.Cog):
 
 	# immediately stop the bot
 	@commands.command(hidden = True)
-	async def end(self, ctx):
-		if utils.check_roles(["Admins"], [y.name for y in ctx.message.author.roles]): # check the user has the required role
-			await self.bot.logout()
-
-	@commands.command(hidden = True, aliases=['free', 'hmu', 'add', 'givemoney', 'give'])
-	async def addmoney(self, ctx, user: str, amnt: int):
-		if utils.check_roles(["Admins"], [y.name for y in ctx.message.author.roles]): # check the user has the required role
-			await self.bot.get_cog("Economy").addWinnings(user, amnt)
+	@has_permissions(administrator=True)
+	async def end(self):
+		await self.bot.logout()
 
 	@commands.command(hidden = True)
+	@has_permissions(administrator=True)
 	async def copy(self, ctx, *, words):
-		if utils.check_roles(["Admins"], [y.name for y in ctx.message.author.roles]): # check the user has the required role
-			await ctx.message.delete() # delete the original message
-			await ctx.send(words) # send the message
+		await ctx.message.delete() # delete the original message
+		await ctx.send(words) # send the message
+
+	@commands.command(hidden = True, aliases=['free', 'hmu', 'add', 'givemoney', 'give'])
+	@has_permissions(administrator=True)
+	async def addmoney(self, user: str, amnt: int):
+		await self.bot.get_cog("Economy").addWinnings(user, amnt)
+
+	@commands.command(pass_context=True)
+	@has_permissions(administrator=True)
+	async def givexp(self, discordId: str, xp: int):
+		db = pymysql.connect(host="twister.hostingspark.net",port=3306, user="hostings_autop",passwd="pwqA!Pp9!1",db="hostings_botdatabase",autocommit=True)
+		cursor = db.cursor()
+		sql = f"""Update Economy
+				  SET XP = XP + {xp}, TotalXP = TotalXP + {xp}
+				  WHERE DiscordID = '{discordId}';"""
+		cursor.execute(sql)
+		db.commit()
+		await self.bot.get_cog("XP").levelUp(ctx, db, discordId) # checks if they lvl up
+		db.close()
+
+	@commands.command(hidden = True)
+	@has_permissions(administrator=True)
+	async def makedonator(self, ctx, *, member: discord.Member): # grabs member from input
+		await ctx.send(f"Thanks for donating {member.mention}! Giving you perks now.")
+		donatorRole = discord.utils.get(ctx.guild.roles, name = "Donator")
+		await member.add_roles(donatorRole)
+		await ctx.send(f"Donator role added.")
+		await self.bot.get_cog("Economy").addWinnings(member.id, 5000)
+		await ctx.send(f"5000 credits added.")
+
 
 
 def setup(bot):
