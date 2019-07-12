@@ -3,6 +3,7 @@ from discord.ext import commands
 import random
 import asyncio
 from discord.ext.commands import has_permissions, CheckFailure
+import time
 
 
 bot = commands.Bot(command_prefix = "$")
@@ -34,10 +35,22 @@ extensions = ["cogs.user_manage", "cogs.roles", "cogs.admin", "cogs.economy", "c
 
 @bot.event
 async def on_ready():
+	global LogFile
+
+	LogFile = open("Logs.txt", "a")
+
 	print(f"{bot.user.name} - {bot.user.id}")
 	print(discord.__version__)
 	print("Ready...")
 
+# COMMAND LOGGER
+
+@bot.event 
+async def on_message(message):
+	if message.author.id != "585227426615787540" and message.content.startswith("$"):
+		localTime = time.asctime(time.localtime(time.time()))
+		LogFile.write(f"\n{message.author}:{message.guild}:{localTime}:{message.content}")
+		LogFile.flush()
 
 @bot.command(pass_context=True)
 async def help(ctx):
