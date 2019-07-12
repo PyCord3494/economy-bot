@@ -58,8 +58,9 @@ class bj(commands.Cog):
 			pDrawnCard[1] = "10"
 		pCardNum.append(int(pDrawnCard[1]))
 
-
-		self.botMsg = await ctx.send(f"{ctx.message.author.mention}")
+		file = discord.File("./images/bj.png", filename="image.png")
+		self.embed.set_thumbnail(url="attachment://image.png")
+		self.botMsg = await ctx.send(f"{ctx.message.author.mention}", file=file, embed=self.embed)
 		ans = "hit"
 		while (ans.lower() == "h") or (ans.lower() == "hit"):
 			
@@ -264,14 +265,18 @@ class bj(commands.Cog):
 			profitInt = moneyToAdd - amntBet
 			result = "YOU WON"
 			profit = f"**{profitInt}** (+**{int(profitInt * (multiplier - 1))}**)"
+			file = discord.File("./images/bjwon.png", filename="image.png")
 			
 			self.embed.color = discord.Color(0x23f518)
+			if player_num == 21:
+				file = discord.File("./images/21.png", filename="image.png")
 
 		elif winner == -1:
 			moneyToAdd = 0 # nothing to add since loss
 			profitInt = -amntBet # profit = amntWon - amntBet; amntWon = 0 in this case
 			result = "YOU LOST"
 			profit = f"**{profitInt}**"
+			file = discord.File("./images/bjlost.png", filename="image.png")
 
 		
 		elif winner == 0:
@@ -279,7 +284,8 @@ class bj(commands.Cog):
 			profitInt = 0 # they get refunded their money (so they don't make or lose money)
 			result = "PUSHED"
 			profit = f"**{profitInt}**"
-
+			file = discord.File("./images/bjpushed.png", filename="image.png")
+		self.embed.set_thumbnail(url="attachment://image.png")
 
 		giveZeroIfNeg = max(0, profitInt) # will give 0 if profit is negative. 
 																				# we don't want it subtracting anything, only adding
@@ -293,7 +299,7 @@ class bj(commands.Cog):
 		xp = randint(50, 500)
 		self.embed.set_footer(text=f"Earned {xp} XP!")
 		await self.bot.get_cog("XP").addXP(ctx, xp)
-		await self.botMsg.edit(content=f"{ctx.message.author.mention}", embed=self.embed)
+		await ctx.send(content=f"{ctx.message.author.mention}", file=file, embed=self.embed)
 
 		self.embed = discord.Embed(color=1768431, title="Pit Boss' Casino | Blackjack")	
 		
