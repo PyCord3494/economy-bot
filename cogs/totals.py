@@ -5,6 +5,15 @@ from discord.ext import commands
 import pymysql
 import asyncio
 import random
+import datetime
+
+actualGame = ["Slots", "Blackjack", "Crash", "Roulette", "Coinflip", "RPS"]
+
+def log(currentTime, discordID, creditsSpent, creditsWon, gameNumber): # Logs what credits have been spent where, by who, to who, why and the time which this has happened
+	logs = open("logs.txt", "a")
+	logs.write(f"\n{datetime.datetime.now()}:::{discordID}:::{creditsSpent}:::{creditsWon}:::{actualGame[gameNumber]}")
+	logs.flush()
+	logs.close()
 
 class Totals(commands.Cog):
 	def __init__(self, bot):
@@ -52,6 +61,7 @@ class Totals(commands.Cog):
 
 
 	async def addTotals(self, ctx, spent, won, game):
+		discordID = ctx.author.id
 		profit = won - spent
 		db = pymysql.connect(host="twister.hostingspark.net",port=3306, user="hostings_autop",passwd="pwqA!Pp9!1",db="hostings_botdatabase",autocommit=True)
 		cursor = db.cursor()
@@ -96,18 +106,9 @@ class Totals(commands.Cog):
 		except Exception as e:
 			print(e)
 
+		log(datetime.datetime.now(), discordID, spent, won, game)
 
 		db.close()
-
-
-
-
-
-
-
-
-
-
 
 def setup(bot):
 	bot.add_cog(Totals(bot))
