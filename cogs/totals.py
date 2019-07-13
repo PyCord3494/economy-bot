@@ -5,13 +5,14 @@ from discord.ext import commands
 import pymysql
 import asyncio
 import random
-import datetime
+import time
 
 actualGame = ["Slots", "Blackjack", "Crash", "Roulette", "Coinflip", "RPS"]
 
 def log(currentTime, discordID, creditsSpent, creditsWon, gameNumber): # Logs what credits have been spent where, by who, to who, why and the time which this has happened
+	localtime = time.asctime(time.localtime(time.time()))
 	logs = open("logs.txt", "a")
-	logs.write(f"\n{datetime.datetime.now()}:::{discordID}:::{creditsSpent}:::{creditsWon}:::{actualGame[gameNumber]}")
+	logs.write(f"\n{localtime}:::{discordID}:::{creditsSpent}:::{creditsWon}:::{actualGame[gameNumber]}")
 	logs.flush()
 	logs.close()
 
