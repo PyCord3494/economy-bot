@@ -163,6 +163,15 @@ class Economy(commands.Cog):
 
 		return crates, keys
 
+	async def subtractInv(self, discordId, amnt):
+		db = pymysql.connect(host="twister.hostingspark.net",port=3306, user="hostings_autop",passwd="pwqA!Pp9!1",db="hostings_botdatabase",autocommit=True)
+		cursor = db.cursor()
+		sql = f"""UPDATE Inventory
+				  SET Crates = Crates - {amnt}, Keyss = Keyss - {amnt}
+				  WHERE DiscordID = '{discordId}';"""
+		cursor.execute(sql)
+		db.commit()
+
 	@commands.command()
 	async def top(self, ctx): # scoreboard to display top 10 richest individuals
 		db = pymysql.connect(host="twister.hostingspark.net",port=3306, user="hostings_autop",passwd="pwqA!Pp9!1",db="hostings_botdatabase",autocommit=True)
