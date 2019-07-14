@@ -42,7 +42,7 @@ class Shop(commands.Cog):
 	async def buy(ctx, ID: int, amnt: int):
 		discordId = ctx.author.id
 		cost = self.items[ID] * amnt
-		balance = self.bot.get_cog("Economy").getBalance(ctx.author.id) > price
+		balance = self.bot.get_cog("Economy").getBalance(ctx.author.id)
 		if balance > price:
 			if ID < 8 and ID > 0:
 				await self.bot.get_cog("Economy").addWinnings(discordId, -(cost))
@@ -116,7 +116,11 @@ class Shop(commands.Cog):
 	async def open(self, ctx, amnt=1):
 		crates, keys = await self.bot.get_cog("Economy").getInventory(ctx.author.id)
 		if crates >= amnt and keys >= amnt:
-			await ctx.send(f"Success\nkeys = {keys}\ncrates = {crates}")
+			await self.bot.get_cog("Economy").subtractInv(ctx.author.id, amnt)
+			rCrates, rKeys = await self.bot.get_cog("Economy").getInventory(ctx.author.id)
+			balance = self.bot.get_cog("Economy").getBalance(ctx.author.id)
+			await ctx.send(f"You got **0** credits\nYou got **0** crates\nYou got **0** keys\n\nYou now have **{balance}** credits, **{rCrates}** crates, and **{rKeys}** keys")
+			await ctx.send()
 		else:
 			await ctx.send(f"{ctx.author.mention}, you only have {crates} crates and {keys} keys.\nType $crate to learn how to obtain more.")
 		
