@@ -9,7 +9,7 @@ import time
 bot = commands.Bot(command_prefix = "$")
 bot.remove_command('help')
 extensions = ["cogs.user_manage", "cogs.roles", "cogs.admin", "cogs.economy", "cogs.roulette", "cogs.coinflip", "cogs.slots", "cogs.ttt",
-			  "cogs.rps", "cogs.rewards", "cogs.bj", "cogs.csgo", "cogs.crash", "cogs.xp", "cogs.totals", "cogs.shop", "cogs.warnings"] # list of cogs to call
+			  "cogs.rps", "cogs.rewards", "cogs.bj", "cogs.crash", "cogs.xp", "cogs.totals", "cogs.shop", "cogs.warnings"] # list of cogs to call
 # took out "cogs.minesweeper"
 
 # async def background_loop():
