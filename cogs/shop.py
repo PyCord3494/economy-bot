@@ -10,7 +10,7 @@ class Shop(commands.Cog):
 		self.items = [1000, 5000, 50000, 100000, 150000, 250000, 35000]
 
 
-	@commands.group(invoke_without_command=True)
+	@commands.group(invoke_without_command=True, pass_context=True)
 	async def shop(self, ctx):
 		if ctx.invoked_subcommand is None:
 			if self.bot.get_cog("Economy").isDonator(ctx.author.id) == 1:
@@ -105,6 +105,23 @@ class Shop(commands.Cog):
 	@shop.command()
 	async def sell(ctx, ID: int, amnt: int):
 		await ctx.send("sold")
+
+	@commands.group(pass_context=True)
+	async def crate(self, ctx):
+		if ctx.invoked_subcommand is None:
+			await ctx.send("$crate open *amnt*")
+
+
+	@crate.command()
+	async def open(self, ctx, amnt=1):
+		crates, keys = await self.bot.get_cog("Economy").getInventory(ctx.author.id)
+		if crates >= amnt and keys >= amnt:
+			await ctx.send(f"Success\nkeys = {keys}\ncrates = {crates}")
+		else:
+			await ctx.send(f"{ctx.author.mention}, you only have {crates} crates and {keys} keys.\nType $crate to learn how to obtain more.")
+		
+
+
 
 
 
