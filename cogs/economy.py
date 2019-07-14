@@ -16,8 +16,11 @@ class Economy(commands.Cog):
 	async def balance(self, ctx):
 		""" Show your balance """
 		balance = self.getBalance(ctx.author.id)
+		crates, keys = await self.getInventory(ctx.author.id)
 		embed = discord.Embed(color=1768431)
-		embed.add_field(name = f"Credits", value = f"You have **{balance}** credits", inline=False)
+		embed.add_field(name = "Credits", value = f"You have **{balance}** credits", inline=False)
+		embed.add_field(name = "_ _\nCrates", value = f"You have **{crates}** crates", inline=True)
+		embed.add_field(name = "_ _\nKeys", value = f"You have **{keys}** keys", inline=True)
 		await ctx.send(embed=embed)
 
 	def isDonator(self, discordID):
@@ -133,7 +136,7 @@ class Economy(commands.Cog):
 		db = pymysql.connect(host="twister.hostingspark.net",port=3306, user="hostings_autop",passwd="pwqA!Pp9!1",db="hostings_botdatabase",autocommit=True)
 		cursor = db.cursor()
 
-		sql = f"""SELECT DiscordId, Credits
+		sql = f"""SELECT DiscordID, Credits
 				  FROM Economy
 				  WHERE DiscordID = '{discordId}';"""
 		cursor.execute(sql)
@@ -143,6 +146,22 @@ class Economy(commands.Cog):
 		db.close()
 
 		return balance
+	
+	async def getInventory(self, discordId):
+		db = pymysql.connect(host="twister.hostingspark.net",port=3306, user="hostings_autop",passwd="pwqA!Pp9!1",db="hostings_botdatabase",autocommit=True)
+		cursor = db.cursor()
+
+		sql = f"""SELECT Crates, Keyss
+				  FROM Inventory
+				  WHERE DiscordID = {discordId};"""
+		cursor.execute(sql)
+		db.commit()
+		getRow = cursor.fetchone()
+		crates = getRow[0]
+		keys = getRow[1]
+		db.close()
+
+		return crates, keys
 
 	@commands.command()
 	async def top(self, ctx): # scoreboard to display top 10 richest individuals
