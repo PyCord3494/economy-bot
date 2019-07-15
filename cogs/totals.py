@@ -6,13 +6,18 @@ import pymysql
 import asyncio
 import random
 import time
+import datetime
 
-actualGame = ["Slots", "Blackjack", "Crash", "Roulette", "Coinflip", "RPS"]
+
+actualGame = ["Slt", "BJ", "Crsh", "Roulette", "CF", "RPS"]
 
 def log(discordID, creditsSpent, creditsWon, gameNumber): # Logs what credits have been spent where, by who, to who, why and the time which this has happened
-	localtime = time.asctime(time.localtime(time.time()))
+	#localtime = time.asctime(time.localtime(time.time()))
+	x = datetime.datetime.now()
+						#  MON DAY HOUR:MIN:SEC
+	localtime = x.strftime("%b %d %H:%M:%S")
 	logs = open("logs.txt", "a")
-	logs.write(f"\n{localtime}:::{discordID}:::{creditsSpent}:::{creditsWon}:::{actualGame[gameNumber]}")
+	logs.write(f"{localtime} : {discordID} : {creditsSpent} : {creditsWon} : {actualGame[gameNumber]}\n")
 	logs.flush()
 	logs.close()
 
