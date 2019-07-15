@@ -86,13 +86,13 @@ class Slots(commands.Cog):
 			await self.bot.get_cog("XP").addXP(ctx, xp)
 			await botMsg.edit(embed=embed)
 
-	@slots.error
-	async def slots_handler(self, ctx, error):
-		embed = discord.Embed(color=0xff2020, title="Pit Boss Help Menu")
-		embed.add_field(name = "`Syntax: /slots <bet>`", value = "_ _", inline=False)
-		embed.add_field(name = "__Play slots for a chance to double your money!__", value = "_ _", inline=False)
-		await ctx.send(embed=embed)
-		print(error)
+	# @slots.error
+	# async def slots_handler(self, ctx, error):
+	# 	embed = discord.Embed(color=0xff2020, title="Pit Boss Help Menu")
+	# 	embed.add_field(name = "`Syntax: /slots <bet>`", value = "_ _", inline=False)
+	# 	embed.add_field(name = "__Play slots for a chance to double your money!__", value = "_ _", inline=False)
+	# 	await ctx.send(embed=embed)
+	# 	print(error)
 
 def setup(bot):
 	bot.add_cog(Slots(bot))

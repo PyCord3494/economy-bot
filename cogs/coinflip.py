@@ -53,13 +53,13 @@ class Coinflip(commands.Cog):
 				await self.bot.get_cog("XP").addXP(ctx, xp)
 				await ctx.send(file=file, embed=embed)
 
-	@coinflip.error
-	async def coinflip_handler(self, ctx, error):
-		embed = discord.Embed(color=0xff2020, title="Pit Boss Help Menu")
-		embed.add_field(name = "`Syntax: /coin <choice> <bet>`", value = "_ _", inline=False)
-		embed.add_field(name = "__Bet either heads or tails on a quick game of coinflip__", value = "_ _", inline=False)
-		await ctx.send(embed=embed)
-		print(error)
+	# @coinflip.error
+	# async def coinflip_handler(self, ctx, error):
+	# 	embed = discord.Embed(color=0xff2020, title="Pit Boss Help Menu")
+	# 	embed.add_field(name = "`Syntax: /coin <choice> <bet>`", value = "_ _", inline=False)
+	# 	embed.add_field(name = "__Bet either heads or tails on a quick game of coinflip__", value = "_ _", inline=False)
+	# 	await ctx.send(embed=embed)
+	# 	print(error)
 
 def setup(bot):
 	bot.add_cog(Coinflip(bot))

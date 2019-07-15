@@ -304,14 +304,14 @@ class bj(commands.Cog):
 		self.embed = discord.Embed(color=1768431, title="Pit Boss' Casino | Blackjack")	
 		
 
-	@bj.error
-	async def bj_handler(self, ctx, error):
-		embed = discord.Embed(color=1768431, title="Pit Boss Help Menu")
-		embed.add_field(name = "`Syntax: $blackjack <bet>`", value = "_ _", inline=False)
-		embed.add_field(name="__Play a game of blackjack and try to get to 21 first.__", value = "_ _", inline=False)
-		await ctx.send(embed=embed)
-		self.embed = discord.Embed(color=1768431, title="Pit Boss' Casino | Blackjack")
-		print(error)
+	# @bj.error
+	# async def bj_handler(self, ctx, error):
+	# 	embed = discord.Embed(color=1768431, title="Pit Boss Help Menu")
+	# 	embed.add_field(name = "`Syntax: $blackjack <bet>`", value = "_ _", inline=False)
+	# 	embed.add_field(name="__Play a game of blackjack and try to get to 21 first.__", value = "_ _", inline=False)
+	# 	await ctx.send(embed=embed)
+	# 	self.embed = discord.Embed(color=1768431, title="Pit Boss' Casino | Blackjack")
+	# 	print(error)
 
 
 
