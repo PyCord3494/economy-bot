@@ -9,7 +9,7 @@ import time
 
 actualGame = ["Slots", "Blackjack", "Crash", "Roulette", "Coinflip", "RPS"]
 
-def log(currentTime, discordID, creditsSpent, creditsWon, gameNumber): # Logs what credits have been spent where, by who, to who, why and the time which this has happened
+def log(discordID, creditsSpent, creditsWon, gameNumber): # Logs what credits have been spent where, by who, to who, why and the time which this has happened
 	localtime = time.asctime(time.localtime(time.time()))
 	logs = open("logs.txt", "a")
 	logs.write(f"\n{localtime}:::{discordID}:::{creditsSpent}:::{creditsWon}:::{actualGame[gameNumber]}")
@@ -107,7 +107,7 @@ class Totals(commands.Cog):
 		except Exception as e:
 			print(e)
 
-		log(datetime.datetime.now(), discordID, spent, won, game)
+		log(discordID, spent, won, game)
 
 		db.close()
 
