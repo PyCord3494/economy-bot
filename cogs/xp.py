@@ -45,6 +45,8 @@ class XP(commands.Cog):
 			embed.add_field(name = "XP Until Level Up", value = f"**{requiredXP - xp}**", inline=True)
 			embed.add_field(name = "Progress", value = f"**{progress}%**", inline=True)
 			await ctx.send(embed=embed)
+		else:
+			await ctx.send("Hello! Please type $start to create your wallet. :smiley:")
 
 
 	async def addXP(self, ctx, xp):
