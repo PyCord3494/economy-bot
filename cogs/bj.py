@@ -290,7 +290,7 @@ class bj(commands.Cog):
 		giveZeroIfNeg = max(0, profitInt) # will give 0 if profit is negative. 
 																				# we don't want it subtracting anything, only adding
 		await self.bot.get_cog("Economy").addWinnings(ctx.author.id, moneyToAdd + (giveZeroIfNeg * (multiplier - 1)))
-		balance = self.bot.get_cog("Economy").getBalance(ctx.author.id)
+		balance = await self.bot.get_cog("Economy").getBalance(ctx)
 		self.embed.set_field_at(2, name = f"**--- {result} ---**", value = "_ _", inline=False)
 		self.embed.add_field(name="Profit", value=f"{profit}{coin}", inline=True)
 		self.embed.add_field(name="Credits", value=f"**{balance}**{coin}", inline=True)

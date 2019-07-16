@@ -43,7 +43,7 @@ class Coinflip(commands.Cog):
 				giveZeroIfNeg = max(0, profitInt) # will give 0 if profitInt is negative. 
 																				# we don't want it subtracting anything, only adding
 				await self.bot.get_cog("Economy").addWinnings(ctx.author.id, moneyToAdd + (giveZeroIfNeg * (multiplier - 1)))
-				balance = self.bot.get_cog("Economy").getBalance(ctx.author.id)
+				balance = await self.bot.get_cog("Economy").getBalance(ctx)
 				embed.add_field(name="Profit", value=f"{profit}{coin}", inline=True)
 				embed.add_field(name="Credits", value=f"**{balance}**{coin}", inline=True)
 

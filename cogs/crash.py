@@ -73,7 +73,7 @@ class Crash(commands.Cog):
 					embed.color = discord.Color(0xff2020)
 
 				await self.bot.get_cog("Totals").addTotals(ctx, self.amntBet, moneyToAdd, 2)
-				balance = self.bot.get_cog("Economy").getBalance(ctx.author.id)
+				balance = await self.bot.get_cog("Economy").getBalance(ctx)
 				xp = random.randint(50, 500)
 				await self.bot.get_cog("XP").addXP(ctx, xp)
 				embed.set_footer(text=f"Earned {xp} XP!")

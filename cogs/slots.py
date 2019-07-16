@@ -75,7 +75,7 @@ class Slots(commands.Cog):
 																				# we don't want it subtracting anything, only adding
 																				
 			await self.bot.get_cog("Economy").addWinnings(ctx.author.id, moneyToAdd + (giveZeroIfNeg * (multiplier - 1)))
-			balance = self.bot.get_cog("Economy").getBalance(ctx.author.id)
+			balance = await self.bot.get_cog("Economy").getBalance(ctx)
 			embed.add_field(name=f"**--- {result} ---**", value="_ _", inline=False)	
 			embed.add_field(name="Profit", value=f"{profit}{coin}", inline=True)
 			embed.add_field(name="Credits", value=f"**{balance}**{coin}", inline=True)

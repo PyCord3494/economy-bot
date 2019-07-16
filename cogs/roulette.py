@@ -273,7 +273,7 @@ class Roulette(commands.Cog):
 					else:
 						result = "You didn't lose or win anything!"
 
-					balance = self.bot.get_cog("Economy").getBalance(ctx.author.id)
+					balance = await self.bot.get_cog("Economy").getBalance(ctx)
 					await self.bot.get_cog("Totals").addTotals(ctx, amntLost, moneyToAdd, 3)
 					xp = random.randint(50, 500)
 					embed.set_footer(text=f"Earned {xp} XP!")
@@ -307,11 +307,11 @@ class Roulette(commands.Cog):
 		refund = nBet + rBet + cBet + pBet
 		if refund > 0:
 			await self.bot.get_cog("Economy").addWinnings(ctx.author.id, refund)
-			balance = self.bot.get_cog("Economy").getBalance(ctx.author.id)
+			balance = await self.bot.get_cog("Economy").getBalance(ctx)
 			embedError.add_field(name = "-----------------------------------------------------------------",
 								 value = f"A refund has been issued!\nYou received your {refund}{self.coin}\n**Credits:** {balance}{self.coin}", inline=False)
 		else:
-			balance = self.bot.get_cog("Economy").getBalance(ctx.author.id)
+			balance = await self.bot.get_cog("Economy").getBalance(ctx)
 			embedError.add_field(name = "-----------------------------------------------------------------",
 								 value = f"Your balance was not affected.\n**Credits:** {balance}{self.coin}", inline=False)
 
