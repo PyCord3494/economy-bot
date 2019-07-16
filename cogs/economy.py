@@ -87,7 +87,7 @@ class Economy(commands.Cog):
 		if await self.accCheck(ctx) == True:
 			db = pymysql.connect(host="twister.hostingspark.net",port=3306, user="hostings_autop",passwd="pwqA!Pp9!1",db="hostings_botdatabase",autocommit=True)
 			cursor = db.cursor()
-			balance = await self.getBalance(ctx.author.id)
+			balance = await self.getBalance(ctx)
 			if amntBet <= balance and amntBet > 0:
 				sql = f"""UPDATE Economy
 						  SET Credits = Credits - {amntBet}
