@@ -1,59 +1,52 @@
+import asyncio
 import discord
 from discord.ext import commands
-import math
+
 
 class ErrorHandling(commands.Cog):
 	def __init__(self, bot):
 		self.bot = bot
 
+
+	async def on_error(self, event_method):
+		print(f"Ignoring exception in {event_method}")
+
 	@commands.Cog.listener()
 	async def on_command_error(self, ctx, error):
-
-		# if command has local error handler, return
-		if hasattr(ctx.command, "on_error"):
-			print(0)
+		"""
+		Catch command errors.
+		"""
+		if isinstance(error, type(None)):
+			await ctx.send("yes")
+		elif isinstance(error, commands.errors.NotOwner):
+			await ctx.send(f"{error}", delete_after=5)
+		elif isinstance(error, discord.errors.Forbidden):
+			await ctx.send("I don't have permission to perform the action", delete_after=5)
+		elif isinstance(error, commands.errors.CommandNotFound):
+			await ctx.send("Command not found.")
+		elif isinstance(error.__cause__, discord.errors.NotFound):
+			await ctx.send("Error cause not found.")
+		elif isinstance(error, commands.errors.NoPrivateMessage):
+			await ctx.send("That command can not be run in PMs!",
+								   delete_after=5)
 			return
+		elif isinstance(error, commands.errors.DisabledCommand):
+			await ctx.send("Sorry, but that command is currently disabled!",
+								   delete_after=5)
+		elif isinstance(error, commands.errors.CheckFailure):
+			await ctx.send("Check failed. You probably don't have "
+								   "permission to do this.", delete_after=5)
+		elif isinstance(error, commands.errors.CommandOnCooldown):
+			await ctx.send(f"{error}", delete_after=5)
+		elif isinstance(error, (commands.errors.BadArgument, commands.errors.MissingRequiredArgument)):
+			await ctx.send(f"Bad argument: {' '.join(error.args)}", delete_after=5)
+			formatted_help = await ctx.bot.formatter.format_help_for(ctx, ctx.command)
+			for page in formatted_help:
+				await ctx.send(page, delete_after=20)
+		else:
+			await ctx.send(f"An error happened. This has been logged and reported. Error: {error}",
+								   delete_after=5)
 
-		# get the original exception
-		error = getattr(error, "original", error)
-
-
-		ignored = (commands.CheckFailure, commands.DisabledCommand)
-		if isinstance(error, ignored):
-			print(f"Error occurred: {error}")
-			return
-
-		elif isinstance(error, commands.MissingRequiredArgument):
-			await ctx.send(f"MissingRequiredArgument: {error}")
-
-		elif isinstance(error, commands.TooManyArguments):
-			await ctx.send(f"TooManyArguments: {error}")
-
-		elif isinstance(error, commands.CommandNotFound):
-			await ctx.send(f"Command not found: `{ctx.invoked_with}`")
-
-		#elif isinstance(error, commands.TypeError):
-		#	await ctx.send("Command not found.")
-
-		elif isinstance(error, commands.CommandOnCooldown):
-			# rounds to #.##
-			await ctx.send("This command is on cooldown, retry in **{:0.2f}s**.".format(error.retry_after))
-			return
-
-		elif isinstance(error, commands.BadArgument):
-			await ctx.send("Bad argument")
-
-		elif isinstance(error, commands.UserInputError):
-			await ctx.send(f"Input error: {error}")
-			ctx.command.reset_cooldown(ctx)
-			return
-
-		elif isinstance(error, commands.NoPrivateMessage):
-			try:
-				await ctx.author.send("This command cannot be used in direct messages.")
-			except discord.Forbidden:
-				pass
-			return
 
 def setup(bot):
 	bot.add_cog(ErrorHandling(bot))

@@ -17,7 +17,7 @@ class Rewards(commands.Cog):
 		dailyReward = await self.getDailyReward(ctx)
 		level = await self.getLevel(ctx)
 		levelReward = self.levelReward[level]
-		donatorReward = await self.getDailyReward(ctx)
+		donatorReward = await self.getDonatorReward(ctx)
 
 
 		embed = discord.Embed(color=1768431)
@@ -41,7 +41,7 @@ class Rewards(commands.Cog):
 			await ctx.send(embed=embed)
 		else:
 			embed = discord.Embed(color=0xff2020)
-			embed.add_field(name="You must donate 10USD or more to use this command", value="[Click Here](https://www.paypal.me/AutopilotJustin) to donate, then contact <@547475078082985990>")
+			embed.add_field(name="You must donate 10USD or more to use this command", value="[Click Here](https://www.paypal.me/AutopilotJustin) to donate, or contact <@547475078082985990>")
 			await ctx.send(embed=embed)
 
 
@@ -147,15 +147,20 @@ class Rewards(commands.Cog):
 	async def getDonatorReward(self, ctx):
 		db = pymysql.connect(host="twister.hostingspark.net",port=3306, user="hostings_autop",passwd="pwqA!Pp9!1",db="hostings_botdatabase",autocommit=True)
 		cursor = db.cursor()
+
 		sql = f"""SELECT DonatorReward
 				  FROM Economy
 				  WHERE DiscordID = '{ctx.author.id}';"""
 		cursor.execute(sql)
 		db.commit()
 		getRow = cursor.fetchone()
-		dailyReward = getRow[0]
+		donatorReward = getRow[0]
+
+		if donatorReward == None:
+			donatorReward = 25000
+
 		db.close()
-		return dailyReward
+		return donatorReward
 
 	#@daily.error
 	#async def daily_handler(self, ctx, error):

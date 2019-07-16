@@ -11,17 +11,46 @@ class Economy(commands.Cog):
 		self.bot = bot
 		self.coin = "<:coins:585233801320333313>"
 
-	@commands.command(description="Check your balance!", aliases=['bal', 'credits'], pass_context=True)
+
+	@commands.command(aliases=['begin', 'new'], pass_context=True)
+	@commands.cooldown(1, 5, commands.BucketType.user)
+	async def start(self, ctx):
+		if await self.accCheck(ctx) == False:
+			db = pymysql.connect(host="twister.hostingspark.net",port=3306, user="hostings_autop",passwd="pwqA!Pp9!1",db="hostings_botdatabase",autocommit=True)
+			cursor = db.cursor()
+			sql = f"""INSERT INTO Economy(DiscordID)
+					  VALUES ('{ctx.author.id}');"""
+			cursor.execute(sql)
+			db.commit()
+
+			sql = f"""INSERT INTO Inventory(DiscordID)
+					  VALUES ('{ctx.author.id}');"""
+			cursor.execute(sql)
+			db.commit()
+
+			sql = f"""INSERT INTO Totals(DiscordID)
+					  VALUES ('{ctx.author.id}');"""
+			cursor.execute(sql)
+			db.commit()
+
+			await ctx.send("You are now successfully registered! Thank you, and have fun.")
+		else:
+			await ctx.send("You are already registered, silly")
+		
+
+	@commands.command(aliases=['bal', 'credits'], pass_context=True)
 	@commands.cooldown(1, 5, commands.BucketType.user)
 	async def balance(self, ctx):
 		""" Show your balance """
-		balance = self.getBalance(ctx.author.id)
-		crates, keys = await self.getInventory(ctx.author.id)
-		embed = discord.Embed(color=1768431)
-		embed.add_field(name = "Credits", value = f"You have **{balance}** credits", inline=False)
-		embed.add_field(name = "_ _\nCrates", value = f"You have **{crates}** crates", inline=True)
-		embed.add_field(name = "_ _\nKeys", value = f"You have **{keys}** keys", inline=True)
-		await ctx.send(embed=embed)
+		if await self.accCheck(ctx) == True:
+			balance = await self.getBalance(ctx)
+			crates, keys = await self.getInventory(ctx)
+			embed = discord.Embed(color=1768431)
+			embed.add_field(name = "Credits", value = f"You have **{balance}** credits", inline=False)
+			embed.add_field(name = "_ _\nCrates", value = f"You have **{crates}** crates", inline=True)
+			embed.add_field(name = "_ _\nKeys", value = f"You have **{keys}** keys", inline=True)
+			await ctx.send(embed=embed)
+
 
 	def isDonator(self, discordID):
 		db = pymysql.connect(host="twister.hostingspark.net",port=3306, user="hostings_autop",passwd="pwqA!Pp9!1",db="hostings_botdatabase",autocommit=True)
@@ -51,54 +80,6 @@ class Economy(commands.Cog):
 		db.close()
 
 		return multiplier
-
-	
-	#@balance.error
-	#async def balance_handler(self, ctx, error):
-	#	embed = discord.Embed(color=1768431, title="Pit Boss Help Menu")
-	#	embed.add_field(name = f"{error}", value="_ _")
-	#	print(error)
-
-
-
-	# async def createWallet(self, ctx):
-	# 	db = pymysql.connect(host="twister.hostingspark.net",port=3306, user="hostings_autop",passwd="pwqA!Pp9!1",db="hostings_botdatabase",autocommit=True)
-	# 	cursor = db.cursor()
-	# 	discordId = ctx.author.id
-
-	# 	sql_check = f"""SELECT *
- #                    FROM Economy
- #                    WHERE DiscordID = '{discordId}';"""
-	# 	cursor.execute(sql_check)
-	# 	db.commit()
-
-	# 	records = cursor.fetchall()
-
-	# 	num_of_rows = 0
-	# 	for row in records:
-	# 		num_of_rows += 1
-
-	# 	if num_of_rows < 1:
-	# 		botMsg = await ctx.send("Creating your wallet... Please wait.")
-
-	# 		add_walletId = self.createID(db, cursor)
-
-	# 		sql_insert = f"""INSERT INTO Economy(WalletID, DiscordID, Credits)
-	# 							VALUES ('{add_walletId}', '{discordId}', 100);"""
-	# 		cursor.execute(sql_insert)
-	# 		db.commit()
-
-	# 		balance = self.getBalance(ctx.author.id)
-	# 		newMsg = f"Wallet created. Your balance is: **${balance}**\nYou may now use your money. :wink:"
-			
-	# 		MODERATION_CHANNEL = self.bot.get_channel(ctx.channel.id)
-	# 		editMsg = await MODERATION_CHANNEL.fetch_message(botMsg.id)
-	# 		await editMsg.edit(content=newMsg)
-	# 		db.close()
-	# 		return 0
-	# 	else:
-	# 		db.close()
-	# 		return 1
 
 
 	async def subtractBet(self, ctx, amntBet): # subtracts the bet users place when they play games
@@ -132,38 +113,40 @@ class Economy(commands.Cog):
 		db.close()
 
 
-	def getBalance(self, discordId):
+	async def getBalance(self, ctx):
 		db = pymysql.connect(host="twister.hostingspark.net",port=3306, user="hostings_autop",passwd="pwqA!Pp9!1",db="hostings_botdatabase",autocommit=True)
 		cursor = db.cursor()
 
-		sql = f"""SELECT DiscordID, Credits
+		sql = f"""SELECT Credits
 				  FROM Economy
-				  WHERE DiscordID = '{discordId}';"""
+				  WHERE DiscordID = '{ctx.author.id}';"""
 		cursor.execute(sql)
 		db.commit()
 		getRow = cursor.fetchone()
-		balance = getRow[1]
 		db.close()
-
+		balance = getRow[0]
 		return balance
 	
-	async def getInventory(self, discordId):
-		db = pymysql.connect(host="twister.hostingspark.net",port=3306, user="hostings_autop",passwd="pwqA!Pp9!1",db="hostings_botdatabase",autocommit=True)
-		cursor = db.cursor()
 
-		sql = f"""SELECT Crates, Keyss
-				  FROM Inventory
-				  WHERE DiscordID = {discordId};"""
-		cursor.execute(sql)
-		db.commit()
-		getRow = cursor.fetchone()
-		crates = getRow[0]
-		keys = getRow[1]
-		db.close()
+	async def getInventory(self, ctx): # grabs all the crates and keys from database
+		if await self.accCheck(ctx) == True:
+			db = pymysql.connect(host="twister.hostingspark.net",port=3306, user="hostings_autop",passwd="pwqA!Pp9!1",db="hostings_botdatabase",autocommit=True)
+			cursor = db.cursor() 
+			# "Keys" is a special word and can't be used in SQL statements for some reason
+			sql = f"""SELECT Crates, Keyss
+					  FROM Inventory
+					  WHERE DiscordID = {ctx.author.id};"""
 
-		return crates, keys
+			cursor.execute(sql)
+			db.commit()
+			getRow = cursor.fetchone()
+			db.close()
+			crates = getRow[0]
+			keys = getRow[1]
+			return crates, keys
 
-	async def subtractInv(self, discordId, amnt):
+
+	async def subtractInv(self, discordId, amnt): # called when people open crates (subtracts them from inv.)
 		db = pymysql.connect(host="twister.hostingspark.net",port=3306, user="hostings_autop",passwd="pwqA!Pp9!1",db="hostings_botdatabase",autocommit=True)
 		cursor = db.cursor()
 		sql = f"""UPDATE Inventory
@@ -171,6 +154,7 @@ class Economy(commands.Cog):
 				  WHERE DiscordID = '{discordId}';"""
 		cursor.execute(sql)
 		db.commit()
+
 
 	@commands.command()
 	async def top(self, ctx): # scoreboard to display top 10 richest individuals
@@ -192,6 +176,27 @@ class Economy(commands.Cog):
 			count += 1 # number the users from 1 - 10
 
 		await ctx.send(f"```MD\nTop 10\n======\n{topUsers}```") # send the list with the top 10
+
+
+	async def accCheck(self, ctx):
+		# checks if they already have a wallet in database
+		db = pymysql.connect(host="twister.hostingspark.net",port=3306, user="hostings_autop",passwd="pwqA!Pp9!1",db="hostings_botdatabase",autocommit=True)
+		cursor = db.cursor()
+
+		sql = f"""SELECT DiscordID
+				  FROM Economy
+				  WHERE DiscordID = '{ctx.author.id}';"""
+
+		cursor.execute(sql) 
+		db.commit()
+
+		getRow = cursor.fetchone()
+		db.close()
+
+		if getRow == None: # getRow will be None if no account is found, therefor return False
+			return False
+		else: 			   # else if they're in the database, return True
+			return True
 
 
 

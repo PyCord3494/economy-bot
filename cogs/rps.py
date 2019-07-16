@@ -83,8 +83,6 @@ class rps(commands.Cog):
 				await self.bot.get_cog("XP").addXP(ctx, xp)
 				await ctx.send(content=f"{ctx.message.author.mention}", file=file, embed=embed)
 
-
-
 		else:
 			await ctx.send("Incorrect choice.")
 
