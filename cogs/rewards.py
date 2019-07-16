@@ -35,7 +35,7 @@ class Rewards(commands.Cog):
 			if self.bot.get_cog("Economy").isDonator(ctx.author.id) == 1:
 				donatorReward = await self.getDonatorReward(ctx)
 				await self.bot.get_cog("Economy").addWinnings(ctx.author.id, donatorReward)
-				balance = self.bot.get_cog("Economy").getBalance(ctx.author.id)
+				balance = await self.bot.get_cog("Economy").getBalance(ctx)
 				embed = discord.Embed(color=1768431)
 				embed.add_field(name = f"You got {donatorReward} credits", 
 								value = f"You have {balance} credits", inline=False)
@@ -44,6 +44,8 @@ class Rewards(commands.Cog):
 				embed = discord.Embed(color=0xff2020)
 				embed.add_field(name="You must donate 10USD or more to use this command", value="[Click Here](https://www.paypal.me/AutopilotJustin) to donate, or contact <@547475078082985990>")
 				await ctx.send(embed=embed)
+		else:
+			await ctx.send("Hello! Please type $start to create your wallet. :smiley:")
 
 
 	@commands.command(pass_context=True)
@@ -56,12 +58,14 @@ class Rewards(commands.Cog):
 			multiplier = self.bot.get_cog("Economy").getMultiplier(ctx)
 			extraMoney = int(levelReward * (multiplier - 1))
 			await self.bot.get_cog("Economy").addWinnings(ctx.author.id, levelReward + extraMoney)
-			balance = self.bot.get_cog("Economy").getBalance(ctx.author.id)
+			balance = await self.bot.get_cog("Economy").getBalance(ctx)
 
 			embed = discord.Embed(color=1768431)
 			embed.add_field(name = f"You got {levelReward} (+{extraMoney}) credits",
 							value = f"You have {balance} credits\nMultiplier: {multiplier}x\nExtra Money: {extraMoney}", inline=False)
 			await ctx.send(embed=embed)
+		else:
+			await ctx.send("Hello! Please type $start to create your wallet. :smiley:")
 
 
 	@commands.command(pass_context=True)
@@ -72,11 +76,13 @@ class Rewards(commands.Cog):
 			multiplier = self.bot.get_cog("Economy").getMultiplier(ctx)
 			extraMoney = int(dailyReward * (multiplier - 1))
 			await self.bot.get_cog("Economy").addWinnings(ctx.author.id, dailyReward + extraMoney)
-			balance = self.bot.get_cog("Economy").getBalance(ctx.author.id)
+			balance = await self.bot.get_cog("Economy").getBalance(ctx)
 			embed = discord.Embed(color=1768431)
 			embed.add_field(name = f"You got {dailyReward} (+{extraMoney}) credits", 
 							value = f"You have {balance} credits\nMultiplier: {multiplier}x\nExtra Money: {extraMoney}", inline=False)
 			await ctx.send(embed=embed)
+		else:
+			await ctx.send("Hello! Please type $start to create your wallet. :smiley:")
 
 	# @commands.command(pass_context=True)
 	# async def claimall(self, ctx):
@@ -100,20 +106,22 @@ class Rewards(commands.Cog):
 	# 	multiplier = self.bot.get_cog("Economy").getMultiplier(ctx)
 	# 	await self.bot.get_cog("Economy").addWinnings(ctx.author.id, totalMoney)
 
-	# 	balance = self.bot.get_cog("Economy").getBalance(ctx.author.id)
+	# 	balance = await self.bot.get_cog("Economy").getBalance(ctx)
 
 	@commands.command(pass_context=True)
 	async def search(self, ctx):
 		if await self.bot.get_cog("Economy").accCheck(ctx) == True:
-			amnt = random.randint(25, 100)
-			if self.bot.get_cog("Economy").getBalance(ctx.author.id) < 100:
+			if await self.bot.get_cog("Economy").getBalance(ctx) < 100:
+				amnt = random.randint(25, 100)
 				await self.bot.get_cog("Economy").addWinnings(ctx.author.id, amnt)
-				balance = self.bot.get_cog("Economy").getBalance(ctx.author.id)
+				balance = await self.bot.get_cog("Economy").getBalance(ctx)
 				embed = discord.Embed(color=1768431)
 				embed.add_field(name = f"You found {amnt} credits", value = f"You have {balance} credits", inline=False)
 				await ctx.send(embed=embed)
 			else:
 				await ctx.send(ctx.author.mention + ", you can't use this if you have over 25 credits.")
+		else:
+			await ctx.send("Hello! Please type $start to create your wallet. :smiley:")
 
 	async def getDailyReward(self, ctx):
 		db = pymysql.connect(host="twister.hostingspark.net",port=3306, user="hostings_autop",passwd="pwqA!Pp9!1",db="hostings_botdatabase",autocommit=True)
