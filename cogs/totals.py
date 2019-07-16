@@ -44,7 +44,7 @@ class Totals(commands.Cog):
 			db = pymysql.connect(host="twister.hostingspark.net",port=3306, user="hostings_autop",passwd="pwqA!Pp9!1",db="hostings_botdatabase",autocommit=True)
 			cursor = db.cursor()
 
-			sql = f"""SELECT Credits, Level
+			sql = f"""SELECT Credits, Level, XP
 					  FROM Economy
 					  WHERE DiscordID = '{ctx.author.id}';"""
 			cursor.execute(sql)
@@ -52,17 +52,23 @@ class Totals(commands.Cog):
 			getRow = cursor.fetchone()
 			db.close()
 			balance = getRow[0]
+			level = getRow[1]
+			xp = getRow[2]
+			XPtoLevelUp = [5000, 5500, 6000, 6500, 7000, 7500, 8000, 8500, 9000, 9500, 10000]
+			requiredXP = XPtoLevelUp[level]
 
 			crates, keys = await self.bot.get_cog("Economy").getInventory(ctx)
 
 			embed = discord.Embed(color=1768431, title="Pit Boss' Casino | Profile")
 			embed.set_thumbnail(url=ctx.author.avatar_url)
+			embed.add_field(name = "User", value = f"{ctx.author.name}", inline=True)
+			embed.add_field(name = "Level", value = f"{level}", inline=True)
 			embed.add_field(name = "Balance", value = f"{balance}", inline=True)
-			embed.add_field(name = "Balance", value = f"{balance}", inline=True)
+			embed.add_field(name = "XP / Next Level", value = f"{xp} / {requiredXP}", inline=True)
+			embed.add_field(name = "Profit", value = f"{profit}", inline=True)
+			embed.add_field(name = "Games Played", value = f"{games}", inline=True)
 			embed.add_field(name = "Crates", value = f"{crates}", inline=True)
 			embed.add_field(name = "Keys", value = f"{keys}", inline=True)
-			embed.add_field(name = "Games Played", value = f"{games}", inline=True)
-			embed.add_field(name = "Profit", value = f"{profit}", inline=True)
 
 			await ctx.send(embed=embed)
 
