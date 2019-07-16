@@ -65,9 +65,6 @@ class Totals(commands.Cog):
 
 			await ctx.send(embed=embed)
 
-		else:
-			await ctx.send(f"{ctx.author.mention}, type $start to begin your wallet.")
-
 
 
 	async def addTotals(self, ctx, spent, won, game):

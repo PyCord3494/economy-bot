@@ -83,22 +83,24 @@ class Economy(commands.Cog):
 
 
 	async def subtractBet(self, ctx, amntBet): # subtracts the bet users place when they play games
-		discordId = ctx.author.id
-		db = pymysql.connect(host="twister.hostingspark.net",port=3306, user="hostings_autop",passwd="pwqA!Pp9!1",db="hostings_botdatabase",autocommit=True)
-		cursor = db.cursor()
-		balance = self.getBalance(ctx.author.id)
-		if amntBet <= balance and amntBet > 0:
-			sql = f"""UPDATE Economy
-					  SET Credits = Credits - {amntBet}
-					  WHERE DiscordID = '{discordId}';"""
-			cursor.execute(sql)
-			db.commit()
-			db.close()
-			return 1 # return 1 if user has enough $$$ to bet their amount entered
-		else:
-			await ctx.send(f"Incorrect amount, you have: **{balance}**{self.coin}.")
-			db.close()
-			return 0 # return 0 if user trying to bet more $$$ than they have
+		if await self.accCheck(ctx) == True:
+			discordId = ctx.author.id
+			db = pymysql.connect(host="twister.hostingspark.net",port=3306, user="hostings_autop",passwd="pwqA!Pp9!1",db="hostings_botdatabase",autocommit=True)
+			cursor = db.cursor()
+			balance = self.getBalance(ctx.author.id)
+			if amntBet <= balance and amntBet > 0:
+				sql = f"""UPDATE Economy
+						  SET Credits = Credits - {amntBet}
+						  WHERE DiscordID = '{discordId}';"""
+				cursor.execute(sql)
+				db.commit()
+				db.close()
+				return 1 # return 1 if user has enough $$$ to bet their amount entered
+			else:
+				await ctx.send(f"Incorrect amount, you have: **{balance}**{self.coin}.")
+				db.close()
+				return 0 # return 0 if user trying to bet more $$$ than they have
+
 
 
 	async def addWinnings(self, discordId, winnings): # add the amount won 
@@ -196,7 +198,7 @@ class Economy(commands.Cog):
 		if getRow == None: # getRow will be None if no account is found, therefor return False
 			return False
 		else: 			   # else if they're in the database, return True
-			return True
+			await ctx.send("Hello! Please type $start to create your wallet. :smiley:")
 
 
 

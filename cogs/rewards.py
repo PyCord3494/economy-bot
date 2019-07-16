@@ -31,41 +31,43 @@ class Rewards(commands.Cog):
 	@commands.command(pass_context=True)
 	@commands.cooldown(1, 500, commands.BucketType.user)
 	async def donator(self, ctx):
-		if self.bot.get_cog("Economy").isDonator(ctx.author.id) == 1:
-			donatorReward = await self.getDonatorReward(ctx)
-			await self.bot.get_cog("Economy").addWinnings(ctx.author.id, donatorReward)
-			balance = self.bot.get_cog("Economy").getBalance(ctx.author.id)
-			embed = discord.Embed(color=1768431)
-			embed.add_field(name = f"You got {donatorReward} credits", 
-							value = f"You have {balance} credits", inline=False)
-			await ctx.send(embed=embed)
-		else:
-			embed = discord.Embed(color=0xff2020)
-			embed.add_field(name="You must donate 10USD or more to use this command", value="[Click Here](https://www.paypal.me/AutopilotJustin) to donate, or contact <@547475078082985990>")
-			await ctx.send(embed=embed)
+		if await self.bot.get_cog("Economy").accCheck(ctx) == True:
+			if self.bot.get_cog("Economy").isDonator(ctx.author.id) == 1:
+				donatorReward = await self.getDonatorReward(ctx)
+				await self.bot.get_cog("Economy").addWinnings(ctx.author.id, donatorReward)
+				balance = self.bot.get_cog("Economy").getBalance(ctx.author.id)
+				embed = discord.Embed(color=1768431)
+				embed.add_field(name = f"You got {donatorReward} credits", 
+								value = f"You have {balance} credits", inline=False)
+				await ctx.send(embed=embed)
+			else:
+				embed = discord.Embed(color=0xff2020)
+				embed.add_field(name="You must donate 10USD or more to use this command", value="[Click Here](https://www.paypal.me/AutopilotJustin) to donate, or contact <@547475078082985990>")
+				await ctx.send(embed=embed)
 
 
 	@commands.command(pass_context=True)
 	@commands.cooldown(1, 500, commands.BucketType.user)
 	async def levelreward(self, ctx):
-		level = await self.getLevel(ctx)
-		levelReward =  self.levelReward[level]
+		if await self.bot.get_cog("Economy").accCheck(ctx) == True:
+			level = await self.getLevel(ctx)
+			levelReward =  self.levelReward[level]
 
-		multiplier = self.bot.get_cog("Economy").getMultiplier(ctx)
-		extraMoney = int(levelReward * (multiplier - 1))
-		await self.bot.get_cog("Economy").addWinnings(ctx.author.id, levelReward + extraMoney)
-		balance = self.bot.get_cog("Economy").getBalance(ctx.author.id)
+			multiplier = self.bot.get_cog("Economy").getMultiplier(ctx)
+			extraMoney = int(levelReward * (multiplier - 1))
+			await self.bot.get_cog("Economy").addWinnings(ctx.author.id, levelReward + extraMoney)
+			balance = self.bot.get_cog("Economy").getBalance(ctx.author.id)
 
-		embed = discord.Embed(color=1768431)
-		embed.add_field(name = f"You got {levelReward} (+{extraMoney}) credits",
-						value = f"You have {balance} credits\nMultiplier: {multiplier}x\nExtra Money: {extraMoney}", inline=False)
-		await ctx.send(embed=embed)
+			embed = discord.Embed(color=1768431)
+			embed.add_field(name = f"You got {levelReward} (+{extraMoney}) credits",
+							value = f"You have {balance} credits\nMultiplier: {multiplier}x\nExtra Money: {extraMoney}", inline=False)
+			await ctx.send(embed=embed)
 
 
 	@commands.command(pass_context=True)
 	#@commands.cooldown(1, 500, commands.BucketType.user)
 	async def daily(self, ctx):
-		if ctx.message.channel.id == channels.channel["dailymoney"]:			
+		if await self.bot.get_cog("Economy").accCheck(ctx) == True:			
 			dailyReward = await self.getDailyReward(ctx)
 			multiplier = self.bot.get_cog("Economy").getMultiplier(ctx)
 			extraMoney = int(dailyReward * (multiplier - 1))
@@ -75,12 +77,6 @@ class Rewards(commands.Cog):
 			embed.add_field(name = f"You got {dailyReward} (+{extraMoney}) credits", 
 							value = f"You have {balance} credits\nMultiplier: {multiplier}x\nExtra Money: {extraMoney}", inline=False)
 			await ctx.send(embed=embed)
-		else:
-			ctx.command.reset_cooldown(ctx)
-			await ctx.message.delete()
-			botMsg = await ctx.send(f"{ctx.author.mention}, that command is only allowed in <#585234694170345501>")
-			await asyncio.sleep(6.5)
-			await botMsg.delete()
 
 	# @commands.command(pass_context=True)
 	# async def claimall(self, ctx):
@@ -108,15 +104,16 @@ class Rewards(commands.Cog):
 
 	@commands.command(pass_context=True)
 	async def search(self, ctx):
-		amnt = random.randint(25, 100)
-		if self.bot.get_cog("Economy").getBalance(ctx.author.id) < 100:
-			await self.bot.get_cog("Economy").addWinnings(ctx.author.id, amnt)
-			balance = self.bot.get_cog("Economy").getBalance(ctx.author.id)
-			embed = discord.Embed(color=1768431)
-			embed.add_field(name = f"You found {amnt} credits", value = f"You have {balance} credits", inline=False)
-			await ctx.send(embed=embed)
-		else:
-			await ctx.send(ctx.author.mention + ", you can't use this if you have over 25 credits.")
+		if await self.bot.get_cog("Economy").accCheck(ctx) == True:
+			amnt = random.randint(25, 100)
+			if self.bot.get_cog("Economy").getBalance(ctx.author.id) < 100:
+				await self.bot.get_cog("Economy").addWinnings(ctx.author.id, amnt)
+				balance = self.bot.get_cog("Economy").getBalance(ctx.author.id)
+				embed = discord.Embed(color=1768431)
+				embed.add_field(name = f"You found {amnt} credits", value = f"You have {balance} credits", inline=False)
+				await ctx.send(embed=embed)
+			else:
+				await ctx.send(ctx.author.mention + ", you can't use this if you have over 25 credits.")
 
 	async def getDailyReward(self, ctx):
 		db = pymysql.connect(host="twister.hostingspark.net",port=3306, user="hostings_autop",passwd="pwqA!Pp9!1",db="hostings_botdatabase",autocommit=True)
@@ -127,8 +124,8 @@ class Rewards(commands.Cog):
 		cursor.execute(sql)
 		db.commit()
 		getRow = cursor.fetchone()
-		dailyReward = getRow[0]
 		db.close()
+		dailyReward = getRow[0]
 		return dailyReward
 
 	async def getLevel(self, ctx):
@@ -140,8 +137,8 @@ class Rewards(commands.Cog):
 		cursor.execute(sql)
 		db.commit()
 		getRow = cursor.fetchone()
-		level = getRow[0]
 		db.close()
+		level = getRow[0]
 		return level
 
 	async def getDonatorReward(self, ctx):
@@ -154,12 +151,12 @@ class Rewards(commands.Cog):
 		cursor.execute(sql)
 		db.commit()
 		getRow = cursor.fetchone()
+		db.close()
 		donatorReward = getRow[0]
 
 		if donatorReward == None:
 			donatorReward = 25000
-
-		db.close()
+			
 		return donatorReward
 
 	#@daily.error

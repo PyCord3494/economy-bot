@@ -17,33 +17,34 @@ class XP(commands.Cog):
 	@commands.command(aliases=['xp'], pass_context=True)
 	@commands.cooldown(1, 1, commands.BucketType.user)
 	async def level(self, ctx):
-		db = pymysql.connect(host="twister.hostingspark.net",port=3306, user="hostings_autop",passwd="pwqA!Pp9!1",db="hostings_botdatabase",autocommit=True)
-		cursor = db.cursor()
+		if await self.bot.get_cog("Economy").accCheck(ctx) == True:
+			db = pymysql.connect(host="twister.hostingspark.net",port=3306, user="hostings_autop",passwd="pwqA!Pp9!1",db="hostings_botdatabase",autocommit=True)
+			cursor = db.cursor()
 
-		sql = f"""SELECT LevelReward, XP, TotalXP, Level
-				  FROM Economy
-				  WHERE DiscordID = '{ctx.author.id}';"""
-		cursor.execute(sql)
-		db.commit()
-		getRow = cursor.fetchone()
+			sql = f"""SELECT LevelReward, XP, TotalXP, Level
+					  FROM Economy
+					  WHERE DiscordID = '{ctx.author.id}';"""
+			cursor.execute(sql)
+			db.commit()
+			getRow = cursor.fetchone()
 
-		level = getRow[3]
-		xp = getRow[1]
-		requiredXP = self.XPtoLevelUp[level]
-		levelReward = getRow[0]
-		progress = round((xp / requiredXP) * 100)
-		totalXP = getRow[1]
+			level = getRow[3]
+			xp = getRow[1]
+			requiredXP = self.XPtoLevelUp[level]
+			levelReward = getRow[0]
+			progress = round((xp / requiredXP) * 100)
+			totalXP = getRow[1]
 
-		db.close()
+			db.close()
 
-		embed = discord.Embed(color=1768431, title="Pit Boss' Casino | Level")
-		embed.add_field(name = "Level", value = f"You are level **{level}**", inline=True)
-		embed.add_field(name = "Level Reward", value = f"**{levelReward}**", inline=True)
-		embed.add_field(name = "Total XP", value = f"**{totalXP}**", inline=True)
-		embed.add_field(name = "XP / Next Level", value = f"**{xp}** / **{requiredXP}**", inline=True)
-		embed.add_field(name = "XP Until Level Up", value = f"**{requiredXP - xp}**", inline=True)
-		embed.add_field(name = "Progress", value = f"**{progress}%**", inline=True)
-		await ctx.send(embed=embed)
+			embed = discord.Embed(color=1768431, title="Pit Boss' Casino | Level")
+			embed.add_field(name = "Level", value = f"You are level **{level}**", inline=True)
+			embed.add_field(name = "Level Reward", value = f"**{levelReward}**", inline=True)
+			embed.add_field(name = "Total XP", value = f"**{totalXP}**", inline=True)
+			embed.add_field(name = "XP / Next Level", value = f"**{xp}** / **{requiredXP}**", inline=True)
+			embed.add_field(name = "XP Until Level Up", value = f"**{requiredXP - xp}**", inline=True)
+			embed.add_field(name = "Progress", value = f"**{progress}%**", inline=True)
+			await ctx.send(embed=embed)
 
 
 	async def addXP(self, ctx, xp):
