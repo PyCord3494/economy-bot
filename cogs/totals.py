@@ -64,6 +64,8 @@ class Totals(commands.Cog):
 			embed.add_field(name = "Rock-Paper-Scissors", value = f"{rps}", inline=True)
 
 			await ctx.send(embed=embed)
+		else:
+			await ctx.send("Hello! Please type $start to create your wallet. :smiley:")
 
 
 
