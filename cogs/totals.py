@@ -9,7 +9,7 @@ import time
 import datetime
 
 
-actualGame = ["Slt", "BJ", "Crsh", "Roulette", "CF", "RPS"]
+actualGame = ["Slt", "BJ", "Crsh", "RLTTE", "CF", "RPS"]
 
 def log(discordID, creditsSpent, creditsWon, gameNumber): # Logs what credits have been spent where, by who, to who, why and the time which this has happened
 	#localtime = time.asctime(time.localtime(time.time()))
