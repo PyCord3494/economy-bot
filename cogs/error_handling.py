@@ -7,10 +7,6 @@ class ErrorHandling(commands.Cog):
 	def __init__(self, bot):
 		self.bot = bot
 
-
-	async def on_error(self, event_method):
-		print(f"Ignoring exception in {event_method}")
-
 	@commands.Cog.listener()
 	async def on_command_error(self, ctx, error):
 		"""
