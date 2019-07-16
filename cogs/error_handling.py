@@ -40,12 +40,9 @@ class ErrorHandling(commands.Cog):
 			await ctx.send(f"{error}", delete_after=5)
 		elif isinstance(error, (commands.errors.BadArgument, commands.errors.MissingRequiredArgument)):
 			await ctx.send(f"Bad argument: {' '.join(error.args)}", delete_after=5)
-			formatted_help = await ctx.bot.formatter.format_help_for(ctx, ctx.command)
-			for page in formatted_help:
-				await ctx.send(page, delete_after=20)
-		else:
-			await ctx.send(f"An error happened. This has been logged and reported. Error: {error}",
-								   delete_after=5)
+		#else:
+		#	await ctx.send(f"An error happened. This has been logged and reported. Error: {error}",
+		#						   delete_after=5)
 
 
 def setup(bot):
