@@ -25,7 +25,50 @@ class Totals(commands.Cog):
 	def __init__(self, bot):
 		self.bot = bot
 
-	@commands.command(pass_context=True, aliases=['profile', 'totals', 'me'])
+	@commands.command(pass_context=True)
+	async def profile(self, ctx):
+		if await self.bot.get_cog("Economy").accCheck(ctx) == True:
+			db = pymysql.connect(host="twister.hostingspark.net",port=3306, user="hostings_autop",passwd="pwqA!Pp9!1",db="hostings_botdatabase",autocommit=True)
+			cursor = db.cursor()
+
+			sql = f"""SELECT Profit, Games
+					  FROM Totals
+					  WHERE DiscordID = '{ctx.author.id}';"""
+			cursor.execute(sql)
+			db.commit()
+			getRow = cursor.fetchone()
+
+			profit = getRow[0]
+			games = getRow[1]
+
+			db = pymysql.connect(host="twister.hostingspark.net",port=3306, user="hostings_autop",passwd="pwqA!Pp9!1",db="hostings_botdatabase",autocommit=True)
+			cursor = db.cursor()
+
+			sql = f"""SELECT Credits, Level
+					  FROM Economy
+					  WHERE DiscordID = '{ctx.author.id}';"""
+			cursor.execute(sql)
+			db.commit()
+			getRow = cursor.fetchone()
+			db.close()
+			balance = getRow[0]
+
+			crates, keys = await self.bot.get_cog("Economy").getInventory(ctx)
+
+			embed = discord.Embed(color=1768431, title="Pit Boss' Casino | Profile")
+			embed.set_thumbnail(url=ctx.author.avatar_url)
+			embed.add_field(name = "Balance", value = f"{balance}", inline=True)
+			embed.add_field(name = "Balance", value = f"{balance}", inline=True)
+			embed.add_field(name = "Crates", value = f"{crates}", inline=True)
+			embed.add_field(name = "Keys", value = f"{keys}", inline=True)
+			embed.add_field(name = "Games Played", value = f"{games}", inline=True)
+			embed.add_field(name = "Profit", value = f"{profit}", inline=True)
+
+			await ctx.send(embed=embed)
+
+
+
+	@commands.command(pass_context=True, aliases=['totals', 'me'])
 	async def stats(self, ctx):
 		if await self.bot.get_cog("Economy").accCheck(ctx) == True:
 			db = pymysql.connect(host="twister.hostingspark.net",port=3306, user="hostings_autop",passwd="pwqA!Pp9!1",db="hostings_botdatabase",autocommit=True)
