@@ -56,12 +56,11 @@ async def on_ready():
 async def help(ctx):
 	embed = discord.Embed(color=1768431, title="Thanks for taking an interest in me!", footer="And that's all for now folks!")
 	embed.add_field(name = ":game_die: Game commands", 
-					 value="`roulette`, `crash`, `lower`, `blackjack`, `slot`, `roulette`, " 
-						 + "`poker`, `crate`, `connect4`, `coinflip`, `highlow`, `scratch`, "
-						 + "`tictactoe`, `horse`, `minesweeper`, `jackpot`, `crypto`, `fight`")
+					 value="`roulette`, `crash`, `blackjack`, `slot`," 
+						 + "`crate`, `coinflip`")
 
 	embed.add_field(name = ":gear: Other commands",
-				   value = "`credits`, `top`, `search`, `daily`, `vote`, `rewards`, "
+				   value = "`credits`, `top`, `search`, `daily`, `rewards`, "
 						 + "`level`, `shop`, `transfer`, `bank`, `donator`, `stats`")
 
 	embed.add_field(name = "_ _",
