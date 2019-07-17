@@ -7,7 +7,7 @@ import asyncio
 import random
 import time
 import datetime
-
+from PIL import Image, ImageDraw, ImageFont
 
 actualGame = ["Slt", "BJ", "Crsh", "RLTTE", "CF", "RPS"]
 
@@ -28,49 +28,63 @@ class Totals(commands.Cog):
 	@commands.command(pass_context=True)
 	async def profile(self, ctx):
 		if await self.bot.get_cog("Economy").accCheck(ctx) == True:
-			db = pymysql.connect(host="twister.hostingspark.net",port=3306, user="hostings_autop",passwd="pwqA!Pp9!1",db="hostings_botdatabase",autocommit=True)
-			cursor = db.cursor()
+			try:
+				db = pymysql.connect(host="twister.hostingspark.net",port=3306, user="hostings_autop",passwd="pwqA!Pp9!1",db="hostings_botdatabase",autocommit=True)
+				cursor = db.cursor()
 
-			sql = f"""SELECT Profit, Games
-					  FROM Totals
-					  WHERE DiscordID = '{ctx.author.id}';"""
-			cursor.execute(sql)
-			db.commit()
-			getRow = cursor.fetchone()
+				sql = f"""SELECT Profit, Games
+						  FROM Totals
+						  WHERE DiscordID = '{ctx.author.id}';"""
+				cursor.execute(sql)
+				db.commit()
+				getRow = cursor.fetchone()
 
-			profit = getRow[0]
-			games = getRow[1]
+				profit = getRow[0]
+				games = getRow[1]
 
-			db = pymysql.connect(host="twister.hostingspark.net",port=3306, user="hostings_autop",passwd="pwqA!Pp9!1",db="hostings_botdatabase",autocommit=True)
-			cursor = db.cursor()
+				db = pymysql.connect(host="twister.hostingspark.net",port=3306, user="hostings_autop",passwd="pwqA!Pp9!1",db="hostings_botdatabase",autocommit=True)
+				cursor = db.cursor()
 
-			sql = f"""SELECT Credits, Level, XP
-					  FROM Economy
-					  WHERE DiscordID = '{ctx.author.id}';"""
-			cursor.execute(sql)
-			db.commit()
-			getRow = cursor.fetchone()
-			db.close()
-			balance = getRow[0]
-			level = getRow[1]
-			xp = getRow[2]
-			XPtoLevelUp = [5000, 5500, 6000, 6500, 7000, 7500, 8000, 8500, 9000, 9500, 10000]
-			requiredXP = XPtoLevelUp[level]
+				sql = f"""SELECT Credits, Level, XP
+						  FROM Economy
+						  WHERE DiscordID = '{ctx.author.id}';"""
+				cursor.execute(sql)
+				db.commit()
+				getRow = cursor.fetchone()
+				db.close()
+				balance = getRow[0]
+				level = getRow[1]
+				xp = getRow[2]
+				XPtoLevelUp = [5000, 5500, 6000, 6500, 7000, 7500, 8000, 8500, 9000, 9500, 10000]
+				requiredXP = XPtoLevelUp[level]
 
-			crates, keys = await self.bot.get_cog("Economy").getInventory(ctx)
+				crates, keys = await self.bot.get_cog("Economy").getInventory(ctx)
 
-			embed = discord.Embed(color=1768431, title="Pit Boss' Casino | Profile")
-			embed.set_thumbnail(url=ctx.author.avatar_url)
-			embed.add_field(name = "User", value = f"{ctx.author.name}", inline=True)
-			embed.add_field(name = "Level", value = f"{level}", inline=True)
-			embed.add_field(name = "Balance", value = f"{balance}", inline=True)
-			embed.add_field(name = "XP / Next Level", value = f"{xp} / {requiredXP}", inline=True)
-			embed.add_field(name = "Profit", value = f"{profit}", inline=True)
-			embed.add_field(name = "Games Played", value = f"{games}", inline=True)
-			embed.add_field(name = "Crates", value = f"{crates}", inline=True)
-			embed.add_field(name = "Keys", value = f"{keys}", inline=True)
+				embed = discord.Embed(color=1768431, title="Pit Boss' Casino | Profile")
+				embed.set_thumbnail(url=ctx.author.avatar_url)
+				embed.add_field(name = "User", value = f"{ctx.author.name}", inline=True)
+				embed.add_field(name = "Level", value = f"{level}", inline=True)
+				embed.add_field(name = "Balance", value = f"{balance}", inline=True)
+				embed.add_field(name = "XP / Next Level", value = f"{xp} / {requiredXP}", inline=True)
+				embed.add_field(name = "Profit", value = f"{profit}", inline=True)
+				embed.add_field(name = "Games Played", value = f"{games}", inline=True)
+				embed.add_field(name = "Crates", value = f"{crates}", inline=True)
+				embed.add_field(name = "Keys", value = f"{keys}", inline=True)
 
-			await ctx.send(embed=embed)
+				img = Image.open("./images/scroll.png")
+				font_type = ImageFont.truetype('arial.ttf',30)
+				draw = ImageDraw.Draw(img)
+				draw.text(xy=(125,100), text=f"{ctx.author.name}",fill=(170,126,0),font=font_type)
+				draw.text(xy=(375,100), text=f"Level {level}",fill=(170,126,0),font=font_type)
+				img.save("images/profile.png")
+				file = discord.File("images/profile.png", filename="image.png")
+				embed.set_image(url="attachment://image.png")
+
+				await ctx.send(file=file, embed=embed)
+			except Exception as e:
+				print(e)
+		else:
+			await ctx.send("Hello! Please type $start to create your wallet. :smiley:")
 
 
 
