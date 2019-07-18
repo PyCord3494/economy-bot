@@ -99,15 +99,20 @@ class XP(commands.Cog):
 			#role = discord.utils.get(ctx.guild.roles, name = f"Level {level}")
 			#await ctx.author.remove_roles(role)
 
-# HERE FOR TESTING PURPOSES FOR IMAGES AND THUMBNAILS
-	# @commands.command(pass_context=True)
-	# async def test(self, ctx):
-	# 	embed = discord.Embed(color=1768431, title="Level Up!")
-	# 	file = discord.File("./images/timeout.png", filename="image.png")
-	# 	embed.set_thumbnail(url="attachment://image.png")
-	# 	embed.add_field(name = f"{ctx.author.name}, you Leveled Up!", value = "_ _", inline=False)
-	# 	embed.add_field(name = f"Level Reward", value = f"**550 ---> 1500** :confetti_ball::confetti_ball: ", inline=False)
-	# 	await ctx.send(file=file, embed=embed)
+	async def getLevel(self, discordId):
+		db = pymysql.connect(host="twister.hostingspark.net",port=3306, user="hostings_autop",passwd="pwqA!Pp9!1",db="hostings_botdatabase",autocommit=True)
+		cursor = db.cursor()
+
+		sql = f"""SELECT Level
+				  FROM Economy
+				  WHERE DiscordID = '{discordId}';"""
+		cursor.execute(sql)
+		db.commit()
+		getRow = cursor.fetchone()
+		db.close()
+		level = getRow[0]
+		return level
+
 
 
 
