@@ -2,7 +2,7 @@ import discord
 from discord.ext import commands
 import random
 import asyncio
-from discord.ext.commands import has_permissions, CheckFailure
+from discord.ext.commands import has_permissions
 import time
 
 import ztoken
