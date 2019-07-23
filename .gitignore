@@ -2,3 +2,4 @@ __pycache__/
 cogs/__pycache__/
 main.py
 Logs.txt
+ztoken.py

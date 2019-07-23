@@ -5,6 +5,7 @@ import asyncio
 from discord.ext.commands import has_permissions, CheckFailure
 import time
 
+import ztoken
 
 bot = commands.Bot(command_prefix = "$")
 bot.remove_command('help')
@@ -112,4 +113,4 @@ if __name__ == '__main__':
 		except Exception as error:
 			print(f"{extension} could not be loaded. [{error}]")
 	# bot.loop.create_task(background_loop())
-	bot.run("NTg1MjI3NDI2NjE1Nzg3NTQw.XPWZpQ.GxYOpdP2MeLwN9BFhsxMo9kbqOs")
+	bot.run(ztoken.token)
