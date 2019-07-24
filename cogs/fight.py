@@ -11,6 +11,7 @@ from discord.ext import commands
 import asyncio
 from random import randrange
 from random import randint
+from PIL import Image, ImageDraw, ImageFont
 
 class Fight(commands.Cog):
 	def __init__(self, bot):
@@ -62,27 +63,42 @@ class Fight(commands.Cog):
 
 			else:  # player 2's turn
 				self.embed.color = discord.Color(0xfd0006)
-				player = [p2, ctx.author.name]
-				opponent = [p1, member.name]
+				player = [p2, member.name]
+				opponent = [p1, ctx.author.name]
 
 			act = randrange(100) # generate what they'll do on their turn
 			if act <= 70: # 70% chance to attack; dmg amount based on generated #
-				opponent[0][0] -= act + 20
-				self.embed.add_field(name="DAMAGE", value=f"{player[1]} damaged {opponent[1]} for {act + 20} damage!\nHe has {opponent[0][0]} health left!")
-				await asyncio.sleep(2)
+				if opponent[0][1] > 0: # if armor exists
+					opponent[0][1] -= act + 20
+
+					if opponent[0][1] < 0: # if they do more dmg to armor than armor can handle
+						self.embed.add_field(name="DAMAGE", value=f"{player[1]} broke {opponent[1]}\'s shield and damaged him for {opponent[0][1] * -1} damage!")
+						opponent[0][0] += opponent[0][1] # take out hp for remaining dmg
+						opponent[0][1] = 0 # set armor to 0 since armor can't be negative
+					else:
+						self.embed.add_field(name="DAMAGE", value=f"{player[1]} damaged {opponent[1]}\'s shield for {act + 20} damage!\nHe has {opponent[0][1]} armor left!")
+
+				else:
+					opponent[0][0] -= act + 20
+					self.embed.add_field(name="DAMAGE", value=f"{player[1]} damaged {opponent[1]} for {act + 20} damage!\nHe has {opponent[0][0]} health left!")
+				await asyncio.sleep(3)
 			elif act > 70: # 30% chance to heal; heal amount based on generated #
 				if player[0][3] > 0:
 					player[0][3] -= 1
 					player[0][0] += act
 					self.embed.add_field(name="HEALED", value=f"{player[1]} healed for {act} health!\nHealth Remaining: {player[0][0]}\nPotions remaining: {player[0][3]}")
 				else:
-					self.embed.add_field(name="HEALED", value=f"{player[1]}tried to use a health potion, but realized he has none.")
-				await asyncio.sleep(2)
+					self.embed.add_field(name="HEALED", value=f"{player[1]} tried to use a health potion, but realized he has none.")
+				await asyncio.sleep(3)
 
 			print(act)
-			
-			# sends embed and resets it for next turn
-			await ctx.send(embed=self.embed)
+			if turnNum % 2 == 0:
+				file = await self.createImg(player, opponent)
+			else:
+				file = await self.createImg(opponent, player)
+			self.embed.set_image(url="attachment://image.png")
+
+			await ctx.send(file=file, embed=self.embed)
 			self.embed.clear_fields()
 
 			turnNum += 1 # changes whose turn it is
@@ -91,7 +107,6 @@ class Fight(commands.Cog):
 			if dead:
 				#print("broke")
 				break # will break once player is dead
-			await asyncio.sleep(2)
 
 		await ctx.send(f"{dead} has been killed!")
 
@@ -104,6 +119,15 @@ class Fight(commands.Cog):
 			return opponent[1]
 		else:
 			return None
+
+	async def createImg(self, player, oppo):
+		img = Image.open("./images/map.png")
+		font_type = ImageFont.truetype('arial.ttf',30)
+		draw = ImageDraw.Draw(img)
+		draw.text(xy=(125,80), text=f"{player[1]}\nArmor: {player[0][1]}\nHP: {player[0][0]}",fill=(255,255,255),font=font_type)
+		draw.text(xy=(505,80), text=f"{oppo[1]}\nArmor: {oppo[0][1]}\nHP: {oppo[0][0]}",fill=(255,255,255),font=font_type)
+		img.save("images/mapUpdated.png")
+		return discord.File("images/mapUpdated.png", filename="image.png")
 
 
 
