@@ -22,6 +22,7 @@ class Fight(commands.Cog):
 		self.p1CheckArmor, self.p2CheckArmor = True, True
 		self.p1Potions, self.p2Potions = True, True
 		self.p1Shields, self.p2Shields = True, True
+		self.msg = ""
 
 	@commands.command(pass_context=True)
 	async def fight(self, ctx, *, member: discord.Member):
@@ -37,6 +38,8 @@ class Fight(commands.Cog):
 		try:
 			p1 = [self.p1Health, self.p1Armor, self.p1CheckArmor, self.p1Potions]
 			p2 = [self.p2Health, self.p2Armor, self.p2CheckArmor, self.p2Potions]
+			file = discord.File("images/map.png", filename="image.png")
+			self.embed.set_image(url="attachment://image.png")
 			await self.fighting(ctx, member, p1, p2)
 		finally: 
 			# resets all the variables
@@ -69,14 +72,14 @@ class Fight(commands.Cog):
 			act = randrange(100) # generate what they'll do on their turn
 			if act <= 70: # 70% chance to attack; dmg amount based on generated #
 				if opponent[0][1] > 0: # if armor exists
-					opponent[0][1] -= act + 20
+					opponent[0][1] -= act + 35
 
 					if opponent[0][1] < 0: # if they do more dmg to armor than armor can handle
 						self.embed.add_field(name="DAMAGE", value=f"{player[1]} broke {opponent[1]}\'s shield and damaged him for {opponent[0][1] * -1} damage!")
 						opponent[0][0] += opponent[0][1] # take out hp for remaining dmg
 						opponent[0][1] = 0 # set armor to 0 since armor can't be negative
 					else:
-						self.embed.add_field(name="DAMAGE", value=f"{player[1]} damaged {opponent[1]}\'s shield for {act + 20} damage!\nHe has {opponent[0][1]} armor left!")
+						self.embed.add_field(name="DAMAGE", value=f"{player[1]} damaged {opponent[1]}\'s shield for {act + 35} damage!\nHe has {opponent[0][1]} armor left!")
 
 				else:
 					opponent[0][0] -= act + 20
@@ -121,11 +124,18 @@ class Fight(commands.Cog):
 			return None
 
 	async def createImg(self, player, oppo):
-		img = Image.open("./images/map.png")
+		img = Image.open("images/map.png")
+
+		leftPlayer = Image.open("images/subzero-left.png")
+		img.paste(leftPlayer, (100, 190), leftPlayer)
+
+		rightPlayer = Image.open("images/subzero-right.png")
+		img.paste(rightPlayer, (475, 190), rightPlayer)
+
 		font_type = ImageFont.truetype('arial.ttf',30)
 		draw = ImageDraw.Draw(img)
 		draw.text(xy=(125,80), text=f"{player[1]}\nArmor: {player[0][1]}\nHP: {player[0][0]}",fill=(255,255,255),font=font_type)
-		draw.text(xy=(505,80), text=f"{oppo[1]}\nArmor: {oppo[0][1]}\nHP: {oppo[0][0]}",fill=(255,255,255),font=font_type)
+		draw.text(xy=(549,80), text=f"{oppo[1]}\nArmor: {oppo[0][1]}\nHP: {oppo[0][0]}",fill=(255,255,255),font=font_type)
 		img.save("images/mapUpdated.png")
 		return discord.File("images/mapUpdated.png", filename="image.png")
 
