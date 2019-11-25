@@ -10,7 +10,7 @@ import ztoken
 bot = commands.Bot(command_prefix = "$")
 bot.remove_command('help')
 extensions = ["cogs.admin", "cogs.economy", "cogs.roulette", "cogs.coinflip", "cogs.slots", "cogs.ttt", "cogs.rps", "cogs.rewards", 
-			  "cogs.bj", "cogs.crash", "cogs.xp", "cogs.totals", "cogs.shop", "cogs.error_handling", "cogs.fight"] # list of cogs to call
+			  "cogs.bj", "cogs.crash", "cogs.xp", "cogs.totals", "cogs.error_handling", "cogs.shop", "cogs.fight"] # list of cogs to call
 # took out "cogs.minesweeper"
 
 # async def background_loop():
