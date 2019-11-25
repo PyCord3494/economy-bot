@@ -11,7 +11,7 @@ from discord.ext import commands
 import asyncio
 from random import randrange
 from random import randint
-from PIL import Image, ImageDraw, ImageFont
+from PIL import Image, ImageDraw, ImageFont, ImageOps
 
 class Fight(commands.Cog):
 	def __init__(self, bot):
@@ -94,7 +94,7 @@ class Fight(commands.Cog):
 					self.embed.add_field(name="HEALED", value=f"{player[1]} tried to use a health potion, but realized he has none.")
 				await asyncio.sleep(3)
 
-			print(act)
+			#print(act)
 			if turnNum % 2 == 0:
 				file = await self.createImg(player, opponent)
 			else:
@@ -129,7 +129,8 @@ class Fight(commands.Cog):
 		leftPlayer = Image.open("images/subzero-left.png")
 		img.paste(leftPlayer, (100, 190), leftPlayer)
 
-		rightPlayer = Image.open("images/subzero-right.png")
+		rightPlayer = Image.open("images/subzero-left.png")
+		rightPlayer = ImageOps.mirror(rightPlayer)
 		img.paste(rightPlayer, (475, 190), rightPlayer)
 
 		font_type = ImageFont.truetype('arial.ttf',30)
