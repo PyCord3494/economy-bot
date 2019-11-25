@@ -58,7 +58,7 @@ class Roulette(commands.Cog):
 		embed.add_field(name = "Current picks:", value = f"Number bet: \nHigh/low bet: \nColor bet: \nParity bet: ", inline=True)
 		embed.add_field(name = "Previous Numbers:", value = f"{nums}_ _", inline=True)
 		#embed.add_field(name = "", value = "", inline=False)
-		msg = await ctx.send(file=discord.File('roulette.png'), embed=embed)
+		msg = await ctx.send(file=discord.File('images/roulette.png'), embed=embed)
 
 		#await ctx.send(f"```Welcome to roulette, choose an option to bet on or choose start```\n\tCurrent picks:\n\t\t\tNumber bet: {str(numberBet)}\n\t\t\tHigh/low bet: {rangeBet}\n\t\t\tColor bet: {colorBet}\n\t\t\tParity bet: {parityBet}\n_ _")
 
