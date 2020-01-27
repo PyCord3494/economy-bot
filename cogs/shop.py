@@ -3,6 +3,7 @@ from discord.ext import commands
 import utils
 import pymysql
 import asyncio
+import config
 
 class Shop(commands.Cog):
 	def __init__(self, bot):
@@ -43,12 +44,12 @@ class Shop(commands.Cog):
 			return 0
 
 	@shop.command()
-	async def buy(ctx, ID: int, amnt: int):
+	async def buy(self, ctx, ID: int, amnt: int):
 		if await self.bot.get_cog("Economy").accCheck(ctx) == True:
 			discordId = ctx.author.id
-			cost = self.items[ID] * amnt
+			cost = self.items[ID - 1] * amnt
 			balance = await self.bot.get_cog("Economy").getBalance(ctx)
-			if balance >= price:
+			if balance >= cost:
 				if ID <= 7 and ID > 0:
 					await self.bot.get_cog("Economy").addWinnings(discordId, -(cost))
 					db = pymysql.connect(host=config.host, port=3306, user=config.user, passwd=config.passwd, db=config.db, autocommit=True)
