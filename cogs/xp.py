@@ -18,7 +18,7 @@ class XP(commands.Cog):
 	@commands.cooldown(1, 1, commands.BucketType.user)
 	async def level(self, ctx):
 		if await self.bot.get_cog("Economy").accCheck(ctx) == True:
-			db = pymysql.connect(host="twister.hostingspark.net",port=3306, user="hostings_autop",passwd="pwqA!Pp9!1",db="hostings_botdatabase",autocommit=True)
+			db = pymysql.connect(host=config.host, port=3306, user=config.user, passwd=config.passwd, db=config.db, autocommit=True)
 			cursor = db.cursor()
 
 			sql = f"""SELECT LevelReward, XP, TotalXP, Level
@@ -50,7 +50,7 @@ class XP(commands.Cog):
 
 
 	async def addXP(self, ctx, xp):
-		db = pymysql.connect(host="twister.hostingspark.net",port=3306, user="hostings_autop",passwd="pwqA!Pp9!1",db="hostings_botdatabase",autocommit=True)
+		db = pymysql.connect(host=config.host, port=3306, user=config.user, passwd=config.passwd, db=config.db, autocommit=True)
 		cursor = db.cursor()
 
 		sql = f"""Update Economy
@@ -100,7 +100,7 @@ class XP(commands.Cog):
 			#await ctx.author.remove_roles(role)
 
 	async def getLevel(self, discordId):
-		db = pymysql.connect(host="twister.hostingspark.net",port=3306, user="hostings_autop",passwd="pwqA!Pp9!1",db="hostings_botdatabase",autocommit=True)
+		db = pymysql.connect(host=config.host, port=3306, user=config.user, passwd=config.passwd, db=config.db, autocommit=True)
 		cursor = db.cursor()
 
 		sql = f"""SELECT Level

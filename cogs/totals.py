@@ -29,7 +29,7 @@ class Totals(commands.Cog):
 	async def profile(self, ctx):
 		if await self.bot.get_cog("Economy").accCheck(ctx) == True:
 			try:
-				db = pymysql.connect(host="twister.hostingspark.net",port=3306, user="hostings_autop",passwd="pwqA!Pp9!1",db="hostings_botdatabase",autocommit=True)
+				db = pymysql.connect(host=config.host, port=3306, user=config.user, passwd=config.passwd, db=config.db, autocommit=True)
 				cursor = db.cursor()
 
 				sql = f"""SELECT Profit, Games
@@ -42,7 +42,9 @@ class Totals(commands.Cog):
 				profit = getRow[0]
 				games = getRow[1]
 
-				db = pymysql.connect(host="twister.hostingspark.net",port=3306, user="hostings_autop",passwd="pwqA!Pp9!1",db="hostings_botdatabase",autocommit=True)
+				db.close()
+
+				db = pymysql.connect(host=config.host, port=3306, user=config.user, passwd=config.passwd, db=config.db, autocommit=True)
 				cursor = db.cursor()
 
 				sql = f"""SELECT Credits, Level, XP
@@ -91,7 +93,7 @@ class Totals(commands.Cog):
 	@commands.command(pass_context=True, aliases=['totals', 'me'])
 	async def stats(self, ctx):
 		if await self.bot.get_cog("Economy").accCheck(ctx) == True:
-			db = pymysql.connect(host="twister.hostingspark.net",port=3306, user="hostings_autop",passwd="pwqA!Pp9!1",db="hostings_botdatabase",autocommit=True)
+			db = pymysql.connect(host=config.host, port=3306, user=config.user, passwd=config.passwd, db=config.db, autocommit=True)
 			cursor = db.cursor()
 
 			sql = f"""SELECT Paid, Won, Profit, Games, Slots, Blackjack, Crash, Roulette, Coinflip, RPS
@@ -135,7 +137,7 @@ class Totals(commands.Cog):
 	async def addTotals(self, ctx, spent, won, game):
 		discordID = ctx.author.id
 		profit = won - spent
-		db = pymysql.connect(host="twister.hostingspark.net",port=3306, user="hostings_autop",passwd="pwqA!Pp9!1",db="hostings_botdatabase",autocommit=True)
+		db = pymysql.connect(host=config.host, port=3306, user=config.user, passwd=config.passwd, db=config.db, autocommit=True)
 		cursor = db.cursor()
 
 		try:

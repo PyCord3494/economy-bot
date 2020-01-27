@@ -26,7 +26,7 @@ class Admin(commands.Cog):
 	@commands.command(pass_context=True)
 	@has_permissions(administrator=True)
 	async def givexp(self, discordId: str, xp: int):
-		db = pymysql.connect(host="twister.hostingspark.net",port=3306, user="hostings_autop",passwd="pwqA!Pp9!1",db="hostings_botdatabase",autocommit=True)
+		db = pymysql.connect(host=config.host, port=3306, user=config.user, passwd=config.passwd, db=config.db, autocommit=True)
 		cursor = db.cursor()
 		sql = f"""Update Economy
 				  SET XP = XP + {xp}, TotalXP = TotalXP + {xp}
