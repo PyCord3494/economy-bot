@@ -5,6 +5,7 @@ from discord.ext import commands
 import pymysql
 import asyncio
 import random
+import config
 
 class XP(commands.Cog):
 	def __init__(self, bot):

@@ -4,6 +4,7 @@ import pymysql
 import asyncio
 import random
 import channels
+import config
 import utils
 
 class Rewards(commands.Cog):

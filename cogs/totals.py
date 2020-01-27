@@ -7,6 +7,7 @@ import asyncio
 import random
 import time
 import datetime
+import config
 from PIL import Image, ImageDraw, ImageFont
 
 actualGame = ["Slt", "BJ", "Crsh", "RLTTE", "CF", "RPS"]
