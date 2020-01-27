@@ -65,9 +65,7 @@ async def help(ctx):
 						 + "`level`, `shop`, `transfer`, `bank`, `donator`, `stats`")
 
 	embed.add_field(name = "_ _",
-					value = "Use **+help <command>**"
-						  + "\nIf you need help or have questions Join official server"
-						  + "\nAdd to your server - Click here"
+					value = "Use **$help <command>**"
 						  + "\nIf you want to support gambling bot's development [Donate on PayPal](https://www.paypal.me/AutopilotJustin)")
 	await ctx.send(embed=embed)
 
