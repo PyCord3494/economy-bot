@@ -51,7 +51,7 @@ class Shop(commands.Cog):
 			if balance >= price:
 				if ID <= 7 and ID > 0:
 					await self.bot.get_cog("Economy").addWinnings(discordId, -(cost))
-					db = pymysql.connect(host="twister.hostingspark.net",port=3306, user="hostings_autop",passwd="pwqA!Pp9!1",db="hostings_botdatabase",autocommit=True)
+					db = pymysql.connect(host=config.host, port=3306, user=config.user, passwd=config.passwd, db=config.db, autocommit=True)
 					cursor = db.cursor()
 					
 					if ID == 1:

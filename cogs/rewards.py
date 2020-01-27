@@ -86,7 +86,7 @@ class Rewards(commands.Cog):
 
 	# @commands.command(pass_context=True)
 	# async def claimall(self, ctx):
-	# 	db = pymysql.connect(host="twister.hostingspark.net",port=3306, user="hostings_autop",passwd="pwqA!Pp9!1",db="hostings_botdatabase",autocommit=True)
+	# 	db = pymysql.connect(host=config.host, port=3306, user=config.user, passwd=config.passwd, db=config.db, autocommit=True)
 	# 	cursor = db.cursor()
 
 	# 	sql = f"""SELECT Level
@@ -124,7 +124,7 @@ class Rewards(commands.Cog):
 			await ctx.send("Hello! Please type $start to create your wallet. :smiley:")
 
 	async def getDailyReward(self, ctx):
-		db = pymysql.connect(host="twister.hostingspark.net",port=3306, user="hostings_autop",passwd="pwqA!Pp9!1",db="hostings_botdatabase",autocommit=True)
+		db = pymysql.connect(host=config.host, port=3306, user=config.user, passwd=config.passwd, db=config.db, autocommit=True)
 		cursor = db.cursor()
 		sql = f"""SELECT DailyReward
 				  FROM Economy
@@ -137,7 +137,7 @@ class Rewards(commands.Cog):
 		return dailyReward
 
 	async def getLevel(self, ctx):
-		db = pymysql.connect(host="twister.hostingspark.net",port=3306, user="hostings_autop",passwd="pwqA!Pp9!1",db="hostings_botdatabase",autocommit=True)
+		db = pymysql.connect(host=config.host, port=3306, user=config.user, passwd=config.passwd, db=config.db, autocommit=True)
 		cursor = db.cursor()
 		sql = f"""SELECT Level
 				  FROM Economy
@@ -150,7 +150,7 @@ class Rewards(commands.Cog):
 		return level
 
 	async def getDonatorReward(self, ctx):
-		db = pymysql.connect(host="twister.hostingspark.net",port=3306, user="hostings_autop",passwd="pwqA!Pp9!1",db="hostings_botdatabase",autocommit=True)
+		db = pymysql.connect(host=config.host, port=3306, user=config.user, passwd=config.passwd, db=config.db, autocommit=True)
 		cursor = db.cursor()
 
 		sql = f"""SELECT DonatorReward
