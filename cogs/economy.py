@@ -5,6 +5,7 @@ from discord.ext import commands
 import pymysql
 import asyncio
 import random
+import config
 
 class Economy(commands.Cog):
 	def __init__(self, bot):
@@ -15,7 +16,7 @@ class Economy(commands.Cog):
 	@commands.cooldown(1, 5, commands.BucketType.user)
 	async def start(self, ctx):
 		if await self.accCheck(ctx) == False:
-			db = pymysql.connect(host="twister.hostingspark.net",port=3306, user="hostings_autop",passwd="pwqA!Pp9!1",db="hostings_botdatabase",autocommit=True)
+			db = pymysql.connect(host=config.host, port=3306, user=config.user, passwd=config.passwd, db=config.db, autocommit=True)
 			cursor = db.cursor()
 			sql = f"""INSERT INTO Economy(DiscordID)
 					  VALUES ('{ctx.author.id}');"""
@@ -54,7 +55,7 @@ class Economy(commands.Cog):
 
 
 	def isDonator(self, discordID):
-		db = pymysql.connect(host="twister.hostingspark.net",port=3306, user="hostings_autop",passwd="pwqA!Pp9!1",db="hostings_botdatabase",autocommit=True)
+		db = pymysql.connect(host=config.host, port=3306, user=config.user, passwd=config.passwd, db=config.db, autocommit=True)
 		cursor = db.cursor() # DonatorCheck is either 0 or 1 (0 for not donator, 1 for donator)
 		sql = f"""SELECT DonatorCheck 
 				  FROM Economy
@@ -69,7 +70,7 @@ class Economy(commands.Cog):
 
 
 	def getMultiplier(self, ctx):
-		db = pymysql.connect(host="twister.hostingspark.net",port=3306, user="hostings_autop",passwd="pwqA!Pp9!1",db="hostings_botdatabase",autocommit=True)
+		db = pymysql.connect(host=config.host, port=3306, user=config.user, passwd=config.passwd, db=config.db, autocommit=True)
 		cursor = db.cursor()
 		sql = f"""SELECT Multiplier
 				  FROM Economy
@@ -85,7 +86,7 @@ class Economy(commands.Cog):
 
 	async def subtractBet(self, ctx, amntBet): # subtracts the bet users place when they play games
 		if await self.accCheck(ctx) == True:
-			db = pymysql.connect(host="twister.hostingspark.net",port=3306, user="hostings_autop",passwd="pwqA!Pp9!1",db="hostings_botdatabase",autocommit=True)
+			db = pymysql.connect(host=config.host, port=3306, user=config.user, passwd=config.passwd, db=config.db, autocommit=True)
 			cursor = db.cursor()
 			balance = await self.getBalance(ctx)
 			if amntBet <= balance and amntBet > 0:
@@ -107,7 +108,7 @@ class Economy(commands.Cog):
 
 
 	async def addWinnings(self, discordId, winnings): # add the amount won 
-		db = pymysql.connect(host="twister.hostingspark.net",port=3306, user="hostings_autop",passwd="pwqA!Pp9!1",db="hostings_botdatabase",autocommit=True)
+		db = pymysql.connect(host=config.host, port=3306, user=config.user, passwd=config.passwd, db=config.db, autocommit=True)
 		cursor = db.cursor()
 		
 		sql = f"""UPDATE Economy
@@ -119,7 +120,7 @@ class Economy(commands.Cog):
 
 
 	async def getBalance(self, ctx):
-		db = pymysql.connect(host="twister.hostingspark.net",port=3306, user="hostings_autop",passwd="pwqA!Pp9!1",db="hostings_botdatabase",autocommit=True)
+		db = pymysql.connect(host=config.host, port=3306, user=config.user, passwd=config.passwd, db=config.db, autocommit=True)
 		cursor = db.cursor()
 
 		sql = f"""SELECT Credits
@@ -134,7 +135,7 @@ class Economy(commands.Cog):
 	
 
 	async def getInventory(self, ctx): # grabs all the crates and keys from database
-		db = pymysql.connect(host="twister.hostingspark.net",port=3306, user="hostings_autop",passwd="pwqA!Pp9!1",db="hostings_botdatabase",autocommit=True)
+		db = pymysql.connect(host=config.host, port=3306, user=config.user, passwd=config.passwd, db=config.db, autocommit=True)
 		cursor = db.cursor() 
 		# "Keys" is a special word and can't be used in SQL statements for some reason
 		sql = f"""SELECT Crates, Keyss
@@ -151,7 +152,7 @@ class Economy(commands.Cog):
 
 
 	async def subtractInv(self, discordId, amnt): # called when people open crates (subtracts them from inv.)
-		db = pymysql.connect(host="twister.hostingspark.net",port=3306, user="hostings_autop",passwd="pwqA!Pp9!1",db="hostings_botdatabase",autocommit=True)
+		db = pymysql.connect(host=config.host, port=3306, user=config.user, passwd=config.passwd, db=config.db, autocommit=True)
 		cursor = db.cursor()
 		sql = f"""UPDATE Inventory
 				  SET Crates = Crates - {amnt}, Keyss = Keyss - {amnt}
@@ -162,7 +163,7 @@ class Economy(commands.Cog):
 
 	@commands.command()
 	async def top(self, ctx): # scoreboard to display top 10 richest individuals
-		db = pymysql.connect(host="twister.hostingspark.net",port=3306, user="hostings_autop",passwd="pwqA!Pp9!1",db="hostings_botdatabase",autocommit=True)
+		db = pymysql.connect(host=config.host, port=3306, user=config.user, passwd=config.passwd, db=config.db, autocommit=True)
 		cursor = db.cursor()
 		sql = f"""SELECT DiscordID, Credits
 				  FROM Economy
@@ -184,7 +185,7 @@ class Economy(commands.Cog):
 
 	async def accCheck(self, ctx):
 		# checks if they already have a wallet in database
-		db = pymysql.connect(host="twister.hostingspark.net",port=3306, user="hostings_autop",passwd="pwqA!Pp9!1",db="hostings_botdatabase",autocommit=True)
+		db = pymysql.connect(host=config.host, port=3306, user=config.user, passwd=config.passwd, db=config.db, autocommit=True)
 		cursor = db.cursor()
 
 		sql = f"""SELECT DiscordID
