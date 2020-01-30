@@ -19,7 +19,7 @@ class Settings(commands.Cog):
 		def is_me_reaction(reaction, user):
 			return user == author
 
-		def get_reaction(msg):
+		async def get_reaction(msg):
 			try:
 				await msg.add_reaction("1⃣") 
 				await msg.add_reaction("2⃣")
@@ -28,9 +28,11 @@ class Settings(commands.Cog):
 				await msg.clear_reactions()
 				return
 
+		await ctx.send("Sending PM... make sure your settings allow me to send you messages!")
+
 		if game == "blackjack":
 			# grab settings for blackjack
-			msg = await ctx.send("Choose an option:")
+			msg = await ctx.author.send("Choose an option:")
 
 			reaction, user = get_reaction(msg)
 
@@ -43,7 +45,7 @@ class Settings(commands.Cog):
 
 		elif game == "roulette":
 			# grab settings for roulette
-			msg = await ctx.send("Choose an option:\n1) Simple Roulette (play each game with only using one command!)\n2) Set default bet")
+			msg = await ctx.author.send("Choose an option:\n1) Simple Roulette (play each game with only using one command!)\n2) Set default bet")
 
 			reaction, user = get_reaction(msg)
 
@@ -54,7 +56,7 @@ class Settings(commands.Cog):
 
 		elif game == "fight":
 			# grab settings for fight
-			msg = await ctx.send("Choose an option:\n1) Send me DMs for the whole fighting log\n2) Confirm fight request automatically")
+			msg = await ctx.author.send("Choose an option:\n1) Send me DMs for the whole fighting log\n2) Confirm fight request automatically")
 
 			reaction, user = get_reaction(msg)
 
@@ -68,8 +70,8 @@ class Settings(commands.Cog):
 
 
 
-	@user_settings.error
-	async def user_settings_handler(self, ctx, error):
+	@settings.error
+	async def settings_handler(self, ctx, error):
 		embed = discord.Embed(color=1768431, title="Pit Boss Help Menu")
 		embed.add_field(name = "`Syntax: $settings <game>`", value = "_ _", inline=False)
 		embed.add_field(name="__Change the settings for one of the games.__", value = "_ _", inline=False)
