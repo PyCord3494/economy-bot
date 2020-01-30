@@ -26,6 +26,26 @@ class Fight(commands.Cog):
 
 	@commands.command(pass_context=True)
 	async def fight(self, ctx, *, member: discord.Member):
+		await ctx.send(f"{member.mention}, you've been challenged by {ctx.author.mention}, do you accept? (Yes/No)")
+		
+		def is_me(m):
+				return (m.author.id == member.id) and (m.content.lower() in ["yes", "no"])
+		try:
+			ans = await self.bot.wait_for('message', check=is_me, timeout=5) # waits for opponent's response
+			ans = ans.content.lower() # grab the message object's contents in lowercase
+		except asyncio.TimeoutError:
+			await ctx.send("User did not respond in enough time.")
+			return
+
+		if ans == "no":
+			await ctx.send("Opponent has refused.")
+			return
+		elif ans == "yes":
+			await ctx.send("Continuing.")
+
+		# WOULD YOU LIKE TO BE DMED THE FIGHTING MESSAGES
+		# REMOVE FIGHTING MESSAGES FROM CHANNELS
+
 		try:
 			p1Lvl = await self.bot.get_cog("XP").getLevel(ctx.author.id)
 			p2Lvl = await self.bot.get_cog("XP").getLevel(member.id)
