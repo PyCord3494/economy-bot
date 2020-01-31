@@ -100,8 +100,10 @@ async def reload(ctx, extension):
 	try:
 		bot.reload_extension(extension)
 		print(f"Reloaded {extension}.\n")
+		await ctx.send(f"Reloaded {extension}")
 	except Exception as error:
 		print(f"{extension} could not be reloaded. [{error}]")
+		await ctx.send(f"{extension} could not be reloaded. [{error}]")
 
 if __name__ == '__main__':
 	for extension in extensions:
