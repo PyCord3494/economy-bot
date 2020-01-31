@@ -16,6 +16,9 @@ class Settings(commands.Cog):
 
 		game = game.lower()
 
+		async def msgUser(ctx, msgString):
+			pass
+
 		def is_me_reaction(reaction, user):
 			return user == author
 
@@ -32,7 +35,8 @@ class Settings(commands.Cog):
 
 		if game == "blackjack":
 			# grab settings for blackjack
-			msg = await ctx.author.send("Choose an option:")
+			msgString = "Choose an option:\n1) Use emojis instead of commands\n2) placeholder"
+			msg = msgUser(ctx, msgString)
 
 			reaction, user = get_reaction(msg)
 
@@ -45,7 +49,8 @@ class Settings(commands.Cog):
 
 		elif game == "roulette":
 			# grab settings for roulette
-			msg = await ctx.author.send("Choose an option:\n1) Simple Roulette (play each game with only using one command!)\n2) Set default bet")
+			msgString = "Choose an option:\n1) Simple Roulette (play each game with only using one command!)\n2) Set default bet"
+			msg = msgUser(ctx, msgString)
 
 			reaction, user = get_reaction(msg)
 
@@ -56,7 +61,8 @@ class Settings(commands.Cog):
 
 		elif game == "fight":
 			# grab settings for fight
-			msg = await ctx.author.send("Choose an option:\n1) Send me DMs for the whole fighting log\n2) Confirm fight request automatically")
+			msg = "Choose an option:\n1) Send me DMs for the whole fighting log\n2) Confirm fight request automatically"
+			msg = msgUser(ctx, msgString)
 
 			reaction, user = get_reaction(msg)
 
@@ -70,15 +76,15 @@ class Settings(commands.Cog):
 
 
 
-	@settings.error
-	async def settings_handler(self, ctx, error):
-		embed = discord.Embed(color=1768431, title="Pit Boss Help Menu")
-		embed.add_field(name = "`Syntax: $settings <game>`", value = "_ _", inline=False)
-		embed.add_field(name="__Change the settings for one of the games.__", value = "_ _", inline=False)
-		embed.add_field(name="__Possible games are blackjack, roulette, and fight__", value = "_ _", inline=False)
-		await ctx.send(embed=embed)
-		self.embed = discord.Embed(color=1768431, title="Pit Boss' Casino | Settings")
-		print(error)
+	# @settings.error
+	# async def settings_handler(self, ctx, error):
+	# 	embed = discord.Embed(color=1768431, title="Pit Boss Help Menu")
+	# 	embed.add_field(name = "`Syntax: $settings <game>`", value = "_ _", inline=False)
+	# 	embed.add_field(name="__Change the settings for one of the games.__", value = "_ _", inline=False)
+	# 	embed.add_field(name="__Possible games are blackjack, roulette, and fight__", value = "_ _", inline=False)
+	# 	await ctx.send(embed=embed)
+	# 	self.embed = discord.Embed(color=1768431, title="Pit Boss' Casino | Settings")
+	# 	print(error)
 
 def setup(bot):
 	bot.add_cog(Settings(bot))
