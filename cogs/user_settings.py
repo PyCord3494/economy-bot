@@ -64,11 +64,11 @@ class Settings(commands.Cog):
 				}
 			}
 
-		with open("settings.json","w+") as f:
-			json.dump(userSettings, f, indent=4)
+			with open("settings.json","w+") as f:
+				json.dump(userSettings, f, indent=4)
+			return
 
 		if game == "blackjack":
-			# grab settings for blackjack
 			with open("settings.json", encoding="utf-8") as f:
 				userSettings = json.load(f)
 
@@ -85,13 +85,13 @@ class Settings(commands.Cog):
 				userSettings = json.load(f)
 
 			if str(reaction) == "1⃣":
-				if userSettings[str(author.id)]["blackjack"]["emojis"] == "\u274c": # check mark
+				if emojis == "\u274c": # check mark
 					emojis, userSettings[str(author.id)]["blackjack"]["emojis"] = "\u2705"
 				else: emojis, userSettings[str(author.id)]["blackjack"]["emojis"] = "\u274c"
 
 
 			elif str(reaction) == "2⃣":
-				if userSettings[str(author.id)]["blackjack"]["pass"] == "\u274c": # check mark
+				if placeholder == "\u274c": # check mark
 					placeholder, userSettings[str(author.id)]["blackjack"]["pass"] = "\u2705"
 				else: placeholder, userSettings[str(author.id)]["blackjack"]["pass"] = "\u274c"
 
@@ -118,13 +118,13 @@ class Settings(commands.Cog):
 				userSettings = json.load(f)
 
 			if str(reaction) == "1⃣":
-				if userSettings[str(author.id)]["roulette"]["simple"] == "\u274c": # check mark
+				if simple == "\u274c": # check mark
 					simple, userSettings[str(author.id)]["roulette"]["simple"] = "\u2705"
 				else: simple, userSettings[str(author.id)]["roulette"]["simple"] = "\u274c"
 
 
 			elif str(reaction) == "2⃣":
-				if userSettings[str(author.id)]["roulette"]["default"] == "\u274c": # check mark
+				if default == "\u274c": # check mark
 					default, userSettings[str(author.id)]["roulette"]["default"] = "\u2705"
 				else: default, userSettings[str(author.id)]["roulette"]["default"] = "\u274c"
 
@@ -152,13 +152,13 @@ class Settings(commands.Cog):
 				userSettings = json.load(f)
 
 			if str(reaction) == "1⃣":
-				if userSettings[str(author.id)]["fight"]["Dms"] == "\u274c": # check mark
+				if Dms == "\u274c": # check mark
 					Dms, userSettings[str(author.id)]["fight"]["Dms"] = "\u2705"
 				else: Dms, userSettings[str(author.id)]["fight"]["Dms"] = "\u274c"
 
 
 			elif str(reaction) == "2⃣":
-				if userSettings[str(author.id)]["fight"]["autoConfirm"] == "\u274c": # check mark
+				if autoConfirm == "\u274c": # check mark
 					autoConfirm, userSettings[str(author.id)]["fight"]["autoConfirm"] = "\u2705"
 				else: autoConfirm, userSettings[str(author.id)]["fight"]["autoConfirm"] = "\u274c"
 
