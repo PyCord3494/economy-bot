@@ -56,6 +56,15 @@ class ErrorHandling(commands.Cog):
 		else:
 			err = str(error)
 			err = err.split(':', 2)[-1]
+			
+			if err == "forbiddenError":
+				await ctx.send("Your Discord settings does not allow me to DM you. Please change them and try again.")
+				return
+
+			if err == "timeoutError":
+				await ctx.author.send("Did not respond in time; timeout.")
+				return
+
 
 			embed.description = f"Error: `{err}`. \nDeveloper has been contacted with all related details..."
 			e = discord.Embed(title='Command Error', colour=0xcc3366)
