@@ -56,7 +56,7 @@ class Settings(commands.Cog):
 				},
 				"roulette": {
 					"simple": "❌",
-					"default": ""
+					"default": "N/A"
 				},
 				"fight": {
 					"Dms:": "✅",
@@ -73,7 +73,7 @@ class Settings(commands.Cog):
 				userSettings = json.load(f)
 
 			emojis = userSettings[str(author.id)]["blackjack"]["emojis"]
-			placeholder = emoji = userSettings[str(author.id)]["blackjack"]["pass"]
+			placeholder = userSettings[str(author.id)]["blackjack"]["pass"]
 			msgString = f"Choose an option:\n1) Use emojis instead of commands -- {emojis}\n2) placeholder -- {placeholder}"
 			msg = await msgUser(ctx, msgString)
 
@@ -85,7 +85,7 @@ class Settings(commands.Cog):
 				userSettings = json.load(f)
 
 			if str(reaction) == "1⃣":
-				if userSettings[str(author.id)]["blackjack"]["emojis"] == "\u274c":
+				if userSettings[str(author.id)]["blackjack"]["emojis"] == "\u274c": # check mark
 					userSettings[str(author.id)]["blackjack"]["emojis"] = "\u2705"
 					await author.send(f"New settings:\n1) Use emojis instead of commands -- ✅\n2) placeholder -- {placeholder}")
 				else:
@@ -94,7 +94,7 @@ class Settings(commands.Cog):
 
 
 			elif str(reaction) == "2⃣":
-				if userSettings[str(author.id)]["blackjack"]["pass"] == "\u274c":
+				if userSettings[str(author.id)]["blackjack"]["pass"] == "\u274c": # check mark
 					userSettings[str(author.id)]["blackjack"]["pass"] = "\u2705"
 					await author.send(f"New settings:\n1) Use emojis instead of commands -- {emojis}\n2) placeholder -- ✅")
 				else:
@@ -106,41 +106,94 @@ class Settings(commands.Cog):
 
 			# react with emojis instead of entering numbers
 
+
+
+
+
+
 		elif game == "roulette":
-			# grab settings for roulette
-			msgString = "Choose an option:\n1) Simple Roulette (play each game with only using one command!) -- ❌\n2) Set default bet: N/A"
+			simple = userSettings[str(author.id)]["roulette"]["simple"]
+			default = userSettings[str(author.id)]["roulette"]["default"]
+			msgString = f"Choose an option:\n1) Simple Roulette (play each game with only using one command!) -- {simple}\n2) Set default bet: {default}"
 			msg = await msgUser(ctx, msgString)
 
 			reaction, user = await get_reaction(msg)
+
+			await msg.delete()
 
 			with open("settings.json", encoding="utf-8") as f:
 				userSettings = json.load(f)
 
 			if str(reaction) == "1⃣":
-				pass
+				if userSettings[str(author.id)]["roulette"]["simple"] == "\u274c": # check mark
+					userSettings[str(author.id)]["roulette"]["simple"] = "\u2705"
+					await author.send(f"New settings:\n1) Use emojis instead of commands -- ✅\n2) placeholder -- {default}")
+				else:
+					userSettings[str(author.id)]["roulette"]["simple"] = "\u274c"
+					await author.send(f"New settings:\n1) Use emojis instead of commands  ❌\n2) placeholder -- {default}")
+
+
 			elif str(reaction) == "2⃣":
-				pass
+				if userSettings[str(author.id)]["roulette"]["default"] == "\u274c": # check mark
+					userSettings[str(author.id)]["roulette"]["default"] = "\u2705"
+					await author.send(f"New settings:\n1) Use emojis instead of commands -- {simple}\n2) placeholder -- ✅")
+				else:
+					userSettings[str(author.id)]["roulette"]["default"] = "\u274c"
+					await author.send(f"New settings:\n1) Use emojis instead of commands  {simple}\n2) placeholder -- ❌")
 
 			with open("settings.json","w+") as f:
 				json.dump(userSettings, f, indent=4)
+
+
+
+
+
+
+
+
+
+
+
 
 		elif game == "fight":
-			# grab settings for fight
-			msg = "Choose an option:\n1) Send me DMs for the whole fighting log -- ✅\n2) Confirm fight request automatically -- ❌"
+			with open("settings.json", encoding="utf-8") as f:
+				userSettings = json.load(f)
+
+			Dms = userSettings[str(author.id)]["fight"]["Dms"]
+			autoConfirm = userSettings[str(author.id)]["fight"]["autoConfirm"]
+			msgString = f"Choose an option:\n1) Send me DMs for the whole fighting log -- {Dms}\n2) Confirm fight request automatically -- {autoConfirm}"
 			msg = await msgUser(ctx, msgString)
 
 			reaction, user = await get_reaction(msg)
+
+			await msg.delete()
 
 			with open("settings.json", encoding="utf-8") as f:
 				userSettings = json.load(f)
 
 			if str(reaction) == "1⃣":
-				pass
+				if userSettings[str(author.id)]["fight"]["Dms"] == "\u274c": # check mark
+					userSettings[str(author.id)]["fight"]["Dms"] = "\u2705"
+					await author.send(f"New settings:\n1) Send me DMs for the whole fighting log -- ✅\n2) Confirm fight request automatically -- {autoConfirm}")
+				else:
+					userSettings[str(author.id)]["fight"]["Dms"] = "\u274c"
+					await author.send(f"New settings:\n1) Send me DMs for the whole fighting log -- ❌\n2) Confirm fight request automatically -- {autoConfirm}")
+
+
 			elif str(reaction) == "2⃣":
-				pass
+				if userSettings[str(author.id)]["fight"]["autoConfirm"] == "\u274c": # check mark
+					userSettings[str(author.id)]["fight"]["autoConfirm"] = "\u2705"
+					await author.send(f"New settings:\n1) Send me DMs for the whole fighting log -- {Dms}\n2) Confirm fight request automatically -- ✅")
+				else:
+					userSettings[str(author.id)]["fight"]["autoConfirm"] = "\u274c"
+					await author.send(f"New settings:\n1) Send me DMs for the whole fighting log -- {Dms}\n2) Confirm fight request automatically -- ❌")
 
 			with open("settings.json","w+") as f:
 				json.dump(userSettings, f, indent=4)
+
+
+
+
 
 		else:
 			raise Exception
