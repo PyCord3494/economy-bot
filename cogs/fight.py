@@ -34,8 +34,7 @@ class Fight(commands.Cog):
 			ans = await self.bot.wait_for('message', check=is_me, timeout=5) # waits for opponent's response
 			ans = ans.content.lower() # grab the message object's contents in lowercase
 		except asyncio.TimeoutError:
-			await ctx.send("User did not respond in enough time.")
-			return
+			raise Exception("timeoutError")
 
 		if ans == "no":
 			await ctx.send("Opponent has refused.")

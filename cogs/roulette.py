@@ -79,7 +79,7 @@ class Roulette(commands.Cog):
 				embedError = await self.onTimeout(ctx, msg, amntNumberBet, amntRangeBet, amntColorBet, amntParityBet)
 				await msg.edit(embed=embedError)
 				await msg.clear_reactions()
-				break
+				raise Exception("timeoutError")
 			else:
 				await msg.clear_reactions()
 				if str(reaction) == "🔢":
@@ -91,7 +91,7 @@ class Roulette(commands.Cog):
 					except asyncio.TimeoutError:
 						await msg.edit(embed=embedError)
 						await msg.clear_reactions()
-						break
+						raise Exception("timeoutError")
 					else:
 						numberBets = numberBetMsg.content.split()
 						numberBet = int(numberBets[0])
@@ -119,7 +119,7 @@ class Roulette(commands.Cog):
 					except asyncio.TimeoutError:
 						await msg.edit(embed=embedError)
 						await msg.clear_reactions()
-						break
+						raise Exception("timeoutError")
 					else:
 						if str(reaction) != "↩":
 							await msg.clear_reactions()
@@ -131,7 +131,7 @@ class Roulette(commands.Cog):
 							except asyncio.TimeoutError:
 								await msg.edit(embed=embedError)
 								await msg.clear_reactions()
-								break
+								raise Exception("timeoutError")
 							else:
 								amntRangeBet = int(amntRangeBetMsg.content)
 								if await self.bot.get_cog("Economy").subtractBet(ctx, amntRangeBet) != 0:
@@ -155,7 +155,7 @@ class Roulette(commands.Cog):
 					except asyncio.TimeoutError:
 						await msg.edit(embed=embedError)
 						await msg.clear_reactions()
-						break
+						raise Exception("timeoutError")
 					else:
 						if str(reaction) != "↩":
 							await msg.clear_reactions()
@@ -167,7 +167,7 @@ class Roulette(commands.Cog):
 							except asyncio.TimeoutError:
 								await msg.edit(embed=embedError)
 								await msg.clear_reactions()
-								break
+								raise Exception("timeoutError")
 							else:
 								amntColorBet = int(amntColorBetMsg.content)
 								if await self.bot.get_cog("Economy").subtractBet(ctx, amntColorBet) != 0:
@@ -191,7 +191,7 @@ class Roulette(commands.Cog):
 					except asyncio.TimeoutError:
 						await msg.edit(embed=embedError)
 						await msg.clear_reactions()
-						break
+						raise Exception("timeoutError")
 					else:
 						if str(reaction) != "↩":
 							await msg.clear_reactions()
@@ -203,7 +203,7 @@ class Roulette(commands.Cog):
 							except asyncio.TimeoutError:
 								await msg.edit(embed=embedError)
 								await msg.clear_reactions()
-								break
+								raise Exception("timeoutError")
 							else:
 								amntParityBet = int(amntParityBetMsg.content)
 								if await self.bot.get_cog("Economy").subtractBet(ctx, amntParityBet) != 0:
@@ -292,7 +292,7 @@ class Roulette(commands.Cog):
 						
 #				else:
 #					await msg.edit(content="Roulette game ended; no bets were placed]")
-					break
+					break # end roulette while loop
 
 				await asyncio.sleep(0.5)
 				embed = discord.Embed(color=1768431, title="Pit Boss' Casino | Roulette")

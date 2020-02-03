@@ -112,8 +112,8 @@ class bj(commands.Cog):
 				ans = await self.bot.wait_for('message', check=is_me, timeout=45)
 				ans = ans.content
 			except asyncio.TimeoutError:
-				await self.botMsg.edit(content="Request timed out.")
-				break
+				await self.botMsg.delete()
+				raise Exception("timeoutError")
 
 		return pCARD, pCardNum
 
