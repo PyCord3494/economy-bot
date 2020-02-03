@@ -3,6 +3,7 @@ from discord.ext import commands
 
 import datetime
 
+import asyncio
 import json
 
 class Settings(commands.Cog):
@@ -14,10 +15,17 @@ class Settings(commands.Cog):
 		# check if settings page exist
 		# if not, input new user to data with default options
 
+		author = ctx.author
 		game = game.lower()
 
 		async def msgUser(ctx, msgString):
-			pass
+			try:
+				if not isinstance(ctx.channel, discord.DMChannel):
+					await ctx.send("Sending DM...")
+				return await author.send(f"{msgString}")
+			except discord.Forbidden:
+				# await ctx.send("Your Discord settings do not allow me to DM you. Please change them and try again.")
+				raise Exception("forbiddenError")
 
 		def is_me_reaction(reaction, user):
 			return user == author
@@ -26,88 +34,117 @@ class Settings(commands.Cog):
 			try:
 				await msg.add_reaction("1⃣") 
 				await msg.add_reaction("2⃣")
-				return await self.bot.wait_for('reaction_add', check=is_me_reaction, timeout=15)
+				reaction, user = await self.bot.wait_for('reaction_add', check=is_me_reaction, timeout=15)
+				return reaction, user
 			except asyncio.TimeoutError:
-				await msg.clear_reactions()
-				return
+				raise Exception("timeoutError")
 
-		await ctx.send("Sending PM... make sure your settings allow me to send you messages!")
+		with open("settings.json", encoding="utf-8") as f:
+			userSettings = json.load(f)
+
+		found = None
+		for current_user in userSettings: # for every existing user
+			if str(author.id) == current_user: # if user is found
+				found = True
+				break
+
+		if not found: # if user not in list
+			userSettings[str(author.id)] = {
+				"blackjack": {
+					"emojis": "❌",
+					"pass": "✅"
+				},
+				"roulette": {
+					"simple": "❌",
+					"default": ""
+				},
+				"fight": {
+					"Dms:": "✅",
+					"autoConfirm": "❌"
+				}
+			}
+
+		with open("settings.json","w+") as f:
+			json.dump(userSettings, f, indent=4)
 
 		if game == "blackjack":
 			# grab settings for blackjack
-			msgString = "Choose an option:\n1) Use emojis instead of commands\n2) placeholder"
-			msg = msgUser(ctx, msgString)
+			with open("settings.json", encoding="utf-8") as f:
+				userSettings = json.load(f)
 
-			reaction, user = get_reaction(msg)
+			emojis = userSettings[str(author.id)]["blackjack"]["emojis"]
+			placeholder = emoji = userSettings[str(author.id)]["blackjack"]["pass"]
+			msgString = f"Choose an option:\n1) Use emojis instead of commands -- {emojis}\n2) placeholder -- {placeholder}"
+			msg = await msgUser(ctx, msgString)
+
+			reaction, user = await get_reaction(msg)
+
+			await msg.delete()
+
+			with open("settings.json", encoding="utf-8") as f:
+				userSettings = json.load(f)
 
 			if str(reaction) == "1⃣":
-				pass
+				if userSettings[str(author.id)]["blackjack"]["emojis"] == "\u274c":
+					userSettings[str(author.id)]["blackjack"]["emojis"] = "\u2705"
+					await author.send(f"New settings:\n1) Use emojis instead of commands -- ✅\n2) placeholder -- {placeholder}")
+				else:
+					userSettings[str(author.id)]["blackjack"]["emojis"] = "\u274c"
+					await author.send(f"New settings:\n1) Use emojis instead of commands  ❌\n2) placeholder -- {placeholder}")
+
+
 			elif str(reaction) == "2⃣":
-				pass
+				if userSettings[str(author.id)]["blackjack"]["pass"] == "\u274c":
+					userSettings[str(author.id)]["blackjack"]["pass"] = "\u2705"
+					await author.send(f"New settings:\n1) Use emojis instead of commands -- {emojis}\n2) placeholder -- ✅")
+				else:
+					userSettings[str(author.id)]["blackjack"]["pass"] = "\u274c"
+					await author.send(f"New settings:\n1) Use emojis instead of commands  {emojis}\n2) placeholder -- ❌")
+
+			with open("settings.json","w+") as f:
+				json.dump(userSettings, f, indent=4)
 
 			# react with emojis instead of entering numbers
 
 		elif game == "roulette":
 			# grab settings for roulette
-			msgString = "Choose an option:\n1) Simple Roulette (play each game with only using one command!)\n2) Set default bet"
-			msg = msgUser(ctx, msgString)
+			msgString = "Choose an option:\n1) Simple Roulette (play each game with only using one command!) -- ❌\n2) Set default bet: N/A"
+			msg = await msgUser(ctx, msgString)
 
-			reaction, user = get_reaction(msg)
+			reaction, user = await get_reaction(msg)
+
+			with open("settings.json", encoding="utf-8") as f:
+				userSettings = json.load(f)
 
 			if str(reaction) == "1⃣":
 				pass
 			elif str(reaction) == "2⃣":
 				pass
+
+			with open("settings.json","w+") as f:
+				json.dump(userSettings, f, indent=4)
 
 		elif game == "fight":
 			# grab settings for fight
-			msg = "Choose an option:\n1) Send me DMs for the whole fighting log\n2) Confirm fight request automatically"
-			msg = msgUser(ctx, msgString)
+			msg = "Choose an option:\n1) Send me DMs for the whole fighting log -- ✅\n2) Confirm fight request automatically -- ❌"
+			msg = await msgUser(ctx, msgString)
 
-			reaction, user = get_reaction(msg)
+			reaction, user = await get_reaction(msg)
+
+			with open("settings.json", encoding="utf-8") as f:
+				userSettings = json.load(f)
 
 			if str(reaction) == "1⃣":
 				pass
 			elif str(reaction) == "2⃣":
 				pass
+
+			with open("settings.json","w+") as f:
+				json.dump(userSettings, f, indent=4)
 
 		else:
 			raise Exception
 
 
-
-	# @settings.error
-	# async def settings_handler(self, ctx, error):
-	# 	embed = discord.Embed(color=1768431, title="Pit Boss Help Menu")
-	# 	embed.add_field(name = "`Syntax: $settings <game>`", value = "_ _", inline=False)
-	# 	embed.add_field(name="__Change the settings for one of the games.__", value = "_ _", inline=False)
-	# 	embed.add_field(name="__Possible games are blackjack, roulette, and fight__", value = "_ _", inline=False)
-	# 	await ctx.send(embed=embed)
-	# 	self.embed = discord.Embed(color=1768431, title="Pit Boss' Casino | Settings")
-	# 	print(error)
-
 def setup(bot):
 	bot.add_cog(Settings(bot))
-
-	# 	with open("settings.json", encoding="utf-8") as f:
-	# 		userSettings = json.load(f)
-
-	# 	found = None
-	# 	for current_user in userSettings: # for every existing user that has been warned
-	# 		if str(user.id) == current_user: # if warned user is current user in list
-	# 			keys = list(userSettings[current_user].keys())
-	# 			ID = str(len(keys) + 1)
-	# 			userSettings[current_user][ID] = {
-	# 				"reason": reason,
-	# 				"time": x
-	# 			}
-	# 			found = True
-	# 			break
-
-	# 	if not found: # if user hasn't been warned before
-	# 		userSettings[str(user.id)] = {
-	# 			"1": {
-	# 				"reason": reason,
-	# 				"time": x
-	# 			}
-	# 		}
