@@ -10,35 +10,7 @@ class Settings(commands.Cog):
 	def __init__(self, bot):
 		self.bot = bot
 
-	@commands.group(invoke_without_command=True, pass_context=True)
-	async def settings(self, ctx, game: str):
-		# check if settings page exist
-		# if not, input new user to data with default options
-
-		author = ctx.author
-		game = game.lower()
-
-		async def msgUser(ctx, msgString):
-			try:
-				if not isinstance(ctx.channel, discord.DMChannel):
-					await ctx.send("Sending DM...")
-				return await author.send(f"{msgString}")
-			except discord.Forbidden:
-				# await ctx.send("Your Discord settings do not allow me to DM you. Please change them and try again.")
-				raise Exception("forbiddenError")
-
-		def is_me_reaction(reaction, user):
-			return user == author
-
-		async def get_reaction(msg):
-			try:
-				await msg.add_reaction("1⃣") 
-				await msg.add_reaction("2⃣")
-				reaction, user = await self.bot.wait_for('reaction_add', check=is_me_reaction, timeout=15)
-				return reaction, user
-			except asyncio.TimeoutError:
-				raise Exception("timeoutError")
-
+	def getUserSettings(user):
 		with open("settings.json", encoding="utf-8") as f:
 			userSettings = json.load(f)
 
@@ -66,109 +38,100 @@ class Settings(commands.Cog):
 
 			with open("settings.json","w+") as f:
 				json.dump(userSettings, f, indent=4)
-			return
+		
+		return userSettings
+
+	@commands.group(invoke_without_command=True, pass_context=True)
+	async def settings(self, ctx, game: str):
+		# check if settings page exist
+		# if not, input new user to data with default options
+
+		author = ctx.author
+		game = game.lower()
+
+		async def msgUser(ctx, msgString):
+			try:
+				if not isinstance(ctx.channel, discord.DMChannel):
+					await ctx.send("Sending DM...")
+				return await author.send(f"{msgString}")
+			except discord.Forbidden:
+				# await ctx.send("Your Discord settings do not allow me to DM you. Please change them and try again.")
+				raise Exception("forbiddenError")
+
+
+
+		def is_me_reaction(reaction, user):
+			return user == author
+
+		async def get_reaction(msg):
+			try:
+				await msg.add_reaction("1⃣") 
+				await msg.add_reaction("2⃣")
+				reaction, user = await self.bot.wait_for('reaction_add', check=is_me_reaction, timeout=15)
+				return reaction, user
+			except asyncio.TimeoutError:
+				raise Exception("timeoutError")
+
+		async def switchEmojis(currSetting):
+			if currSetting == "\u274c": # check mark
+				return "\u2705"
+			else: return "\u274c"
+		
+		userSettings = getUserSettings(ctx.author)
 
 		if game == "blackjack":
-			with open("settings.json", encoding="utf-8") as f:
-				userSettings = json.load(f)
-
 			emojis = userSettings[str(author.id)]["blackjack"]["emojis"]
 			placeholder = userSettings[str(author.id)]["blackjack"]["pass"]
-			msgString = f"Choose an option:\n1) Use emojis instead of commands -- {emojis}\n2) placeholder -- {placeholder}"
-			msg = await msgUser(ctx, msgString)
+			msg = await msgUser(ctx, f"Choose an option:\n1) Use emojis instead of commands -- {emojis}\n2) placeholder -- {placeholder}")
 
 			reaction, user = await get_reaction(msg)
 
 			await msg.delete()
 
-			with open("settings.json", encoding="utf-8") as f:
-				userSettings = json.load(f)
+			if str(reaction) == "1⃣": emojis, userSettings[str(author.id)]["blackjack"]["emojis"] = await switchEmojis(emojis)
+			elif str(reaction) == "2⃣": placeholder, userSettings[str(author.id)]["blackjack"]["pass"] = await switchEmojis(placeholder)
 
-			if str(reaction) == "1⃣":
-				if emojis == "\u274c": # check mark
-					emojis, userSettings[str(author.id)]["blackjack"]["emojis"] = "\u2705"
-				else: emojis, userSettings[str(author.id)]["blackjack"]["emojis"] = "\u274c"
+			msg = await msgUser(ctx, f"New settings:\n1) Use emojis instead of commands  {emojis}\n2) placeholder -- {placeholder}")
 
-
-			elif str(reaction) == "2⃣":
-				if placeholder == "\u274c": # check mark
-					placeholder, userSettings[str(author.id)]["blackjack"]["pass"] = "\u2705"
-				else: placeholder, userSettings[str(author.id)]["blackjack"]["pass"] = "\u274c"
-
-			with open("settings.json","w+") as f:
-				json.dump(userSettings, f, indent=4)
-
-			await author.send(f"New settings:\n1) Use emojis instead of commands  {emojis}\n2) placeholder -- {placeholder}")
-
-			# react with emojis instead of entering numbers
 
 
 
 		elif game == "roulette":
 			simple = userSettings[str(author.id)]["roulette"]["simple"]
 			default = userSettings[str(author.id)]["roulette"]["default"]
-			msgString = f"Choose an option:\n1) Simple Roulette (play each game with only using one command!) -- {simple}\n2) Set default bet: {default}"
-			msg = await msgUser(ctx, msgString)
+			msg = await msgUser(ctx, f"Choose an option:\n1) Simple Roulette (play each game with only using one command!) -- {simple}\n2) Set default bet: {default}")
 
 			reaction, user = await get_reaction(msg)
 
 			await msg.delete()
 
-			with open("settings.json", encoding="utf-8") as f:
-				userSettings = json.load(f)
+			if str(reaction) == "1⃣": simple, userSettings[str(author.id)]["roulette"]["simple"] = await switchEmojis(simple)
+			elif str(reaction) == "2⃣": await ctx.send("Enter what to change the default bet to...")
 
-			if str(reaction) == "1⃣":
-				if simple == "\u274c": # check mark
-					simple, userSettings[str(author.id)]["roulette"]["simple"] = "\u2705"
-				else: simple, userSettings[str(author.id)]["roulette"]["simple"] = "\u274c"
+			msg = await msgUser(ctx, f"New settings:\n1) Simple Roulette (play each game with only using one command!) -- {simple}\n2) Set default bet: {default}")
 
-
-			elif str(reaction) == "2⃣":
-				if default == "\u274c": # check mark
-					default, userSettings[str(author.id)]["roulette"]["default"] = "\u2705"
-				else: default, userSettings[str(author.id)]["roulette"]["default"] = "\u274c"
-
-			await author.send(f"New settings:\n1) Simple Roulette (play each game with only using one command!) -- {simple}\n2) Set default bet: {default}")
-
-			with open("settings.json","w+") as f:
-				json.dump(userSettings, f, indent=4)
 
 
 
 		elif game == "fight":
-			with open("settings.json", encoding="utf-8") as f:
-				userSettings = json.load(f)
-
 			Dms = userSettings[str(author.id)]["fight"]["Dms"]
 			autoConfirm = userSettings[str(author.id)]["fight"]["autoConfirm"]
-			msgString = f"Choose an option:\n1) Send me DMs for the whole fighting log -- {Dms}\n2) Confirm fight request automatically -- {autoConfirm}"
-			msg = await msgUser(ctx, msgString)
+			msg = await msgUser(ctx, f"Choose an option:\n1) Send me DMs for the whole fighting log -- {Dms}\n2) Confirm fight request automatically -- {autoConfirm}")
 
 			reaction, user = await get_reaction(msg)
 
 			await msg.delete()
 
-			with open("settings.json", encoding="utf-8") as f:
-				userSettings = json.load(f)
+			if str(reaction) == "1⃣": Dms, userSettings[str(author.id)]["fight"]["Dms"] = await switchEmojis(Dms)
+			elif str(reaction) == "2⃣": autoConfirm, userSettings[str(author.id)]["fight"]["autoConfirm"] = await switchEmojis(autoConfirm)
 
-			if str(reaction) == "1⃣":
-				if Dms == "\u274c": # check mark
-					Dms, userSettings[str(author.id)]["fight"]["Dms"] = "\u2705"
-				else: Dms, userSettings[str(author.id)]["fight"]["Dms"] = "\u274c"
-
-
-			elif str(reaction) == "2⃣":
-				if autoConfirm == "\u274c": # check mark
-					autoConfirm, userSettings[str(author.id)]["fight"]["autoConfirm"] = "\u2705"
-				else: autoConfirm, userSettings[str(author.id)]["fight"]["autoConfirm"] = "\u274c"
-
-			await author.send(f"New settings:\n1) Send me DMs for the whole fighting log -- {Dms}\n2) Confirm fight request automatically -- {autoConfirm}")
-
-			with open("settings.json","w+") as f:
-				json.dump(userSettings, f, indent=4)
+			msg = await msgUser(ctx, f"New settings:\n1) Send me DMs for the whole fighting log -- {Dms}\n2) Confirm fight request automatically -- {autoConfirm}")
 
 		else:
 			raise Exception
+
+		with open("settings.json","w+") as f:
+			json.dump(userSettings, f, indent=4)
 
 
 def setup(bot):
