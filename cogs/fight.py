@@ -23,30 +23,38 @@ class Fight(commands.Cog):
 		self.p1Potions, self.p2Potions = True, True
 		self.p1Shields, self.p2Shields = True, True
 		self.msg = ""
+		self.playerSettings, self.oppoSettings = None
+
+	async def fetchSettings(user):
+		userSettings = self.bot.get_cog("Settings").getUserSettings(user)
+		return [userSettings[str(user.id)]["fight"]["Dms"], userSettings[str(user.id)]["fight"]["autoConfirm"]]
 
 	@commands.command(pass_context=True)
 	async def fight(self, ctx, *, member: discord.Member):
-		await ctx.send(f"{member.mention}, you've been challenged by {ctx.author.mention}, do you accept? (Yes/No)")
+		author = ctx.author
+		self.playerSettings = fetchSettings(author)
+		self.oppoSettings = fetchSettings(member)
+
+		if oppoSettings[1] != "\u274c": # if autoConfirm is not on
+			await ctx.send(f"{member.mention}, you've been challenged by {author.mention}, do you accept? (Yes/No)")
 		
-		def is_me(m):
-				return (m.author.id == member.id) and (m.content.lower() in ["yes", "no"])
-		try:
-			ans = await self.bot.wait_for('message', check=is_me, timeout=5) # waits for opponent's response
-			ans = ans.content.lower() # grab the message object's contents in lowercase
-		except asyncio.TimeoutError:
-			raise Exception("timeoutError")
+			def is_me(m):
+					return (m.author.id == member.id) and (m.content.lower() in ["yes", "no"])
+			try:
+				ans = await self.bot.wait_for('message', check=is_me, timeout=5) # waits for opponent's response
+				ans = ans.content.lower() # grab the message object's contents in lowercase
+			except asyncio.TimeoutError:
+				raise Exception("timeoutError")
 
-		if ans == "no":
-			await ctx.send("Opponent has refused.")
-			return
-		elif ans == "yes":
-			await ctx.send("Continuing.")
+			if ans == "no":
+				await ctx.send("Opponent has refused.")
+				return
 
-		# WOULD YOU LIKE TO BE DMED THE FIGHTING MESSAGES
-		# REMOVE FIGHTING MESSAGES FROM CHANNELS
+			elif ans == "yes":
+				await ctx.send("Continuing.")
 
 		try:
-			p1Lvl = await self.bot.get_cog("XP").getLevel(ctx.author.id)
+			p1Lvl = await self.bot.get_cog("XP").getLevel(author.id)
 			p2Lvl = await self.bot.get_cog("XP").getLevel(member.id)
 		except Exception as e:
 			await ctx.send(f"User does not have an account. Error: {e}")
@@ -77,16 +85,17 @@ class Fight(commands.Cog):
 
 	async def fighting(self, ctx, member, p1, p2):
 		turnNum = 0
+		author = ctx.author
 		while True:
 			if turnNum % 2 == 0: # player 1's turn
 				self.embed.color = discord.Color(0x007efd)
-				player = [p1, ctx.author.name]
+				player = [p1, author.name]
 				opponent = [p2, member.name]
 
 			else:  # player 2's turn
 				self.embed.color = discord.Color(0xfd0006)
 				player = [p2, member.name]
-				opponent = [p1, ctx.author.name]
+				opponent = [p1, author.name]
 
 			act = randrange(100) # generate what they'll do on their turn
 			if act <= 70: # 70% chance to attack; dmg amount based on generated #
@@ -120,7 +129,10 @@ class Fight(commands.Cog):
 				file = await self.createImg(opponent, player)
 			self.embed.set_image(url="attachment://image.png")
 
-			await ctx.send(file=file, embed=self.embed)
+			if self.playerSettings[0] == "\u274c": # if Dms are on
+				await author.send(file=file, embed=self.embed)
+			if self.oppoSettings[0] == "\u274c": # if Dms are on
+				await member.send(file=file, embed=self.embed)
 			self.embed.clear_fields()
 
 			turnNum += 1 # changes whose turn it is
