@@ -10,18 +10,18 @@ class Settings(commands.Cog):
 	def __init__(self, bot):
 		self.bot = bot
 
-	def getUserSettings(user):
+	def getUserSettings(self, user):
 		with open("settings.json", encoding="utf-8") as f:
 			userSettings = json.load(f)
 
 		found = None
 		for current_user in userSettings: # for every existing user
-			if str(author.id) == current_user: # if user is found
+			if str(user.id) == current_user: # if user is found
 				found = True
 				break
 
 		if not found: # if user not in list
-			userSettings[str(author.id)] = {
+			userSettings[str(user.id)] = {
 				"blackjack": {
 					"emojis": "❌",
 					"pass": "✅"
@@ -31,7 +31,7 @@ class Settings(commands.Cog):
 					"default": "N/A"
 				},
 				"fight": {
-					"Dms:": "✅",
+					"Dms": "❌",
 					"autoConfirm": "❌"
 				}
 			}
@@ -51,8 +51,8 @@ class Settings(commands.Cog):
 
 		async def msgUser(ctx, msgString):
 			try:
-				if not isinstance(ctx.channel, discord.DMChannel):
-					await ctx.send("Sending DM...")
+				#if not isinstance(ctx.channel, discord.DMChannel):
+				#	await ctx.send("Sending DM...")
 				return await author.send(f"{msgString}")
 			except discord.Forbidden:
 				# await ctx.send("Your Discord settings do not allow me to DM you. Please change them and try again.")
@@ -64,20 +64,20 @@ class Settings(commands.Cog):
 			return user == author
 
 		async def get_reaction(msg):
+			await msg.add_reaction("1⃣") 
+			await msg.add_reaction("2⃣")
 			try:
-				await msg.add_reaction("1⃣") 
-				await msg.add_reaction("2⃣")
 				reaction, user = await self.bot.wait_for('reaction_add', check=is_me_reaction, timeout=15)
 				return reaction, user
 			except asyncio.TimeoutError:
 				raise Exception("timeoutError")
 
 		async def switchEmojis(currSetting):
-			if currSetting == "\u274c": # check mark
-				return "\u2705"
-			else: return "\u274c"
+			if currSetting == "\u2705": # check mark
+				return "\u274c"
+			else: return "\u2705"
 		
-		userSettings = getUserSettings(ctx.author)
+		userSettings = self.getUserSettings(ctx.author)
 
 		if game == "blackjack":
 			emojis = userSettings[str(author.id)]["blackjack"]["emojis"]
@@ -122,8 +122,13 @@ class Settings(commands.Cog):
 
 			await msg.delete()
 
-			if str(reaction) == "1⃣": Dms, userSettings[str(author.id)]["fight"]["Dms"] = await switchEmojis(Dms)
-			elif str(reaction) == "2⃣": autoConfirm, userSettings[str(author.id)]["fight"]["autoConfirm"] = await switchEmojis(autoConfirm)
+			if str(reaction) == "1⃣": 
+				userSettings[str(author.id)]["fight"]["Dms"] = await switchEmojis(Dms)
+				Dms = userSettings[str(author.id)]["fight"]["Dms"]
+			elif str(reaction) == "2⃣": 
+				userSettings[str(author.id)]["fight"]["autoConfirm"] = await switchEmojis(autoConfirm)
+				autoConfirm = userSettings[str(author.id)]["fight"]["autoConfirm"]
+
 
 			msg = await msgUser(ctx, f"New settings:\n1) Send me DMs for the whole fighting log -- {Dms}\n2) Confirm fight request automatically -- {autoConfirm}")
 
