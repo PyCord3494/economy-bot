@@ -43,6 +43,7 @@ class bj(commands.Cog):
 
 
 	async def player_turn(self, dCard, dCardNum, ctx):
+		author = ctx.author
 		pCARD = []
 		pCardSuit = []
 		pCardNum = []
@@ -60,7 +61,7 @@ class bj(commands.Cog):
 
 		file = discord.File("./images/bj.png", filename="image.png")
 		self.embed.set_thumbnail(url="attachment://image.png")
-		self.botMsg = await ctx.send(f"{ctx.message.author.mention}", file=file, embed=self.embed)
+		self.botMsg = await ctx.send(f"{author.mention}", file=file, embed=self.embed)
 		ans = "hit"
 		while (ans.lower() == "h") or (ans.lower() == "hit"):
 			
@@ -92,9 +93,9 @@ class bj(commands.Cog):
 
 			# if game just started, it will add all the fields; if player "hit", it will update the embed for player's cards
 			try:
-				self.embed.set_field_at(0, name = f"{ctx.message.author.name}'s CARD:", value = f"{pTotal}\n**Score**: {sum(pCardNum)}", inline=True)
+				self.embed.set_field_at(0, name = f"{author.name}'s CARD:", value = f"{pTotal}\n**Score**: {sum(pCardNum)}", inline=True)
 			except:
-				self.embed.add_field(name = f"{ctx.message.author.name}'s CARD:", value = f"{pTotal}\n**Score**: {sum(pCardNum)}", inline=True)
+				self.embed.add_field(name = f"{author.name}'s CARD:", value = f"{pTotal}\n**Score**: {sum(pCardNum)}", inline=True)
 				self.embed.add_field(name = "Pit Boss' CARD", value = f"{dCard[0]}\n**Score**: {dCardNum[0]}\n", inline=True)
 				self.embed.add_field(name = "_ _", value = "**Options:** hit or stay", inline=False)
 
@@ -103,9 +104,12 @@ class bj(commands.Cog):
 			# ends game if player busted or has 21
 			if (await self.is_bust(pCardNum) or await self.is_blackjack(pCardNum)):
 				break
-			await self.botMsg.edit(content=f"{ctx.message.author.mention}", embed=self.embed)
-			emojis = None
-			if emojis:
+			await self.botMsg.edit(content=f"{author.mention}", embed=self.embed)
+
+			userSettings = self.bot.get_cog("Settings").getUserSettings(author)
+			emojis = userSettings[str(author.id)]["blackjack"]["emojis"]
+
+			if emojis == "\u2705":
 				def is_me_reaction(reaction, user):
 					return user == author
 
@@ -113,14 +117,14 @@ class bj(commands.Cog):
 				await self.botMsg.add_reaction("2⃣")
 				try:
 					reaction, user = await self.bot.wait_for('reaction_add', check=is_me_reaction, timeout=15)
-					return reaction, user
+					#return reaction, user
 				except asyncio.TimeoutError:
 					await self.botMsg.delete()
 					raise Exception("timeoutError")
 
 				if str(reaction) == "1⃣": 
 					ans = "hit"
-				else if str(reaction) == "2⃣": 
+				elif str(reaction) == "2⃣": 
 					ans = "stay"
 				else:
 					raise Exception
@@ -129,7 +133,7 @@ class bj(commands.Cog):
 
 			else:
 				def is_me(m):
-					return (m.author.id == ctx.author.id) and (m.content.lower() in ["hit", "stay", "h", "s"])
+					return (m.author.id == author.id) and (m.content.lower() in ["hit", "stay", "h", "s"])
 				try:
 					# waits for user action; while loop repeated
 					ans = await self.bot.wait_for('message', check=is_me, timeout=45)
@@ -262,7 +266,7 @@ class bj(commands.Cog):
 			dTotal += f"{x} "
 
 
-		#self.embed.add_field(name = f"{ctx.message.author.name}'s' CARD:", value = f"{pTotal}\n**Score**: {sum(player_num)}", inline=True)
+		#self.embed.add_field(name = f"{author.name}'s' CARD:", value = f"{pTotal}\n**Score**: {sum(player_num)}", inline=True)
 
 		coin = "<:coins:585233801320333313>"
 
@@ -322,7 +326,7 @@ class bj(commands.Cog):
 		xp = randint(50, 500)
 		self.embed.set_footer(text=f"Earned {xp} XP!")
 		await self.bot.get_cog("XP").addXP(ctx, xp)
-		await ctx.send(content=f"{ctx.message.author.mention}", file=file, embed=self.embed)
+		await ctx.send(content=f"{ctx.author.mention}", file=file, embed=self.embed)
 
 		self.embed = discord.Embed(color=1768431, title="Pit Boss' Casino | Blackjack")	
 		
