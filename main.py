@@ -46,12 +46,12 @@ async def on_ready():
 
 # COMMAND LOGGER
 
-#@bot.event 
-#async def on_message(message):
-#	if message.author.id != "585227426615787540" and message.content.startswith("$"):
-#		localTime = time.asctime(time.localtime(time.time()))
-#		LogFile.write(f"\n{message.author}:{message.guild}:{localTime}:{message.content}")
-#		LogFile.flush()
+# @bot.event 
+# async def on_message(message):
+# 	if message.author.id != "585227426615787540" and message.content.startswith("$"):
+# 		localTime = time.asctime(time.localtime(time.time()))
+# 		LogFile.write(f"\n{message.author}:{message.guild}:{localTime}:{message.content}")
+# 		LogFile.flush()
 
 @bot.command(pass_context=True)
 async def help(ctx):
@@ -78,8 +78,10 @@ async def load(ctx, extension):
 	try:
 		bot.load_extension(extension)
 		print(f"Loaded {extension}.\n")
+		await ctx.send(f"Loaded {extension}")
 	except Exception as error:
 		print(f"{extension} could not be loaded. [{error}]")
+		await ctx.send(f"{extension} could not be loaded. [{error}]")
 
 
 # manually unload a cog
@@ -89,8 +91,10 @@ async def unload(ctx, extension):
 	try:
 		bot.unload_extension(extension)
 		print(f"Unloaded {extension}.\n")
+		await ctx.send(f"Unloaded {extension}")
 	except Exception as error:
 		print(f"{extension} could not be unloaded. [{error}]")
+		await ctx.send(f"{extension} could not be unloaded. [{error}]")
 
 
 # manually reload a cog
