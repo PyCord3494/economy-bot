@@ -62,28 +62,35 @@ class ErrorHandling(commands.Cog):
 				return
 
 			if err == "timeoutError":
-				await ctx.author.send("Did not respond in time; timeout.")
+				await ctx.send("Did not respond in time; timeout.")
 				return
 
 
-			embed.description = f"Error: `{err}`. \nDeveloper has been contacted with all related details..."
-			e = discord.Embed(title='Command Error', colour=0xcc3366)
-			command_name = ctx.command.qualified_name
-			if command_name: 
-				e.add_field(name='Name', value=ctx.command.qualified_name)
-			e.add_field(name='Author', value=f'{ctx.author} (ID: {ctx.author.id})')
+			# embed.description = f"Error: `{err}`. \nDeveloper has been contacted with all related details..."
+			# e = discord.Embed(title='Command Error', colour=0xcc3366)
+			# command_name = ctx.command.qualified_name
+			# #if command_name: 
+			# #	e.add_field(name='Name', value=ctx.command.qualified_name)
+			# e.add_field(name='Author', value=f'{ctx.author} (ID: {ctx.author.id})')
 
-			fmt = f'Channel: {ctx.channel} (ID: {ctx.channel.id})'
-			if ctx.guild:
-				fmt = f'{fmt}\nGuild: {ctx.guild} (ID: {ctx.guild.id})'
+			# fmt = f'Channel: {ctx.channel} (ID: {ctx.channel.id})'
+			# if ctx.guild:
+			# 	fmt = f'{fmt}\nGuild: {ctx.guild} (ID: {ctx.guild.id})'
 
-			e.add_field(name='Location', value=f"{fmt}]\n[Link]({ctx.message.jump_url})", inline=False)
+			# e.add_field(name='Location', value=f"{fmt}]\n[Link]({ctx.message.jump_url})", inline=False)
 
 			exc = ''.join(traceback.format_exception(type(error), error, error.__traceback__, chain=False))
-			e.description = f'```py\n{exc}\n```'
-			e.timestamp = datetime.datetime.utcnow()
+			# e.description = f'```py\n{exc}\n```'
+			# e.timestamp = datetime.datetime.utcnow()
 			ch = self.bot.get_channel(648617998063763467)
-			await ch.send(embed=e)
+			if len(exc) > 1999:
+				await ch.send(f"{exc[:1999]}")
+				await ch.send(f"{exc[1999:]}")
+			else:
+				await ch.send(f"{exc}")
+
+			# await ch.send(embed=e)
+			#await ctx.send(f"{error}  {ctx.command.qualified_name}")
 
 		embed.set_thumbnail(url=ctx.author.avatar_url)
 		await ctx.send(embed=embed)
