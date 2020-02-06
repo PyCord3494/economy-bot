@@ -74,8 +74,8 @@ class Settings(commands.Cog):
 
 		async def switchEmojis(currSetting):
 			if currSetting == "\u2705": # check mark
-				return "\u274c"
-			else: return "\u2705"
+				return "\u274c", "\u274c"
+			else: return "\u2705", "\u2705"
 		
 		userSettings = self.getUserSettings(ctx.author)
 
@@ -123,11 +123,9 @@ class Settings(commands.Cog):
 			await msg.delete()
 
 			if str(reaction) == "1⃣": 
-				userSettings[str(author.id)]["fight"]["Dms"] = await switchEmojis(Dms)
-				Dms = userSettings[str(author.id)]["fight"]["Dms"]
+				Dms, userSettings[str(author.id)]["fight"]["Dms"] = await switchEmojis(Dms)
 			elif str(reaction) == "2⃣": 
-				userSettings[str(author.id)]["fight"]["autoConfirm"] = await switchEmojis(autoConfirm)
-				autoConfirm = userSettings[str(author.id)]["fight"]["autoConfirm"]
+				autoConfirm, userSettings[str(author.id)]["fight"]["autoConfirm"] = await switchEmojis(autoConfirm)
 
 
 			msg = await msgUser(ctx, f"New settings:\n1) Send me DMs for the whole fighting log -- {Dms}\n2) Confirm fight request automatically -- {autoConfirm}")
