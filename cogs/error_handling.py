@@ -51,6 +51,9 @@ class ErrorHandling(commands.Cog):
 		elif isinstance(error, commands.CheckFailure):
 			embed.description = "You do not have the required permissions to use this command."
 
+		elif isinstance(error, commands.CommandOnCooldown):
+			embed.description = "Command is on cooldown"
+
 		elif isinstance(error, commands.BadArgument):
 			embed.description = f"{error}"
 		else:
