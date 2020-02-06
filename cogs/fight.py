@@ -1,4 +1,4 @@
-# zipped in order: pTurn, pHealth, pArmor, pCheckArmor, pPotions
+	# zipped in order: pTurn, pHealth, pArmor, pCheckArmor, pPotions
 # pHealth represents users hp, default 100
 # pArmor represents users armor, default 100
 # pCheckArmor will see if the user has any armor left or if it's all gone
@@ -23,19 +23,25 @@ class Fight(commands.Cog):
 		self.p1Potions, self.p2Potions = True, True
 		self.p1Shields, self.p2Shields = True, True
 		self.msg = ""
-		self.playerSettings, self.oppoSettings = None
+		self.playerSettings, self.oppoSettings = [None,  None]
 
-	async def fetchSettings(user):
-		userSettings = self.bot.get_cog("Settings").getUserSettings(user)
-		return [userSettings[str(user.id)]["fight"]["Dms"], userSettings[str(user.id)]["fight"]["autoConfirm"]]
 
 	@commands.command(pass_context=True)
 	async def fight(self, ctx, *, member: discord.Member):
-		author = ctx.author
-		self.playerSettings = fetchSettings(author)
-		self.oppoSettings = fetchSettings(member)
 
-		if oppoSettings[1] != "\u274c": # if autoConfirm is not on
+		if ctx.author == member:
+			await ctx.send("Cannot challenge yourself!")
+			return
+
+		async def fetchSettings(user):
+			userSettings = self.bot.get_cog("Settings").getUserSettings(user)
+			return [userSettings[str(user.id)]["fight"]["Dms"], userSettings[str(user.id)]["fight"]["autoConfirm"]]
+
+		author = ctx.author
+		self.playerSettings = await fetchSettings(author)
+		self.oppoSettings = await fetchSettings(member)
+
+		if self.oppoSettings[1] != "\u2705": # if autoConfirm is not on
 			await ctx.send(f"{member.mention}, you've been challenged by {author.mention}, do you accept? (Yes/No)")
 		
 			def is_me(m):
@@ -61,7 +67,7 @@ class Fight(commands.Cog):
 			return
 
 
-		# listed in order: player health, armor, checkArmor, potion
+		# listed in order: player health, armor, checkArmor, potions
 		try:
 			p1 = [self.p1Health, self.p1Armor, self.p1CheckArmor, self.p1Potions]
 			p2 = [self.p2Health, self.p2Armor, self.p2CheckArmor, self.p2Potions]
@@ -69,7 +75,7 @@ class Fight(commands.Cog):
 			self.embed.set_image(url="attachment://image.png")
 			await self.fighting(ctx, member, p1, p2)
 		finally: 
-			# resets all the variables
+			# reset all the variables
 			self.embed = discord.Embed(color=0x24ecf7, title="Pit Boss' Wrestling | FIGHT!")
 			self.p1Health, self.p2Health = 100, 100
 			self.p1Armor, self.p2Armor = 100, 100
@@ -123,15 +129,20 @@ class Fight(commands.Cog):
 				await asyncio.sleep(3)
 
 			#print(act)
+			users = [author, member]
 			if turnNum % 2 == 0:
-				file = await self.createImg(player, opponent)
+				await self.createImg(player, opponent)
 			else:
-				file = await self.createImg(opponent, player)
-			self.embed.set_image(url="attachment://image.png")
+				await self.createImg(opponent, player)
 
-			if self.playerSettings[0] == "\u274c": # if Dms are on
+
+			if self.playerSettings[0] == "\u2705": # if Dms are on
+				file = discord.File("images/mapUpdated.png", filename="image.png")
+				self.embed.set_image(url="attachment://image.png")
 				await author.send(file=file, embed=self.embed)
-			if self.oppoSettings[0] == "\u274c": # if Dms are on
+			if self.oppoSettings[0] == "\u2705": # if Dms are on
+				file = discord.File("images/mapUpdated.png", filename="image.png")
+				self.embed.set_image(url="attachment://image.png")
 				await member.send(file=file, embed=self.embed)
 			self.embed.clear_fields()
 
@@ -169,7 +180,6 @@ class Fight(commands.Cog):
 		draw.text(xy=(125,80), text=f"{player[1]}\nArmor: {player[0][1]}\nHP: {player[0][0]}",fill=(255,255,255),font=font_type)
 		draw.text(xy=(549,80), text=f"{oppo[1]}\nArmor: {oppo[0][1]}\nHP: {oppo[0][0]}",fill=(255,255,255),font=font_type)
 		img.save("images/mapUpdated.png")
-		return discord.File("images/mapUpdated.png", filename="image.png")
 
 
 
