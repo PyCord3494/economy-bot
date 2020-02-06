@@ -104,16 +104,39 @@ class bj(commands.Cog):
 			if (await self.is_bust(pCardNum) or await self.is_blackjack(pCardNum)):
 				break
 			await self.botMsg.edit(content=f"{ctx.message.author.mention}", embed=self.embed)
+			emojis = None
+			if emojis:
+				def is_me_reaction(reaction, user):
+					return user == author
 
-			def is_me(m):
-				return (m.author.id == ctx.author.id) and (m.content.lower() in ["hit", "stay", "h", "s"])
-			try:
-				# waits for user action; while loop repeated
-				ans = await self.bot.wait_for('message', check=is_me, timeout=45)
-				ans = ans.content
-			except asyncio.TimeoutError:
-				await self.botMsg.delete()
-				raise Exception("timeoutError")
+				await self.botMsg.add_reaction("1⃣") 
+				await self.botMsg.add_reaction("2⃣")
+				try:
+					reaction, user = await self.bot.wait_for('reaction_add', check=is_me_reaction, timeout=15)
+					return reaction, user
+				except asyncio.TimeoutError:
+					await self.botMsg.delete()
+					raise Exception("timeoutError")
+
+				if str(reaction) == "1⃣": 
+					ans = "hit"
+				else if str(reaction) == "2⃣": 
+					ans = "stay"
+				else:
+					raise Exception
+
+				await self.botMsg.clear_reactions()
+
+			else:
+				def is_me(m):
+					return (m.author.id == ctx.author.id) and (m.content.lower() in ["hit", "stay", "h", "s"])
+				try:
+					# waits for user action; while loop repeated
+					ans = await self.bot.wait_for('message', check=is_me, timeout=45)
+					ans = ans.content
+				except asyncio.TimeoutError:
+					await self.botMsg.delete()
+					raise Exception("timeoutError")
 
 		return pCARD, pCardNum
 
