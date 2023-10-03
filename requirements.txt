@@ -3,6 +3,6 @@ nextcord-ext-menus==1.5.6
 asyncio==3.4.3
 numpy==1.25.2
 datetime==5.2
-Pillow==10.0.0
+Pillow==10.0.1
 topggpy==1.4.0
 function-cooldowns==1.7.1
