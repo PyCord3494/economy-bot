@@ -209,6 +209,8 @@ class AuctionScheduler(commands.Cog):
 			return
 		_, auction_id = heapq.heappop(self.heap)
 		await self.remove_auction(auction_id)
+		
+		await self._wait_until_next_auction()
 	
 
 	@nextcord.slash_command()
