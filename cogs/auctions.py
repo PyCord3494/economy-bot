@@ -162,17 +162,26 @@ class AuctionScheduler(commands.Cog):
 			await self.bot.get_cog("Economy").addWinnings(sellerID, round(currentBid*0.975))
 
 			embed.description = f"Congratulations! Your item {itemName} sold for {currentBid:,} (-2.5% seller fee) {emojis.coin}. Your funds have been added."
-			await sellerUser.send(embed=embed)
+			try:
+				await sellerUser.send(embed=embed)
+			except:
+				pass
 
 			embed.description = f"Congratulations! You have won Auction #{auction_id} for item {itemName} ({currentBid:,}{emojis.coin}). Item has been added to your inventory"
-			await buyerUser.send(embed=embed)
+			try:
+				await buyerUser.send(embed=embed)
+			except:
+				pass
 		# no user bids
 		else:
 			# add item back to seller's inventory
 			self.bot.get_cog("Inventory").addItemToInventory(sellerID, 1, itemName)
 
 			embed.description = f"Your item {itemName} did not sell and has been returned back to your inventory"
-			await sellerUser.send(embed=embed)
+			try:
+				await sellerUser.send(embed=embed)
+			except:
+				pass
 		
 		DB.delete("DELETE FROM AuctionListings WHERE AuctionID = ?;", [auction_id])
 
