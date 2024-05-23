@@ -2,7 +2,7 @@ import nextcord
 from nextcord.ext import commands
 from nextcord import Interaction 
 
-import cooldowns, random, datetime, math, config
+import cooldowns, random, datetime, config
 # from cogs.economy import Economy
 
 import emojis
@@ -588,6 +588,11 @@ class Util(commands.Cog):
 			await deferMsg.edit(embed=embed)
 
 			cooldowns.reset_bucket(self.rob.callback, interaction)
+			return
+		
+		if await self.bot.get_cog("TempBuffs").userHasBuff(member.id, 'Small Blind Chip'):
+			embed.description = f"This user cannot be robbed! They have Small Blind Chip active."
+			await deferMsg.edit(embed=embed)
 			return
 
 		bal1 = await self.bot.get_cog("Economy").getBalance(interaction.user)
