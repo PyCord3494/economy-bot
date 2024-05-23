@@ -98,17 +98,31 @@ class Inventory(commands.Cog):
 	@cooldown(1, 5, bucket=SlashBucket.author)
 	async def activebuffs(self, interaction:Interaction):
 		buffs = DB.fetchAll("SELECT Item FROM ActiveBuffs WHERE DiscordID = ?;", [interaction.user.id])
+		tempBuffs = self.bot.get_cog("TempBuffs").getBuffs(interaction.user.id)
 
-		if not buffs:
+
+		if not buffs and not tempBuffs:
 			await interaction.send("You have no active buffs.")
 			return
 
-		buffs = set(buffs)
-		
 		msg = ""
-		for x in buffs:
-			msg += x[0]
-			msg += "\n"
+		if buffs:
+			msg += "**Buffs**\n"
+			buffs = set(buffs)
+			
+			for x in buffs:
+				msg += x[0]
+				msg += "\n"
+		
+		if tempBuffs:
+			msg += "\n**Temp Buffs**\n"
+
+			for record in tempBuffs:
+				msg += f"{record[0]} expires <t:{int(record[1])}:R>"
+				msg += "\n"
+
+
+
 		await interaction.send(msg)
 
 
@@ -137,10 +151,13 @@ class Inventory(commands.Cog):
 
 		if not self.checkInventoryFor(interaction.user, itemSelected, amnt):
 			raise Exception("itemNotFoundInInventory")
-		
-		self.removeItemFromInventory(interaction.user, itemSelected, amnt)
 
-		if itemSelected in ["Voter Chip", "High Card", "One Pair", "Two Pair", "Straight", "Flush", "Full House", "Four of a Kind", "Straight Flush", "Royal Flush"]:
+		if itemSelected == "Small Blind Chip":
+			results = await self.bot.get_cog("TempBuffs").addBuff(interaction.user.id, 'Small Blind Chip', amnt)
+			embed.description = results
+				
+
+		elif itemSelected in ["Voter Chip", "High Card", "One Pair", "Two Pair", "Straight", "Flush", "Full House", "Four of a Kind", "Straight Flush", "Royal Flush"]:
 			if itemSelected == "Voter Chip":
 				multiplier = 1.3
 				minutes = 150
@@ -174,7 +191,7 @@ class Inventory(commands.Cog):
 
 			embed.description = self.bot.get_cog("Multipliers").addMultiplier(interaction.user.id, multiplier, datetime.datetime.now() + datetime.timedelta(minutes=(minutes*amnt)))
 
-		if itemSelected == "Dealer Chip" or itemSelected == "Ace of Spades" or itemSelected == "Big Blind Chip" or itemSelected == "Deck of Cards" or itemSelected == "Three of a Kind":
+		elif itemSelected == "Dealer Chip" or itemSelected == "Ace of Spades" or itemSelected == "Big Blind Chip" or itemSelected == "Deck of Cards" or itemSelected == "Three of a Kind":
 			self.addActiveItemToDB(interaction.user, itemSelected, amnt)
 			if itemSelected != "Three of a Kind":
 				gameName = "Blackjack"
@@ -195,6 +212,9 @@ class Inventory(commands.Cog):
 			embed.description = text
 
 			embed.set_footer(text=f"Log ID: {logID}")
+		
+
+		self.removeItemFromInventory(interaction.user, itemSelected, amnt)
 
 		await interaction.send(embed=embed)
 
