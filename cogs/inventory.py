@@ -257,7 +257,12 @@ class Inventory(commands.Cog):
 	def removeItemFromInventory(self, user: nextcord.user, itemName: str, amnt: int=1):
 		if amnt < 1:
 			raise ValueError("valueError")
-		DB.update("UPDATE Inventory SET Quantity = Quantity - ? WHERE DiscordID = ? AND Item = ?;", [amnt, user.id, itemName])
+		
+		quantity = DB.fetchOne("SELECT Quantity FROM Inventory WHERE DiscordID = ? AND Item = ?", [str(user.id), itemName])[0]
+		if quantity == amnt:
+			DB.delete("DELETE FROM Inventory WHERE DiscordID = ? AND Item = ?", [user.id, itemName])
+		else:
+			DB.update("UPDATE Inventory SET Quantity = Quantity - ? WHERE DiscordID = ? AND Item = ?;", [amnt, user.id, itemName])
 
 	# called when people open crates (subtracts them from inv.)
 	def subtractInv(self, discordid: int, amnt: int): # called when people open crates (subtracts them from inv.)
