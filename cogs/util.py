@@ -590,7 +590,7 @@ class Util(commands.Cog):
 			cooldowns.reset_bucket(self.rob.callback, interaction)
 			return
 		
-		if await self.bot.get_cog("TempBuffs").userHasBuff(member.id, 'Small Blind Chip'):
+		if self.bot.get_cog("TempBuffs").userHasBuff(member.id, 'Small Blind Chip'):
 			embed.description = f"This user cannot be robbed! They have Small Blind Chip active."
 			await deferMsg.edit(embed=embed)
 			return
