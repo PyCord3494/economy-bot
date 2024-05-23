@@ -1,3 +1,22 @@
+CREATE TABLE "AchievementList" (
+	"ID"	INTEGER NOT NULL,
+	"Activity"	TEXT NOT NULL DEFAULT 'Game',
+	"Name"	TEXT NOT NULL DEFAULT 'Name',
+	"Description"	TEXT NOT NULL DEFAULT 'Desc',
+	"Goal"	INTEGER NOT NULL DEFAULT 1,
+	"Reward"	INTEGER NOT NULL DEFAULT 5000,
+	"Type"	TEXT NOT NULL DEFAULT 'Basic',
+	"Showable"	INTEGER NOT NULL DEFAULT 1,
+	PRIMARY KEY("ID" AUTOINCREMENT)
+);
+
+CREATE TABLE "AchievementProgress" (
+	"DiscordID"	TEXT NOT NULL,
+	"ID"	INTEGER NOT NULL,
+	"Progress"	INTEGER NOT NULL DEFAULT 0,
+	PRIMARY KEY("ID","DiscordID")
+);
+
 CREATE TABLE "ActiveBuffs" (
 	"ID"	INTEGER NOT NULL,
 	"DiscordID"	TEXT NOT NULL,
@@ -5,10 +24,49 @@ CREATE TABLE "ActiveBuffs" (
 	PRIMARY KEY("ID" AUTOINCREMENT)
 );
 
+CREATE TABLE "Alerts" (
+	"ID"	INTEGER,
+	"Title"	TEXT NOT NULL,
+	"Description"	TEXT NOT NULL,
+	"Timestamp"	REAL NOT NULL,
+	"Reward"	INTEGER NOT NULL,
+	PRIMARY KEY("ID" AUTOINCREMENT)
+);
+
+CREATE TABLE "AlertsMuted" (
+	"DiscordID"	TEXT,
+	PRIMARY KEY("DiscordID")
+);
+
+CREATE TABLE "AlertsViewed" (
+	"AlertID"	INTEGER,
+	"DiscordID"	TEXT,
+	FOREIGN KEY("DiscordID") REFERENCES "Economy"("DiscordID"),
+	FOREIGN KEY("AlertID") REFERENCES "Alerts"("ID")
+);
+
+CREATE TABLE "AuctionListings" (
+	"AuctionID"	INTEGER,
+	"SellerID"	TEXT NOT NULL,
+	"Item"	TEXT NOT NULL,
+	"CurrentBid"	INTEGER NOT NULL,
+	"CurrentBidderID"	TEXT NOT NULL DEFAULT 0,
+	"BidCount"	INTEGER NOT NULL DEFAULT 0,
+	"Expires"	REAL NOT NULL,
+	PRIMARY KEY("AuctionID" AUTOINCREMENT)
+);
+
+CREATE TABLE "Bounties" (
+	"PlacedOn"	INTEGER,
+	"PlacedBy"	INTEGER UNIQUE,
+	"Amount"	INTEGER,
+	PRIMARY KEY("PlacedOn")
+);
+
 CREATE TABLE "Codes" (
 	"DiscordID"	TEXT NOT NULL,
 	PRIMARY KEY("DiscordID")
-)
+);
 
 CREATE TABLE "Crypto" (
 	"DiscordID"	TEXT NOT NULL,
@@ -127,6 +185,18 @@ CREATE TABLE "Multipliers" (
 	PRIMARY KEY("DiscordID","Multiplier","Expires")
 );
 
+CREATE TABLE "MultipliersPerm" (
+	"DiscordID"	TEXT,
+	"Multiplier"	REAL NOT NULL,
+	PRIMARY KEY("DiscordID")
+);
+
+CREATE TABLE "Prestige" (
+	"DiscordID"	TEXT NOT NULL,
+	"Prestige"	INTEGER NOT NULL,
+	PRIMARY KEY("DiscordID")
+);
+
 CREATE TABLE `Quests` (
         `DiscordID`  varchar(64) DEFAULT NULL,
         `ActiveQuest`      varchar(30) DEFAULT NULL,
@@ -134,6 +204,14 @@ CREATE TABLE `Quests` (
         `Wins`       tinyint(3) DEFAULT 0,
         `Profit`     integer(6) DEFAULT 0,
         PRIMARY KEY (DiscordID, ActiveQuest)
+);
+
+CREATE TABLE "RankedUsers" (
+	"DiscordID"	TEXT NOT NULL,
+	"Rank"	INTEGER NOT NULL DEFAULT 0,
+	"CasinoPoints"	INTEGER NOT NULL DEFAULT 0,
+	"HighestEarned"	INTEGER NOT NULL DEFAULT 0,
+	PRIMARY KEY("DiscordID")
 );
 
 CREATE TABLE "ReferralCount" (
@@ -145,6 +223,14 @@ CREATE TABLE "Settings" (
 	"DiscordID"	TEXT NOT NULL,
 	"Setting"	TEXT NOT NULL,
 	PRIMARY KEY("DiscordID","Setting")
+);
+
+CREATE TABLE "TempBuffs" (
+	"ID"	INTEGER,
+	"DiscordID"	TEXT NOT NULL,
+	"Item"	TEXT NOT NULL,
+	"Expires"	REAL NOT NULL,
+	PRIMARY KEY("ID" AUTOINCREMENT)
 );
 
 CREATE TABLE "Totals" (
