@@ -19,7 +19,7 @@ class TempBuffs(commands.Cog):
 		self.hasExtendedTime = []
 		
 		self.length = dict()
-		self.length['Small Blind Chip'] = 15
+		self.length['Small Blind Chip'] = 86400
 
 	@commands.Cog.listener()
 	async def on_ready(self):
@@ -63,9 +63,6 @@ class TempBuffs(commands.Cog):
 		data = DB.fetchOne('SELECT Expires FROM TempBuffs WHERE Item = ? AND DiscordID = ?;', [buffName, userId])
 
 		if not data:
-			return False
-		elif data[0] < datetime.now().timestamp():
-			DB.delete('DELETE FROM TempBuffs WHERE Item = ? and DiscordID = ?;', [buffName, userId])
 			return False
 		else:
 			return True
