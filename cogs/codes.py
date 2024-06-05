@@ -13,19 +13,19 @@ class Codes(commands.Cog):
 		self.currCode = None
 		self.reward = 10000
 
-		self.codes = ["Christmas", "Merry", "Festive", "Santa",
-					"Elves", "Jolly",
-					"Reindeer", "Carols",
-					"Mistletoe", "Frankincense", "Myrrh", "Nativity",
-					"Xmas", "Yuletide", "Tinsel", "Stocking",
-					"Presents", "Fruitcake", "Chimney",
-					"Birth", "Family", "Candy", "Pinecone",
-					"Spirit", "Tidings", "Tradition", "Rudolph",
-					"Sleigh", "Holiday", "Holly", "Ornaments",
-					"Scrooge", "Sledge", "Snowball",
-					"Snowman", "Rejoice","Celebrate", "Chestnuts",
-					"Angel", "Elf", "Feast", "Goose", "Bells", "Turkey", "Cookie", 
-					"Decorations", "Frosty", "Gingerbread", "Chocolate", "Nutcracker", "Winter"]
+		self.codes = ["lazy", "flower", "explode", "celebrate", "decorate", "fire", 
+				"party", "computer", "home", "garden", "menu", "background", 
+				"secular", "message", "fur", "vote", "safety", "environment", 
+				"worm", "butt", "primary", "structure", "statement", "look", "memory", 
+				"mess", "noise", "track", "tasty", "salon", "favor", "particle", 
+				"transparent", "reception", "other", "blind", "cabin", "wings", 
+				"premature", "freedom", "language", "bomb", "defend", "hill", "nuclear", 
+				"clique", "master", "clean", "growth", "cinema", "beautiful", "steel", "wine", 
+				"bishop", "justice", "build", "normal", "temperature", "visit", "rush", "essay", 
+				"beef", "chicken", "pork", "trick", "shock", "lean", "glance", "distance", "nature", 
+				"patch", "season", "record", "polish", "lounge", "club", "bar", "point", "fair", 
+				"frozen", "can", "van", "new", "obey", "object", "theme", "social", "network", "theory", "love", "birthday"]
+
 		self.embed = nextcord.Embed(color=1768431, title=f"New Code")
 	
 	@commands.Cog.listener()
@@ -38,7 +38,7 @@ class Codes(commands.Cog):
 	# @tasks.loop(seconds=30)
 	async def GetNewCode(self):
 		DB.delete("DELETE FROM Codes;")
-		word = choice(self.codes).lower()
+		word = choice(self.codes).lower().strip()
 		self.currCode = word
 		chnl = self.bot.get_channel(config.channelIDForCodes)
 		self.embed.description = f"Code is **{word}**"
