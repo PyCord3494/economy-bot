@@ -1,3 +1,4 @@
+from typing import Any, Coroutine
 import nextcord
 from nextcord.ext import commands 
 from nextcord import Interaction
@@ -9,9 +10,23 @@ import cooldowns, asyncio, io
 import emojis
 from db import DB
 
+class PlayAgainButton(nextcord.ui.Button):
+	def __init__(self):
+		super().__init__(label="Play Again")
+	async def callback(self, interaction: Interaction) -> None:
+		self.view.stop()
+
+class PlayAgainView(nextcord.ui.View):
+	def __init__(self):
+		super().__init__(timeout=60)
+		self.add_item(PlayAgainButton())
+
+
+
+
 class GetAmountToBet(nextcord.ui.TextInput):
 	def __init__(self):
-		super().__init__(label="Amount of credits to bet", min_length=1, max_length=10, required=True, placeholder="1000")
+		super().__init__(label="Amount of credits to bet", min_length=1, max_length=6, required=True, placeholder="1000")
 class GetNumberBet(nextcord.ui.TextInput):
 	def __init__(self):
 		super().__init__(label = "Number to bet on", min_length = 1, max_length = 2, required=False, placeholder = "0 - 36")
@@ -182,8 +197,11 @@ class View(nextcord.ui.View):
 
 
 	async def Start(self, interaction:Interaction):
-		await interaction.response.defer()
-		self.msg = await interaction.original_message()
+		try:
+			await interaction.response.defer()
+			self.msg = await interaction.original_message()
+		except:
+			pass
 
 		self.usedThreeOfAKind = False
 		if self.bot.get_cog("Inventory").checkForActiveItem(interaction.user, "Three of a Kind"):
@@ -217,13 +235,12 @@ class View(nextcord.ui.View):
 		self.embed.add_field(name="Previous Numbers", value=f"{nums}_ _", inline=True)
 		await self.msg.edit(file=nextcord.File('images/roulette/roulette.png'), embed=self.embed, view=self)
 
-
 		await self.wait()
 
 		for child in self.children:
 			if not child.disabled:
 				child.disabled = True
-		
+
 		await self.msg.edit(view=self)
 
 		await self.Spin(interaction)
@@ -249,7 +266,7 @@ class View(nextcord.ui.View):
 		roulette.paste(whiteChip, self.getPos(n), whiteChip)
 		# n = 0
 
-		if n >= 18: 
+		if n > 18: 
 			highLowResult = "⬆"
 			roulette.paste(whiteChip, self.getHighLowPos("high"), whiteChip)
 		else: 
@@ -333,16 +350,32 @@ class View(nextcord.ui.View):
 		with io.BytesIO() as image_binary:
 			roulette.save(image_binary, 'PNG')
 			image_binary.seek(0)
-			await self.msg.edit(embed=self.embed, file=nextcord.File(fp=image_binary, filename='image.png'))
+
+			# playAgainView = PlayAgainView()
+			await self.msg.edit(embed=self.embed, file=nextcord.File(fp=image_binary, filename='image.png'))#, view=playAgainView)
 			roulette.close()
 
-		self.bot.get_cog("Totals").addTotals(interaction, amntSpent, moneyToAdd, "Roulette")
+		await self.bot.get_cog("Totals").addTotals(interaction, amntSpent, moneyToAdd, "Roulette")
 		await self.bot.get_cog("Quests").AddQuestProgress(interaction, interaction.user, "Rltte", moneyToAdd - amntSpent)
+
+		gameResult = {
+			"Name": "Roulette", 
+			"AmntBet": amntSpent, 
+			"AmntWon": moneyToAdd
+		}
+		await self.bot.get_cog("DailyQuests").GameEndCheckDailyQuests(interaction, gameResult)
+
 		if len(self.previousNums) == 8:  # display only 8 previous numbers
 			self.previousNums.pop()
 		self.previousNums.insert(0, f"{colorResult} {str(n)}")  # insert the resulting color and number
 
 		await toDelete.delete()
+
+		# if await playAgainView.wait():
+		# 	await self.msg.edit(view=None)
+		# 	return
+
+		# await self.Start(interaction)
 
 
 

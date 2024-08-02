@@ -163,6 +163,12 @@ class View(nextcord.ui.View):
 
 		await self.bot.get_cog("Totals").addTotals(interaction, self.amntbet, moneyToAdd, "Horse")
 
+		gameResult = {
+			"Name": "Horse", 
+			"AmntBet": self.amntbet, 
+			"AmntWon": moneyToAdd
+		}
+		await self.bot.get_cog("DailyQuests").GameEndCheckDailyQuests(interaction, gameResult)
 
 
 class Horse(commands.Cog):

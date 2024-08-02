@@ -101,6 +101,13 @@ class rps(commands.Cog):
 		await self.bot.get_cog("Totals").addTotals(interaction, amntbet, moneyToAdd, "RPS")
 		await self.bot.get_cog("Quests").AddQuestProgress(interaction, interaction.user, "RPS", profitInt)
 
+		gameResult = {
+			"Name": "RPS", 
+			"AmntBet": amntbet, 
+			"AmntWon": moneyToAdd
+		}
+		await self.bot.get_cog("DailyQuests").GameEndCheckDailyQuests(interaction, gameResult)
+
 
 def setup(bot):
 	bot.add_cog(rps(bot))

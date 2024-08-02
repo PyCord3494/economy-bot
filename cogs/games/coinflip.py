@@ -183,5 +183,12 @@ class Coinflip(commands.Cog):
 		await self.bot.get_cog("Totals").addTotals(interaction, amntbet, moneyToAdd, "Coinflip")
 		await self.bot.get_cog("Quests").AddQuestProgress(interaction, interaction.user, "CF", profitInt)
 
+		gameResult = {
+			"Name": "Coinflip", 
+			"AmntBet": amntbet, 
+			"AmntWon": moneyToAdd
+		}
+		await self.bot.get_cog("DailyQuests").GameEndCheckDailyQuests(interaction, gameResult)
+
 def setup(bot):
 	bot.add_cog(Coinflip(bot))

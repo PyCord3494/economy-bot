@@ -276,6 +276,13 @@ class View(nextcord.ui.View):
 
 		await self.bot.get_cog("Totals").addTotals(interaction, self.amntBet, moneyToAdd, "DOND")
 
+		gameResult = {
+			"Name": "DOND", 
+			"AmntBet": self.amntBet, 
+			"AmntWon": moneyToAdd
+		}
+		await self.bot.get_cog("DailyQuests").GameEndCheckDailyQuests(interaction, gameResult)
+
 
 class Dond(commands.Cog):
 	def __init__(self, bot):

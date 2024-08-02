@@ -138,8 +138,15 @@ class Slots(commands.Cog):
 		await botMsg.edit(content=None, embed=embed, file=file)
 		file.close()
 
-		await self.bot.get_cog("Totals").addTotals(interaction, amntbet, profitInt, "Slots")
+		await self.bot.get_cog("Totals").addTotals(interaction, amntbet, moneyToAdd, "Slots")
 		await self.bot.get_cog("Quests").AddQuestProgress(interaction, interaction.user, "Slt", profitInt)
+
+		gameResult = {
+			"Name": "Slots", 
+			"AmntBet": amntbet, 
+			"AmntWon": moneyToAdd
+		}
+		await self.bot.get_cog("DailyQuests").GameEndCheckDailyQuests(interaction, gameResult)
 
 
 def setup(bot):

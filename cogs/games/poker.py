@@ -409,6 +409,13 @@ class PokerView(nextcord.ui.View):
 
 		await self.bot.get_cog("Achievements").AddAchievementProgress(interaction, "Poker", [self.amntbet, moneyToAdd > self.amntbet, playerHand], self.ownerId)
 
+		gameResult = {
+			"Name": "Poker", 
+			"AmntBet": self.amntbet, 
+			"AmntWon": moneyToAdd
+		}
+		await self.bot.get_cog("DailyQuests").GameEndCheckDailyQuests(interaction, gameResult)
+
 	def PlayerDrawCards(self):
 		# self.pCards = ["♠ A", "♦ T"]
 		# return

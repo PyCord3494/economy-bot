@@ -762,6 +762,13 @@ class Blackjack(nextcord.ui.View):
 				 "Blackjack", 
 				 [self.amntbet, moneyToAdd > self.amntbet, sum(self.pCardNum) == 21 and len(self.pCARD) == 2 and winner == 1], 
 				 self.ownerId)
+		
+		gameResult = {
+			"Name": "Blackjack", 
+			"AmntBet": self.amntbet, 
+			"AmntWon": moneyToAdd
+		}
+		await self.bot.get_cog("DailyQuests").GameEndCheckDailyQuests(self.interaction, gameResult)
 
 
 class bj(commands.Cog):

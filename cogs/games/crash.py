@@ -122,6 +122,14 @@ class View(nextcord.ui.View):
 		await self.bot.get_cog("Totals").addTotals(interaction, self.amntbet, moneyToAdd, "Crash")
 		await self.bot.get_cog("Quests").AddQuestProgress(interaction, interaction.user, "Crsh", profitInt)
 
+		gameResult = {
+			"Name": "Crash", 
+			"AmntBet": self.amntbet, 
+			"AmntWon": moneyToAdd
+		}
+		print(gameResult)
+		await self.bot.get_cog("DailyQuests").GameEndCheckDailyQuests(interaction, gameResult)
+
 
 class Crash(commands.Cog):
 	def __init__(self, bot):
