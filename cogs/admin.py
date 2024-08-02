@@ -5,7 +5,7 @@ from nextcord import Interaction
 import math, datetime, cooldowns
 
 import config, emojis
-from db import DB
+from db import DB, donators
 
 from cogs.util import SendConfirmButton, IsDonatorCheck
 
@@ -386,8 +386,9 @@ Week's top uses:\n{weekActivitiesMsg}\n\n"
 		donatorReward = 5000
 		await self.bot.get_cog("Economy").addWinnings(member.id, creditsGiven)
 
-
 		DB.insert("INSERT INTO Donators(DiscordID, Level, DonatorReward) VALUES(?, ?, ?)", [member.id, 1, donatorReward])
+		donators.append(str(member.id))
+		
 
 		await interaction.send(f"**Donator** role added\
 \n{creditsGiven:,}{emojis.coin} added.\
