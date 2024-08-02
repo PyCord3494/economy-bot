@@ -141,5 +141,8 @@ collectibleItems = DB.fetchAll("SELECT * FROM Items WHERE Type = 'Collectible';"
 randomItemList = DB.fetchAll("SELECT * FROM Items WHERE Type = 'Usable' or TYPE = 'Collectible';")
 highestRarity = DB.fetchOne("SELECT * FROM Items WHERE Type = 'Usable' or TYPE = 'Collectible' ORDER BY Rarity DESC LIMIT 1;")[7]
 
+donatorsSQL = DB.fetchAll("SELECT DiscordID FROM Donators;")
+donators = [discordID[0] for discordID in donatorsSQL]
+
 def setup(bot):
 	bot.add_cog(DB(bot))
