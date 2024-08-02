@@ -36,6 +36,8 @@ class Economy(commands.Cog):
 		DB.insert('INSERT INTO Totals(DiscordID) VALUES (?);', [user.id])
 		log(interaction.user.id, 0, 0, "Registered", 2500)
 
+		await self.bot.get_cog("DailyQuests").AssignQuestsToUser(user.id)
+
 		embed.description = f"You are now successfully registered. Enjoy {self.bot.user.name}."
 
 		# if interaction.application_command.qualified_name == 'start'
