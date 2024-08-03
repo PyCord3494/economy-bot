@@ -9,6 +9,29 @@ CREATE TABLE "AchievementList" (
 	"Showable"	INTEGER NOT NULL DEFAULT 1,
 	PRIMARY KEY("ID" AUTOINCREMENT)
 );
+INSERT INTO "main"."AchievementList" ("ID", "Activity", "Name", "Description", "Goal", "Reward", "Type", "Showable") VALUES ('190', 'Prestige', 'Fresh Hand', 'Obtain Prestige 1', '1', '0', 'Basic', '1');
+INSERT INTO "main"."AchievementList" ("ID", "Activity", "Name", "Description", "Goal", "Reward", "Type", "Showable") VALUES ('191', 'Prestige', 'Rising Bet', 'Obtain Prestige 2', '1', '0', 'Moderate', '1');
+INSERT INTO "main"."AchievementList" ("ID", "Activity", "Name", "Description", "Goal", "Reward", "Type", "Showable") VALUES ('192', 'Prestige', 'Elite Wager', 'Obtain Prestige 3', '1', '0', 'Moderate', '1');
+INSERT INTO "main"."AchievementList" ("ID", "Activity", "Name", "Description", "Goal", "Reward", "Type", "Showable") VALUES ('193', 'Prestige', 'Masterful Roll', 'Obtain Prestige 4', '1', '0', 'Moderate', '1');
+INSERT INTO "main"."AchievementList" ("ID", "Activity", "Name", "Description", "Goal", "Reward", "Type", "Showable") VALUES ('194', 'Prestige', 'Shadow Ante', 'Obtain Prestige 5', '1', '0', 'Moderate', '1');
+INSERT INTO "main"."AchievementList" ("ID", "Activity", "Name", "Description", "Goal", "Reward", "Type", "Showable") VALUES ('195', 'Prestige', 'Eternal Stake', 'Obtain Prestige 6', '1', '0', 'Moderate', '1');
+INSERT INTO "main"."AchievementList" ("ID", "Activity", "Name", "Description", "Goal", "Reward", "Type", "Showable") VALUES ('196', 'Prestige', 'Apex Bet', 'Obtain Prestige 7', '1', '0', 'Advanced', '1');
+INSERT INTO "main"."AchievementList" ("ID", "Activity", "Name", "Description", "Goal", "Reward", "Type", "Showable") VALUES ('197', 'Prestige', 'Timeless Gamble', 'Obtain Prestige 8', '1', '0', 'Advanced', '1');
+INSERT INTO "main"."AchievementList" ("ID", "Activity", "Name", "Description", "Goal", "Reward", "Type", "Showable") VALUES ('198', 'Prestige', 'Supreme Odds', 'Obtain Prestige 9', '1', '0', 'Advanced', '1');
+INSERT INTO "main"."AchievementList" ("ID", "Activity", "Name", "Description", "Goal", "Reward", "Type", "Showable") VALUES ('199', 'Prestige', 'Legendary Gambler', 'Obtain Prestige 10', '1', '0', 'Advanced', '1');
+INSERT INTO "main"."AchievementList" ("ID", "Activity", "Name", "Description", "Goal", "Reward", "Type", "Showable") VALUES ('201', 'Blackjack', 'Double Blackjack', 'Get Blackjack 21 times', '21', '5000', 'Basic', '1');
+INSERT INTO "main"."AchievementList" ("ID", "Activity", "Name", "Description", "Goal", "Reward", "Type", "Showable") VALUES ('202', 'Blackjack', 'Lucky Boy', 'Get Blackjack 3 times in a row', '3', '5000', 'Basic', '1');
+INSERT INTO "main"."AchievementList" ("Activity", "Name", "Description", "Goal", "Reward", "Type", "Showable") VALUES ('Poker', 'Poker Master', 'Win Poker games with each hand', '1', '250000', 'Advanced', '1');
+INSERT INTO "main"."AchievementList" ("Activity", "Name", "Description", "Goal", "Reward", "Type", "Showable") VALUES ('Poker', 'Both Losers', 'Win a game with High Card', '1', '2500', 'Basic', '1');
+INSERT INTO "main"."AchievementList" ("Activity", "Name", "Description", "Goal", "Reward", "Type", "Showable") VALUES ('Poker', 'Don''t Be Proud', 'Win a game with Pair', '1', '4000', 'Basic', '1');
+INSERT INTO "main"."AchievementList" ("Activity", "Name", "Description", "Goal", "Reward", "Type", "Showable") VALUES ('Poker', 'Ehh', 'Win a game with Two Pair', '1', '5000', 'Basic', '1');
+INSERT INTO "main"."AchievementList" ("Activity", "Name", "Description", "Goal", "Reward", "Type", "Showable") VALUES ('Poker', 'Getting Somewhere', 'Win a game with Three of a Kind', '1', '6000', 'Basic', '1');
+INSERT INTO "main"."AchievementList" ("Activity", "Name", "Description", "Goal", "Reward", "Type", "Showable") VALUES ('Poker', 'Not Too Bad', 'Win a game with Straight', '1', '7000', 'Basic', '1');
+INSERT INTO "main"."AchievementList" ("Activity", "Name", "Description", "Goal", "Reward", "Type", "Showable") VALUES ('Poker', 'I See You', 'Win a game with Flush', '1', '8000', 'Basic', '1');
+INSERT INTO "main"."AchievementList" ("Activity", "Name", "Description", "Goal", "Reward", "Type", "Showable") VALUES ('Poker', 'Noice Hand', 'Win a game with Full House', '1', '9000', 'Basic', '1');
+INSERT INTO "main"."AchievementList" ("Activity", "Name", "Description", "Goal", "Reward", "Type", "Showable") VALUES ('Poker', 'That doesn''t happen often...', 'Win a game with Four of a Kind', '1', '10000', 'Basic', '1');
+INSERT INTO "main"."AchievementList" ("Activity", "Name", "Description", "Goal", "Reward", "Type", "Showable") VALUES ('Poker', 'WHAT THE-', 'Win a game with Straight Flush', '1', '25000', 'Basic', '1');
+INSERT INTO "main"."AchievementList" ("Activity", "Name", "Description", "Goal", "Reward", "Type", "Showable") VALUES ('Poker', 'SPECTACULAR', 'Win a game with Royal Flush', '1', '50000', 'Basic', '1');
 
 CREATE TABLE "AchievementProgress" (
 	"DiscordID"	TEXT NOT NULL,
@@ -86,6 +109,68 @@ CREATE TABLE "CryptoMiner" (
 	PRIMARY KEY("ID","DiscordID")
 );
 
+CREATE TABLE DailyQuests (
+    QuestID INTEGER PRIMARY KEY AUTOINCREMENT,
+    QuestName TEXT NOT NULL,
+    QuestGoal INTEGER NOT NULL,
+    Reward INTEGER NOT NULL DEFAULT 7500
+);
+INSERT INTO "main"."DailyQuests" ("QuestID", "QuestName", "QuestGoal", "Reward") VALUES ('2', 'Play games', '20', '7500');
+INSERT INTO "main"."DailyQuests" ("QuestID", "QuestName", "QuestGoal", "Reward") VALUES ('3', 'Profit in games', '10000', '7500');
+INSERT INTO "main"."DailyQuests" ("QuestID", "QuestName", "QuestGoal", "Reward") VALUES ('4', 'Bet in games', '20000', '7500');
+INSERT INTO "main"."DailyQuests" ("QuestID", "QuestName", "QuestGoal", "Reward") VALUES ('5', 'Play games in Roulette', '10', '7500');
+INSERT INTO "main"."DailyQuests" ("QuestID", "QuestName", "QuestGoal", "Reward") VALUES ('6', 'Play games in Blackjack', '10', '7500');
+INSERT INTO "main"."DailyQuests" ("QuestID", "QuestName", "QuestGoal", "Reward") VALUES ('7', 'Play games in Coinflip', '10', '7500');
+INSERT INTO "main"."DailyQuests" ("QuestID", "QuestName", "QuestGoal", "Reward") VALUES ('8', 'Play games in Crash', '10', '7500');
+INSERT INTO "main"."DailyQuests" ("QuestID", "QuestName", "QuestGoal", "Reward") VALUES ('9', 'Play games in DOND', '10', '7500');
+INSERT INTO "main"."DailyQuests" ("QuestID", "QuestName", "QuestGoal", "Reward") VALUES ('10', 'Play games in Horse', '10', '7500');
+INSERT INTO "main"."DailyQuests" ("QuestID", "QuestName", "QuestGoal", "Reward") VALUES ('11', 'Play games in Mines', '10', '7500');
+INSERT INTO "main"."DailyQuests" ("QuestID", "QuestName", "QuestGoal", "Reward") VALUES ('12', 'Play games in Poker', '10', '7500');
+INSERT INTO "main"."DailyQuests" ("QuestID", "QuestName", "QuestGoal", "Reward") VALUES ('13', 'Play games in RPS', '10', '7500');
+INSERT INTO "main"."DailyQuests" ("QuestID", "QuestName", "QuestGoal", "Reward") VALUES ('14', 'Play games in Scratch', '10', '7500');
+INSERT INTO "main"."DailyQuests" ("QuestID", "QuestName", "QuestGoal", "Reward") VALUES ('15', 'Play games in Slots', '10', '7500');
+INSERT INTO "main"."DailyQuests" ("QuestID", "QuestName", "QuestGoal", "Reward") VALUES ('16', 'Bet in games of Roulette', '20000', '7500');
+INSERT INTO "main"."DailyQuests" ("QuestID", "QuestName", "QuestGoal", "Reward") VALUES ('17', 'Bet in games of Blackjack', '20000', '7500');
+INSERT INTO "main"."DailyQuests" ("QuestID", "QuestName", "QuestGoal", "Reward") VALUES ('18', 'Bet in games of Coinflip', '20000', '7500');
+INSERT INTO "main"."DailyQuests" ("QuestID", "QuestName", "QuestGoal", "Reward") VALUES ('19', 'Bet in games of Crash', '20000', '7500');
+INSERT INTO "main"."DailyQuests" ("QuestID", "QuestName", "QuestGoal", "Reward") VALUES ('20', 'Bet in games of DOND', '20000', '7500');
+INSERT INTO "main"."DailyQuests" ("QuestID", "QuestName", "QuestGoal", "Reward") VALUES ('21', 'Bet in games of Horse', '20000', '7500');
+INSERT INTO "main"."DailyQuests" ("QuestID", "QuestName", "QuestGoal", "Reward") VALUES ('22', 'Bet in games of Mines', '20000', '7500');
+INSERT INTO "main"."DailyQuests" ("QuestID", "QuestName", "QuestGoal", "Reward") VALUES ('23', 'Bet in games of Poker', '20000', '7500');
+INSERT INTO "main"."DailyQuests" ("QuestID", "QuestName", "QuestGoal", "Reward") VALUES ('24', 'Bet in games of RPS', '20000', '7500');
+INSERT INTO "main"."DailyQuests" ("QuestID", "QuestName", "QuestGoal", "Reward") VALUES ('25', 'Bet in games of Scratch', '20000', '7500');
+INSERT INTO "main"."DailyQuests" ("QuestID", "QuestName", "QuestGoal", "Reward") VALUES ('26', 'Bet in games of Slots', '20000', '7500');
+INSERT INTO "main"."DailyQuests" ("QuestID", "QuestName", "QuestGoal", "Reward") VALUES ('27', 'Profit in Roulette', '10000', '7500');
+INSERT INTO "main"."DailyQuests" ("QuestID", "QuestName", "QuestGoal", "Reward") VALUES ('28', 'Profit in Blackjack', '10000', '7500');
+INSERT INTO "main"."DailyQuests" ("QuestID", "QuestName", "QuestGoal", "Reward") VALUES ('29', 'Profit in Coinflip', '10000', '7500');
+INSERT INTO "main"."DailyQuests" ("QuestID", "QuestName", "QuestGoal", "Reward") VALUES ('30', 'Profit in Crash', '10000', '7500');
+INSERT INTO "main"."DailyQuests" ("QuestID", "QuestName", "QuestGoal", "Reward") VALUES ('31', 'Profit in DOND', '10000', '7500');
+INSERT INTO "main"."DailyQuests" ("QuestID", "QuestName", "QuestGoal", "Reward") VALUES ('32', 'Profit in Horse', '10000', '7500');
+INSERT INTO "main"."DailyQuests" ("QuestID", "QuestName", "QuestGoal", "Reward") VALUES ('33', 'Profit in Mines', '10000', '7500');
+INSERT INTO "main"."DailyQuests" ("QuestID", "QuestName", "QuestGoal", "Reward") VALUES ('34', 'Profit in Poker', '10000', '7500');
+INSERT INTO "main"."DailyQuests" ("QuestID", "QuestName", "QuestGoal", "Reward") VALUES ('35', 'Profit in RPS', '10000', '7500');
+INSERT INTO "main"."DailyQuests" ("QuestID", "QuestName", "QuestGoal", "Reward") VALUES ('36', 'Profit in Scratch', '10000', '7500');
+INSERT INTO "main"."DailyQuests" ("QuestID", "QuestName", "QuestGoal", "Reward") VALUES ('37', 'Profit in Slots', '10000', '7500');
+INSERT INTO "main"."DailyQuests" ("QuestID", "QuestName", "QuestGoal", "Reward") VALUES ('38', 'Win games in Blackjack', '5', '7500');
+INSERT INTO "main"."DailyQuests" ("QuestID", "QuestName", "QuestGoal", "Reward") VALUES ('39', 'Win games in Coinflip', '5', '7500');
+INSERT INTO "main"."DailyQuests" ("QuestID", "QuestName", "QuestGoal", "Reward") VALUES ('40', 'Win games in Crash', '5', '7500');
+INSERT INTO "main"."DailyQuests" ("QuestID", "QuestName", "QuestGoal", "Reward") VALUES ('41', 'Win games in DOND', '5', '7500');
+INSERT INTO "main"."DailyQuests" ("QuestID", "QuestName", "QuestGoal", "Reward") VALUES ('42', 'Win games in Horse', '5', '7500');
+INSERT INTO "main"."DailyQuests" ("QuestID", "QuestName", "QuestGoal", "Reward") VALUES ('43', 'Win games in Mines', '5', '7500');
+INSERT INTO "main"."DailyQuests" ("QuestID", "QuestName", "QuestGoal", "Reward") VALUES ('44', 'Win games in Poker', '5', '7500');
+INSERT INTO "main"."DailyQuests" ("QuestID", "QuestName", "QuestGoal", "Reward") VALUES ('45', 'Win games in RPS', '5', '7500');
+INSERT INTO "main"."DailyQuests" ("QuestID", "QuestName", "QuestGoal", "Reward") VALUES ('46', 'Win games in Scratch', '5', '7500');
+INSERT INTO "main"."DailyQuests" ("QuestID", "QuestName", "QuestGoal", "Reward") VALUES ('47', 'Win games in Slots', '5', '7500');
+INSERT INTO "main"."DailyQuests" ("QuestID", "QuestName", "QuestGoal", "Reward") VALUES ('48', 'Win games in Roulette', '5', '7500');
+
+CREATE TABLE "DailyQuestsUserProgress" (
+	"DiscordID"	TEXT NOT NULL,
+	"QuestID"	INTEGER NOT NULL,
+	"Progress"	INTEGER NOT NULL DEFAULT 0,
+	PRIMARY KEY("DiscordID","QuestID"),
+	FOREIGN KEY("QuestID") REFERENCES "DailyQuests"("QuestID")
+);
+
 CREATE TABLE "Donators" (
 	"DiscordID"	TEXT NOT NULL,
 	"Level"	INTEGER NOT NULL,
@@ -129,6 +214,34 @@ CREATE TABLE "Items" (
 	"Emoji"	TEXT NOT NULL DEFAULT ':warning:',
 	PRIMARY KEY("ID")
 );
+INSERT INTO "main"."Items" ("ID", "Name", "Description", "Type", "Price", "Buyable", "SellPrice", "Rarity", "Emoji", "Findable") VALUES ('2', 'Key', 'Used to open crates', 'Collectible', '1000', '1', '0', '0', ':key:', '1');
+INSERT INTO "main"."Items" ("ID", "Name", "Description", "Type", "Price", "Buyable", "SellPrice", "Rarity", "Emoji", "Findable") VALUES ('4', 'Fishing Pole', 'Needed for fish command', 'Tool', '20000', '1', '0', '0', '<:fishingpole:1137150400554864730>', '0');
+INSERT INTO "main"."Items" ("ID", "Name", "Description", "Type", "Price", "Buyable", "SellPrice", "Rarity", "Emoji", "Findable") VALUES ('7', 'Crate', '/use for rewards', 'Usable', '1000', '1', '0', '0', '<:crate:1137150401674756187>', '1');
+INSERT INTO "main"."Items" ("ID", "Name", "Description", "Type", "Price", "Buyable", "SellPrice", "Rarity", "Emoji", "Findable") VALUES ('10', 'Dice', 'This will do something one day!', 'Collectible', '5000', '0', '0', '0', ':game_die:', '1');
+INSERT INTO "main"."Items" ("ID", "Name", "Description", "Type", "Price", "Buyable", "SellPrice", "Rarity", "Emoji", "Findable") VALUES ('11', 'Big Blind Chip', '/use to show card count in Blackjack', 'Usable', '5000', '1', '2000', '1', '<:BigBlindChip:1137151212681175050>', '1');
+INSERT INTO "main"."Items" ("ID", "Name", "Description", "Type", "Price", "Buyable", "SellPrice", "Rarity", "Emoji", "Findable") VALUES ('12', 'Small Blind Chip', 'This will do something one day!', 'Collectible', '5000', '0', '0', '0', '<:SmallBlindChip:1137151214304362516>', '1');
+INSERT INTO "main"."Items" ("ID", "Name", "Description", "Type", "Price", "Buyable", "SellPrice", "Rarity", "Emoji", "Findable") VALUES ('13', 'Dealer Chip', '/use to force Dealer to go first in Blackjack', 'Usable', '10000', '0', '7500', '1', '<:DealerChip:1137151573395521580>', '1');
+INSERT INTO "main"."Items" ("ID", "Name", "Description", "Type", "Price", "Buyable", "SellPrice", "Rarity", "Emoji", "Findable") VALUES ('14', 'Deck of Cards', '/use to not be able to Bust in Blackjack', 'Usable', '5000', '0', '0', '2', '<:DeckofCards:1140050715193135198>', '1');
+INSERT INTO "main"."Items" ("ID", "Name", "Description", "Type", "Price", "Buyable", "SellPrice", "Rarity", "Emoji", "Findable") VALUES ('15', 'Ace of Spades', '/use to force your first card in Blackjack to be Ace of Spades', 'Usable', '15000', '0', '7500', '3', '<:AceofSpades:1137150398906511500>', '1');
+INSERT INTO "main"."Items" ("ID", "Name", "Description", "Type", "Price", "Buyable", "SellPrice", "Rarity", "Emoji", "Findable") VALUES ('16', 'Pickaxe', 'Used for the /miner command', 'Tool', '75000', '1', '0', '0', ':pick:', '0');
+INSERT INTO "main"."Items" ("ID", "Name", "Description", "Type", "Price", "Buyable", "SellPrice", "Rarity", "Emoji", "Findable") VALUES ('17', 'Shovel', 'Used for the /dig command', 'Tool', '25000', '1', '0', '0', '<:Shovel:1140006974189211780>', '0');
+INSERT INTO "main"."Items" ("ID", "Name", "Description", "Type", "Price", "Buyable", "SellPrice", "Rarity", "Emoji", "Findable") VALUES ('20', 'Voter Chip', '/use this for a 2-hour 1.3x multiplier!', 'Usable', '75000', '0', '0', '0', ':coin:', '1');
+INSERT INTO "main"."Items" ("ID", "Name", "Description", "Type", "Price", "Buyable", "SellPrice", "Rarity", "Emoji", "Findable") VALUES ('21', 'High Card', '/use this for a 2-hour 1.1x multiplier', 'Usable', '5000', '0', '1000', '0', ':arrow_heading_up:', '1');
+INSERT INTO "main"."Items" ("ID", "Name", "Description", "Type", "Price", "Buyable", "SellPrice", "Rarity", "Emoji", "Findable") VALUES ('22', 'One Pair', '/use this for a 2-hour 1.1x multiplier', 'Usable', '7500', '0', '2500', '0', ':pear:', '1');
+INSERT INTO "main"."Items" ("ID", "Name", "Description", "Type", "Price", "Buyable", "SellPrice", "Rarity", "Emoji", "Findable") VALUES ('23', 'Two Pair', '/use this for a 2-hour 1.15x multiplier ', 'Usable', '10000', '0', '3500', '0', ':two:', '1');
+INSERT INTO "main"."Items" ("ID", "Name", "Description", "Type", "Price", "Buyable", "SellPrice", "Rarity", "Emoji", "Findable") VALUES ('24', 'Three of a Kind', '/use for a 70% chance of getting Red in Roulette', 'Usable', '12500', '0', '5000', '1', '<:Threeofakind:1140049672795332648>', '1');
+INSERT INTO "main"."Items" ("ID", "Name", "Description", "Type", "Price", "Buyable", "SellPrice", "Rarity", "Emoji", "Findable") VALUES ('25', 'Straight', '/use this for a 2-hour 1.2x multiplier', 'Usable', '15000', '0', '7500', '2', '<:straight:1140048471097872484>', '1');
+INSERT INTO "main"."Items" ("ID", "Name", "Description", "Type", "Price", "Buyable", "SellPrice", "Rarity", "Emoji", "Findable") VALUES ('26', 'Flush', '/use this for a 2-hour 1.3x multiplier', 'Usable', '17500', '0', '10000', '3', ':toilet:', '1');
+INSERT INTO "main"."Items" ("ID", "Name", "Description", "Type", "Price", "Buyable", "SellPrice", "Rarity", "Emoji", "Findable") VALUES ('27', 'Full House', '/use this for a 1.5-hour 1.4x multiplier ', 'Usable', '20000', '0', '15000', '4', ':house:', '1');
+INSERT INTO "main"."Items" ("ID", "Name", "Description", "Type", "Price", "Buyable", "SellPrice", "Rarity", "Emoji", "Findable") VALUES ('28', 'Four of a Kind', '/use this for a 1-hour 1.5x multiplier ', 'Usable', '25000', '0', '20000', '5', '<:4ofakind:1140042057134637226>', '1');
+INSERT INTO "main"."Items" ("ID", "Name", "Description", "Type", "Price", "Buyable", "SellPrice", "Rarity", "Emoji", "Findable") VALUES ('29', 'Straight Flush', '/use this for a 30-minute 1.6x multiplier ', 'Usable', '35000', '0', '25000', '6', ':second_place:', '1');
+INSERT INTO "main"."Items" ("ID", "Name", "Description", "Type", "Price", "Buyable", "SellPrice", "Rarity", "Emoji", "Findable") VALUES ('30', 'Royal Flush', '/use this for a 15-minute 1.75x multiplier ', 'Usable', '45000', '0', '30000', '6', ':heart:', '1');
+INSERT INTO "main"."Items" ("ID", "Name", "Description", "Type", "Price", "Buyable", "SellPrice", "Rarity", "Emoji", "Findable") VALUES ('50', 'Magic 8 Ball', '/use this to get a random amount of credits', 'Usable', '75000', '0', '0', '0', ':8ball:', '1');
+INSERT INTO "main"."Items" ("ID", "Name", "Description", "Type", "Price", "Buyable", "SellPrice", "Rarity", "Emoji", "Findable") VALUES ('60', 'Table', 'Used to seat people in your Monopoly', 'Collectible', '10000', '1', '0', '0', ':shinto_shrine: ', '0');
+INSERT INTO "main"."Items" ("ID", "Name", "Description", "Type", "Price", "Buyable", "SellPrice", "Rarity", "Emoji", "Findable") VALUES ('200', 'Fish', '/sell me for coins!', 'Collectible', '3000', '0', '3000', '0', ':fish:', '1');
+INSERT INTO "main"."Items" ("ID", "Name", "Description", "Type", "Price", "Buyable", "SellPrice", "Rarity", "Emoji", "Findable") VALUES ('201', 'Crab', '/sell me for coins!', 'Collectible', '5000', '0', '5000', '1', ':crab:', '1');
+INSERT INTO "main"."Items" ("ID", "Name", "Description", "Type", "Price", "Buyable", "SellPrice", "Rarity", "Emoji", "Findable") VALUES ('202', 'Blowfish', '/sell me for coins!', 'Collectible', '7500', '0', '7500', '2', ':blowfish:', '1');
+INSERT INTO "main"."Items" ("ID", "Name", "Description", "Type", "Price", "Buyable", "SellPrice", "Rarity", "Emoji", "Findable") VALUES ('203', 'Tropical Fish', '/sell me for coins!', 'Collectible', '10000', '0', '10000', '3', ':tropical_fish:', '1');
 
 CREATE TABLE "Logs" (
 	"ID"	TEXT NOT NULL,
@@ -149,6 +262,13 @@ CREATE TABLE "MinerBlocks" (
 	"RequiresPickaxeLevel"	INTEGER,
 	PRIMARY KEY("ID")
 );
+INSERT INTO "main"."MinerBlocks" ("ID", "Name", "Value", "Emoji", "RequiresPickaxeLevel") VALUES ('1', 'Dirt', '5', '<:grassblock:1102289649675804802>', '1');
+INSERT INTO "main"."MinerBlocks" ("ID", "Name", "Value", "Emoji", "RequiresPickaxeLevel") VALUES ('2', 'Cobblestone', '10', '<:cobblestone:1102289646672678912>', '1');
+INSERT INTO "main"."MinerBlocks" ("ID", "Name", "Value", "Emoji", "RequiresPickaxeLevel") VALUES ('3', 'Coal', '20', '<:coal:1102289644353241149>', '2');
+INSERT INTO "main"."MinerBlocks" ("ID", "Name", "Value", "Emoji", "RequiresPickaxeLevel") VALUES ('4', 'Iron', '35', '<:ironingot:1102289651986858055>', '2');
+INSERT INTO "main"."MinerBlocks" ("ID", "Name", "Value", "Emoji", "RequiresPickaxeLevel") VALUES ('5', 'Gold', '40', '<:goldingot:1102289647889023017>', '3');
+INSERT INTO "main"."MinerBlocks" ("ID", "Name", "Value", "Emoji", "RequiresPickaxeLevel") VALUES ('6', 'Emerald', '50', '<:emerald:1135740633441640518>', '4');
+INSERT INTO "main"."MinerBlocks" ("ID", "Name", "Value", "Emoji", "RequiresPickaxeLevel") VALUES ('7', 'Diamond', '65', '<:diamond:1103091216716922932>', '5');
 
 CREATE TABLE "MinerInventory" (
 	"DiscordID"	varchar(64) DEFAULT NULL,
