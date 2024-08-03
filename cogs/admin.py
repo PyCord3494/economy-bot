@@ -68,7 +68,7 @@ class Admin(commands.Cog):
 	@cooldowns.cooldown(1, 5, bucket=cooldowns.SlashBucket.author, cooldown_id='send4')
 	async def send(self, interaction:Interaction, user: nextcord.Member, amnt:int):
 		embed = nextcord.Embed(color=1768431, title=f"{self.bot.user.name} | Send")
-		if interaction.guild_id not in [1207789281037516900, 821015960931794964, config.adminServerID, 1201596618496032930, 1166804572501721230, 1181383297310400572, 825179206958055425, 467084194200289280, 670038316271403021, 751429233049468960, 1057947351542669332, 1057947351542669332]:
+		if interaction.guild_id not in [1186100743158112286, 1207789281037516900, 821015960931794964, config.adminServerID, 1201596618496032930, 1166804572501721230, 1181383297310400572, 825179206958055425, 467084194200289280, 670038316271403021, 751429233049468960, 1057947351542669332, 1057947351542669332]:
 			embed.description = "This command can only be used in [Donator](https://docs.justingrah.am/thecasino/donator) servers and the [Support Server](https://discord.gg/ggUksVN)."
 			await interaction.send(embed=embed, ephemeral=True)
 			return
