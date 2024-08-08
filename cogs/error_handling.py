@@ -15,6 +15,17 @@ class ErrorHandling(commands.Cog):
 	def __init__(self, bot:commands.bot.Bot):
 		self.bot = bot
 		bot.event(self.on_application_command_error)
+	
+	async def SendErrorToDiscordChannel(self, commandName, msg):
+		ch = self.bot.get_channel(config.channelIDForErrors)
+		for i in range(0, len(msg), 1995):
+			await ch.send(msg[i:i + 1995])
+
+		try:
+			await ch.send(f"Further info\n{commandName} ")
+		except Exception as e:
+			await ch.send(f"error with further infooooo: {e}")
+		
 
 	# @commands.Cog.listener()
 	async def on_application_command_error(self, interaction:Interaction, error):
@@ -126,25 +137,7 @@ class ErrorHandling(commands.Cog):
 			except:
 				pass
 
-			ch = self.bot.get_channel(config.channelIDForErrors)
-			if len(exc) > 1999:
-				await ch.send(f"{exc[:1999]}")
-				if len(exc) > 3998:
-					await ch.send(f"{exc[1999:3998]}")
-					if len(exc) > 5997:
-						await ch.send(f"{exc[3998:5997]}")
-						await ch.send(f"{exc[5997:]}")
-					else:
-						await ch.send(f"{exc[3998:]}")
-				else:
-					await ch.send(f"{exc[1999:]}")
-			else:
-				await ch.send(f"{exc}")
-
-			try:
-				await ch.send(f"Further info\n{commandName} ")
-			except Exception as e:
-				await ch.send(f"error with further infooooo: {e}")
+			self.SendErrorToDiscordChannel(commandName, exc)
 
 
 			embed.set_thumbnail(url=interaction.user.avatar)
