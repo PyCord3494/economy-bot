@@ -1,7 +1,7 @@
 from typing import Any, Coroutine
 import nextcord
 from nextcord.ext import commands 
-from nextcord import Interaction
+from nextcord import Interaction, Color
 
 from random import randrange, choices, choice
 from PIL import Image
@@ -9,19 +9,7 @@ import cooldowns, asyncio, io
 
 import emojis
 from db import DB
-
-class PlayAgainButton(nextcord.ui.Button):
-	def __init__(self):
-		super().__init__(label="Play Again")
-	async def callback(self, interaction: Interaction) -> None:
-		self.view.stop()
-
-class PlayAgainView(nextcord.ui.View):
-	def __init__(self):
-		super().__init__(timeout=60)
-		self.add_item(PlayAgainButton())
-
-
+from cogs.util import IsDonatorCheck, BetAgainView
 
 
 class GetAmountToBet(nextcord.ui.TextInput):
@@ -196,7 +184,7 @@ class View(nextcord.ui.View):
 			  Parity bet: {parityBet}"
 
 
-	async def Start(self, interaction:Interaction):
+	async def Start(self, interaction:Interaction, playAgain=False):
 		try:
 			await interaction.response.defer()
 			self.msg = await interaction.original_message()
@@ -229,6 +217,7 @@ class View(nextcord.ui.View):
 			numCount += 1
 
 		self.embed = nextcord.Embed(color=1768431, title=f"{self.bot.user.name} | Roulette")
+		
 		self.embed.add_field(name="Picks",
 						value=f"Number bet: \nHigh/low bet: \nColor bet: \nParity bet: ",
 						inline=True)
@@ -351,8 +340,8 @@ class View(nextcord.ui.View):
 			roulette.save(image_binary, 'PNG')
 			image_binary.seek(0)
 
-			# playAgainView = PlayAgainView()
-			await self.msg.edit(embed=self.embed, file=nextcord.File(fp=image_binary, filename='image.png'))#, view=playAgainView)
+			betAgainView = BetAgainView()
+			await self.msg.edit(embed=self.embed, file=nextcord.File(fp=image_binary, filename='image.png'), view=betAgainView)
 			roulette.close()
 
 		await self.bot.get_cog("Totals").addTotals(interaction, amntSpent, moneyToAdd, "Roulette")
@@ -371,11 +360,26 @@ class View(nextcord.ui.View):
 
 		await toDelete.delete()
 
-		# if await playAgainView.wait():
-		# 	await self.msg.edit(view=None)
-		# 	return
+		if await betAgainView.wait():
+			await self.msg.edit(view=None)
+			return
 
-		# await self.Start(interaction)
+		if self.totalBet != 0 and not await self.bot.get_cog("Economy").subtractBet(interaction.user, self.totalBet):
+			await interaction.send("You don't have enough credits for that bet", ephemeral=True)
+			return
+		
+		if not IsDonatorCheck(interaction.user.id):
+			betAgainEmbed = nextcord.Embed(color=Color.yellow())
+			betAgainEmbed.description = "***Resetting roulette table***"
+			betAgainEmbed.set_footer(text="Tables are instantly reset for donators")
+			toDelete = await interaction.send(embed=betAgainEmbed, ephemeral=True)
+			await asyncio.sleep(4)
+			await toDelete.delete()
+
+		self.embed.remove_field(2)
+		self.embed.remove_field(2)
+		self.embed.remove_field(2)
+		await self.Spin(interaction)
 
 
 
