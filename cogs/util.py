@@ -9,6 +9,22 @@ import emojis
 from db import DB, donators
 
 
+class BetAgainButton(nextcord.ui.Button):
+	def __init__(self):
+		super().__init__(label="Bet Again", style=nextcord.ButtonStyle.green)
+	async def callback(self, interaction: Interaction) -> None:
+		self.view.stop()
+
+		try:
+			await interaction.response.defer()
+		except:
+			pass
+
+class BetAgainView(nextcord.ui.View):
+	def __init__(self):
+		super().__init__(timeout=30)
+		self.add_item(BetAgainButton())
+
 class Button(nextcord.ui.Button):
 	def __init__(self, label, style):
 		super().__init__(label=label, style=style)
