@@ -56,5 +56,7 @@ class Vote(commands.Cog):
 		msg = await msg.fetch()
 		await msg.add_reaction("❤️")
 
+		await self.bot.get_cog("DailyQuests").UpdateUserQuestProgress(interaction, [("Vote for the bot", 1)])
+
 def setup(bot):
 	bot.add_cog(Vote(bot))
