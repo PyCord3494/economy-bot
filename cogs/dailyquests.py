@@ -104,25 +104,25 @@ class DailyQuests(commands.Cog):
 		quest_progress_entries = [(discordID, quest_id, 0) for quest_id in chosen_quest_ids]
 
 		# Perform the bulk insert
-		cursor.executemany(
-			"""INSERT INTO DailyQuestsUserProgress (DiscordID, QuestID, Progress) 
-			VALUES (?, ?, ?)""",
-			quest_progress_entries
-		)
-			
-		# else:
-		#     # Otherwise, create a new connection and cursor
-		#     with sqlite3.connect(config.db) as conn:
-		#         cursor = conn.cursor()
-		#         quest_progress_entries = [(discordID, quest_id, 0) for quest_id in chosen_quest_ids]
+		if cursor:
+			cursor.executemany(
+				"""INSERT INTO DailyQuestsUserProgress (DiscordID, QuestID, Progress) 
+				VALUES (?, ?, ?)""",
+				quest_progress_entries
+			)
+		else:
+			# Otherwise, create a new connection and cursor
+			with sqlite3.connect(config.db) as conn:
+				cursor = conn.cursor()
+				quest_progress_entries = [(discordID, quest_id, 0) for quest_id in chosen_quest_ids]
 
-		#         # Perform the bulk insert
-		#         cursor.executemany(
-		#             """INSERT INTO DailyQuestsUserProgress (DiscordID, QuestID, Progress) 
-		#             VALUES (?, ?, ?)""",
-		#             quest_progress_entries
-		#         )
-		#         conn.commit()
+				# Perform the bulk insert
+				cursor.executemany(
+					"""INSERT INTO DailyQuestsUserProgress (DiscordID, QuestID, Progress) 
+					VALUES (?, ?, ?)""",
+					quest_progress_entries
+				)
+				conn.commit()
 
 	@nextcord.slash_command(name='dailyquests')
 	async def DailyQuests(self, interaction: Interaction):
