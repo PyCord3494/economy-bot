@@ -159,7 +159,7 @@ class AuctionScheduler(commands.Cog):
 			# add item to bidder's inventory
 			self.bot.get_cog("Inventory").addItemToInventory(currentBidderID, 1, itemName)
 			# add funds to seller
-			await self.bot.get_cog("Economy").addWinnings(sellerID, round(currentBid*0.975))
+			await self.bot.get_cog("Economy").addWinnings(sellerID, int(round(currentBid*0.975)))
 
 			embed.description = f"Congratulations! Your item {itemName} sold for {currentBid:,} (-2.5% seller fee) {emojis.coin}. Your funds have been added."
 			try:
