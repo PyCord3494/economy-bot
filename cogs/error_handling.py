@@ -137,7 +137,7 @@ class ErrorHandling(commands.Cog):
 			except:
 				pass
 
-			self.SendErrorToDiscordChannel(commandName, exc)
+			await self.SendErrorToDiscordChannel(commandName, exc)
 
 
 			embed.set_thumbnail(url=interaction.user.avatar)
