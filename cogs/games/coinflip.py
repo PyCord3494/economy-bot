@@ -1,18 +1,18 @@
 import nextcord
 from nextcord.ext import commands 
-from nextcord import Interaction
+from nextcord import Interaction, Color
 
 import cooldowns, asyncio, random
 
 import emojis
 from db import DB
-from cogs.util import GetMaxBet, IsDonatorCheck
+from cogs.util import GetMaxBet, IsDonatorCheck, BetAgainView
 
 
 class MultiplayerButton(nextcord.ui.Button):
 	def __init__(self, label, style):
 		super().__init__(label=label, style=style)
-	
+
 	async def callback(self, interaction:Interaction):
 		assert self.view is not None
 		view: MultiplayerView = self.view
@@ -114,20 +114,14 @@ class Coinflip(commands.Cog):
 																required=True,
 																name="side", 
 																choices=("heads", "tails")), 
-														user: nextcord.Member=None):
+														user=None):
+														#user: nextcord.Member=None
 		amntbet = await self.bot.get_cog("Economy").GetBetAmount(interaction, amntbet)
 
 		if user:
 			if user.id == interaction.user.id:
 				await interaction.send(f"You cannot play with yourself", ephemeral=True)
 
-			# if not await self.bot.get_cog("Economy").subtractBet(interaction.user, amntbet):
-			# 	raise Exception("tooPoor")
-
-			# if not await self.bot.get_cog("Economy").subtractBet(user, amntbet):
-			# 	await interaction.send(f"{user.mention} has either not typed /start yet or does not have enough money for this.", ephemeral=True)
-			# 	return
-			
 			view = MultiplayerView(self.bot)
 			await view.Initiate(interaction, interaction.user, user, sidebet, amntbet)			
 
@@ -135,13 +129,16 @@ class Coinflip(commands.Cog):
 
 
 
-
+		isDonator = IsDonatorCheck(interaction.user.id)
 
 		###################
 		## SINGLE PLAYER ##
 		###################
-		await interaction.response.defer(with_message=True)
-		deferMsg = await interaction.original_message()
+
+		try:
+			await interaction.response.defer(with_message=True)
+		except:
+			pass
 
 		if amntbet < 100:
 			raise Exception("minBet 100")
@@ -151,44 +148,70 @@ class Coinflip(commands.Cog):
 
 		if not await self.bot.get_cog("Economy").subtractBet(interaction.user, amntbet):
 			raise Exception("tooPoor")
-
-
-		side = random.choice(["Heads", "Tails"]).lower()
-
-		embed = nextcord.Embed(color=0x23f518)
 		
-		if sidebet == side:
-			moneyToAdd = int(amntbet * 2)
-			file = nextcord.File("./images/coinwon.png", filename="image.png")
 
-		else:
-			moneyToAdd = 0
-			file = nextcord.File("./images/coinlost.png", filename="image.png")
-			embed.color = nextcord.Color(0xff2020)
+		async def PlaySinglePlayer(msg=None):
+			embed:nextcord.Embed = nextcord.Embed(color=0x23f518)
+			side = random.choice(["Heads", "Tails"]).lower()
+			
+			if sidebet == side:
+				moneyToAdd = int(amntbet * 2)
+				file = nextcord.File("./images/coinwon.png", filename="image.png")
 
-		profitInt = moneyToAdd - amntbet
+			else:
+				moneyToAdd = 0
+				file = nextcord.File("./images/coinlost.png", filename="image.png")
+				embed.color = nextcord.Color(0xff2020)
 
-		embed.add_field(name=f"{self.bot.user.name} | Coinflip", value=f"The coin landed on {side}\n_ _",inline=False)
-		gameID = await self.bot.get_cog("Economy").addWinnings(interaction.user.id, moneyToAdd, giveMultiplier=True, activityName="CF", amntBet=amntbet)
+			profitInt = moneyToAdd - amntbet
+
+			embed.add_field(name=f"{self.bot.user.name} | Coinflip", value=f"The coin landed on {side}\n_ _",inline=False)
+			gameID = await self.bot.get_cog("Economy").addWinnings(interaction.user.id, moneyToAdd, giveMultiplier=True, activityName="CF", amntBet=amntbet)
+
+
+			embed, _ = await DB.addProfitAndBalFields(self, interaction, profitInt, embed)
+
+			balance = await self.bot.get_cog("Economy").getBalance(interaction.user)
+			embed = await DB.calculateXP(self, interaction, balance - profitInt, amntbet, embed, gameID)
+
+			betAgainView = BetAgainView()
+			embed.set_thumbnail(url="attachment://image.png")
+			if not msg:
+				msg = await interaction.send(file=file, embed=embed, view=betAgainView)
+			else:
+				await msg.edit(file=file, embed=embed, view=betAgainView)
+
+			await self.bot.get_cog("Totals").addTotals(interaction, amntbet, moneyToAdd, "Coinflip")
+			await self.bot.get_cog("Quests").AddQuestProgress(interaction, interaction.user, "CF", profitInt)
+
+			gameResult = {
+				"Name": "Coinflip", 
+				"AmntBet": amntbet, 
+				"AmntWon": moneyToAdd
+			}
+			await self.bot.get_cog("DailyQuests").GameEndCheckDailyQuests(interaction, gameResult)
+
+			if await betAgainView.wait():
+				await msg.edit(view=None)
+				return
+
+			if amntbet != 0 and not await self.bot.get_cog("Economy").subtractBet(interaction.user, amntbet):
+				await interaction.send("You don't have enough credits for that bet", ephemeral=True)
+				return
+
+			if not isDonator:
+				betAgainEmbed = nextcord.Embed(color=Color.yellow())
+				betAgainEmbed.description = "***Flipping coin***"
+				betAgainEmbed.set_footer(text="Coins are flipped instantly for donators")
+				toDelete = await interaction.send(embed=betAgainEmbed, ephemeral=True)
+				await asyncio.sleep(4)
+				await toDelete.delete()
+
+			embed.remove_field(1)
+			embed.remove_field(1)
+			await PlaySinglePlayer(msg=msg)
 		
-		
-		embed, _ = await DB.addProfitAndBalFields(self, interaction, profitInt, embed)
-
-		balance = await self.bot.get_cog("Economy").getBalance(interaction.user)
-		embed = await DB.calculateXP(self, interaction, balance - profitInt, amntbet, embed, gameID)
-
-		embed.set_thumbnail(url="attachment://image.png")
-		await interaction.send(file=file, embed=embed)
-
-		await self.bot.get_cog("Totals").addTotals(interaction, amntbet, moneyToAdd, "Coinflip")
-		await self.bot.get_cog("Quests").AddQuestProgress(interaction, interaction.user, "CF", profitInt)
-
-		gameResult = {
-			"Name": "Coinflip", 
-			"AmntBet": amntbet, 
-			"AmntWon": moneyToAdd
-		}
-		await self.bot.get_cog("DailyQuests").GameEndCheckDailyQuests(interaction, gameResult)
+		await PlaySinglePlayer()
 
 def setup(bot):
 	bot.add_cog(Coinflip(bot))
