@@ -114,35 +114,82 @@ class DB(commands.Cog):
 		return embed, file
 
 
-allItems = DB.fetchAll('SELECT * FROM Items')
+# allItems = DB.fetchAll('SELECT * FROM Items')
+# allItemNames = list()
+# for x in allItems:
+# 	allItemNames.append((x[1],))
+
+# allItemNamesList = [item for sublist in allItemNames for item in sublist]
+
+# buyableItems = DB.fetchAll('SELECT * FROM Items WHERE Buyable = 1;')
+# buyableItemNames = list()
+# for x in buyableItems:
+# 	buyableItemNames.append((x[1],))
+# buyableItemNamesList = [item for sublist in buyableItemNames for item in sublist]
+
+# sellableItems = DB.fetchAll("SELECT * FROM Items WHERE SellPrice > 0;")
+# sellableItemNames = list()
+# for x in sellableItems:
+# 	sellableItemNames.append((x[1],))
+# sellableItemNamesList = [item for sublist in sellableItemNames for item in sublist]
+
+# usableItemNames = DB.fetchAll("SELECT Name FROM Items WHERE Type = 'Usable';")
+# usableItemNamesList = [item[0] for item in usableItemNames]
+
+# collectibleItems = DB.fetchAll("SELECT * FROM Items WHERE Type = 'Collectible';")
+
+# randomItemList = DB.fetchAll("SELECT * FROM Items WHERE Type = 'Usable' or TYPE = 'Collectible';")
+# highestRarity = DB.fetchOne("SELECT * FROM Items WHERE Type = 'Usable' or TYPE = 'Collectible' ORDER BY Rarity DESC LIMIT 1;")[7]
+
+# donatorsSQL = DB.fetchAll("SELECT DiscordID FROM Donators;")
+# donators = [discordID[0] for discordID in donatorsSQL]
+
+
+
+
+conn = sqlite3.connect(config.db)
+
+cursor = conn.cursor()
+
+allItems = cursor.execute('SELECT * FROM Items').fetchall()
 allItemNames = list()
 for x in allItems:
 	allItemNames.append((x[1],))
 
 allItemNamesList = [item for sublist in allItemNames for item in sublist]
 
-buyableItems = DB.fetchAll('SELECT * FROM Items WHERE Buyable = 1;')
+
+buyableItems = cursor.execute('SELECT * FROM Items WHERE Buyable = 1;').fetchall() 
 buyableItemNames = list()
 for x in buyableItems:
 	buyableItemNames.append((x[1],))
 buyableItemNamesList = [item for sublist in buyableItemNames for item in sublist]
 
-sellableItems = DB.fetchAll("SELECT * FROM Items WHERE SellPrice > 0;")
+sellableItems = cursor.execute("SELECT * FROM Items WHERE SellPrice > 0;").fetchall() 
 sellableItemNames = list()
 for x in sellableItems:
 	sellableItemNames.append((x[1],))
 sellableItemNamesList = [item for sublist in sellableItemNames for item in sublist]
 
-usableItemNames = DB.fetchAll("SELECT Name FROM Items WHERE Type = 'Usable';")
+usableItemNames = cursor.execute("SELECT Name FROM Items WHERE Type = 'Usable';").fetchall() 
 usableItemNamesList = [item[0] for item in usableItemNames]
 
-collectibleItems = DB.fetchAll("SELECT * FROM Items WHERE Type = 'Collectible';")
+collectibleItems = cursor.execute("SELECT * FROM Items WHERE Type = 'Collectible';").fetchall() 
 
-randomItemList = DB.fetchAll("SELECT * FROM Items WHERE Type = 'Usable' or TYPE = 'Collectible';")
-highestRarity = DB.fetchOne("SELECT * FROM Items WHERE Type = 'Usable' or TYPE = 'Collectible' ORDER BY Rarity DESC LIMIT 1;")[7]
+data = cursor.execute("SELECT * FROM Items WHERE Type = 'Usable' or TYPE = 'Collectible';").fetchall() 
 
-donatorsSQL = DB.fetchAll("SELECT DiscordID FROM Donators;")
+highestRaritySQL = cursor.execute("SELECT Rarity FROM Items WHERE Type = 'Usable' or TYPE = 'Collectible' ORDER BY Rarity DESC LIMIT 1;").fetchall()
+highestRarity = highestRaritySQL[0]
+
+donatorsSQL = cursor.execute("SELECT DiscordID FROM Donators;").fetchall() 
 donators = [discordID[0] for discordID in donatorsSQL]
+
+# Fetch all quests once and store them in self.quests
+questListSQL = cursor.execute("SELECT QuestID FROM DailyQuests").fetchall()
+questList = [row[0] for row in questListSQL]
+
+conn.close()
+
 
 def setup(bot):
 	bot.add_cog(DB(bot))
