@@ -127,7 +127,6 @@ class View(nextcord.ui.View):
 			"AmntBet": self.amntbet, 
 			"AmntWon": moneyToAdd
 		}
-		print(gameResult)
 		await self.bot.get_cog("DailyQuests").GameEndCheckDailyQuests(interaction, gameResult)
 
 
