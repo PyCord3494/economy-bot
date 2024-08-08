@@ -5,7 +5,7 @@ from nextcord import Interaction
 import cooldowns, json, math, asyncio, random, sqlite3
 
 import config, emojis
-from db import DB
+from db import DB, questList
 from cogs.util import PrintProgress, IsDonatorCheck
 
 from datetime import datetime, date, timedelta, time
@@ -14,7 +14,7 @@ from datetime import datetime, date, timedelta, time
 class DailyQuests(commands.Cog):
 	def __init__(self, bot):
 		self.bot = bot
-		self.questList = None
+		self.questList = questList
 		self.AssignDailyQuests.start()
 
 	def cog_unload(self):
@@ -66,10 +66,6 @@ class DailyQuests(commands.Cog):
 				# Delete all previous quests
 				cursor.execute("DELETE FROM DailyQuestsUserProgress")
 				conn.commit()
-
-				# Fetch all quests once and store them in self.quests
-				cursor.execute("SELECT QuestID FROM DailyQuests")
-				self.questList = [row[0] for row in cursor.fetchall()]
 				
 				# Fetch the total number of users
 				cursor.execute("SELECT COUNT(DiscordID) FROM Economy")
@@ -89,6 +85,7 @@ class DailyQuests(commands.Cog):
 					# Optional: add a delay to avoid hitting rate limits or overwhelming the database
 					await asyncio.sleep(0.01)  # Adjust the sleep time based on your system's needs
 		except Exception as e:
+			await self.bot.get_cog("ErrorHandling").SendErrorToDiscordChannel("DailyQuests", e)
 			print(f"An error occurred: {e}")
 		
 	def AssignQuestsToUser(self, discordID, cursor=None):
