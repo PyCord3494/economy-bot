@@ -178,7 +178,7 @@ collectibleItems = cursor.execute("SELECT * FROM Items WHERE Type = 'Collectible
 
 data = cursor.execute("SELECT * FROM Items WHERE Type = 'Usable' or TYPE = 'Collectible';").fetchall() 
 
-highestRaritySQL = cursor.execute("SELECT Rarity FROM Items WHERE Type = 'Usable' or TYPE = 'Collectible' ORDER BY Rarity DESC LIMIT 1;").fetchall()
+highestRaritySQL = cursor.execute("SELECT Rarity FROM Items WHERE Type = 'Usable' or TYPE = 'Collectible' ORDER BY Rarity DESC LIMIT 1;").fetchone()
 highestRarity = highestRaritySQL[0]
 
 donatorsSQL = cursor.execute("SELECT DiscordID FROM Donators;").fetchall() 
