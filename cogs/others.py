@@ -8,6 +8,57 @@ from random import randint
 from PIL import Image
 import config, emojis
 
+
+class HelpDropdown(nextcord.ui.Select):
+    def __init__(self):
+        options = [
+            nextcord.SelectOption(label="Games", emoji='🎲'),
+			nextcord.SelectOption(label="Money"),
+			nextcord.SelectOption(label="Item"),
+            nextcord.SelectOption(label="Crypto"),
+			nextcord.SelectOption(label="Profile/Stats"),
+            nextcord.SelectOption(label="Other"),
+            nextcord.SelectOption(label="Earn Money", emoji='💰'),
+        ]
+        super().__init__(placeholder="Choose a category...", min_values=1, max_values=1, options=options)
+
+    async def callback(self, interaction: nextcord.Interaction):
+        embed = nextcord.Embed(color=1768431, title="Command List")
+
+        if self.values[0] == "Games":
+            embed.add_field(name=":game_die: Game Commands", 
+                            value="poker\nblackjack\nroulette\nslots\ncrash\nhorse \
+                            \ncoinflip\nrockpaperscissors\ndond\nmines\nscratch\nrob\nhighlow\nhangman", inline=False)
+        elif self.values[0] == "Money":
+            embed.add_field(name=":gear: Other Commands",
+                            value="balance\nbank balance/withdraw/deposit\npay", inline=False)
+        elif self.values[0] == "Item":
+            embed.add_field(name=":gear: Other Commands",
+                            value="items\ninventory\nshop\nuse", inline=False)
+        elif self.values[0] == "Crypto":
+            embed.add_field(name=f"{emojis.bitcoinEmoji} Crypto Commands", 
+                            value="crypto miner buy/start/stop/status/setcrypto\ncrypto buy/sell")
+        elif self.values[0] == "Profile/Stats":
+            embed.add_field(name=":gear: Other Commands",
+                            value="profile\nstats\nrank\ntop\nposition\nlevel\nrewards", inline=False)
+        elif self.values[0] == "Earn Money":
+            embed.add_field(name=":money_with_wings: Earn Money",
+                            value="vote\nwork\ndaily\nweekly\nmonthly\nsearch\nclaim \
+                                \nbeg\ncrime\nfish\ndig\nmonopoly\nquests\ndailyquests\nreferral", inline=False)
+        elif self.values[0] == "Other":
+            embed.add_field(name=":gear: Other Commands",
+                            value="rewards\ncooldown\nlog\nfeedback\nsettings\ndonate", inline=False)
+
+        embed.set_footer(text="And that's all for now folks!")
+        await interaction.response.edit_message(embed=embed, view=self.view)
+
+class HelpView(nextcord.ui.View):
+    def __init__(self):
+        super().__init__()
+        self.add_item(HelpDropdown())
+
+
+
 class Others(commands.Cog):
 	def __init__(self, bot):
 		self.bot:commands.bot.Bot = bot
@@ -83,33 +134,14 @@ class Others(commands.Cog):
 		embed = nextcord.Embed(color=1768431, title="Thanks for taking an interest in me!")
 		embed.set_footer(text="And that's all for now folks!")
 
-		embed.add_field(name = "Commands start with slash (/)", value="_ _", inline=False)
-		
-		embed.add_field(name = ":game_die: Game Commands", 
-						 value="`poker`, `blackjack`, `roulette`, `slots`, `crash`, `horse`, " 
-							 + "`coinflip`, `rockpaperscissors`, `dond`, `mines`, `scratch`, `rob`, `highlow`, `hangman`", inline = False)
-		
-		embed.add_field(name = f"{emojis.bitcoinEmoji} Crypto Commands", 
-				  		 value="`crypto miner buy/start/stop/status/setcrypto`, `crypto buy/sell`")
+		# Embed default message
+		embed.add_field(name="Commands start with slash (/)", value="_ _", inline=False)
+		embed.add_field(name="New commands! :bangbang:", value="`auctions`, `alerts`", inline=False)
+		embed.add_field(name="_ _",
+						value=f"[Join official server](https://discord.gg/ggUksVN) and use `/claim` in the server for free 15,000{emojis.coin}\
+	\nAdd this bot to your server - [Click Here](https://discord.com/api/oauth2/authorize?client_id=585235000459264005&permissions=387136&scope=bot)\
+	\n[Website](https://justingrah.am/Casino) --- [Docs](https://docs.justingrah.am/thecasino/) --- [Donate](https://docs.justingrah.am/thecasino/donator)", inline=False)
 
-		embed.add_field(name = ":gear: Other Commands",
-					   value = "`balance`, `rank`, `top`, `position`, `shop`, `use`, `stats`, `bank`, "
-							 + "`profile`, `level`, `rewards`, `inventory`, `pay`, `cooldown`, `log`, `feedback`, `settings`, `donate`", inline=False)
-
-		embed.add_field(name = ":money_with_wings: Earn Money",
-					   value = "`vote`, `work`, `daily`, `weekly`, `monthly`, `search`, `claim`, `beg`, `crime`, `fish`, `dig`, `monopoly`, `quests`, `referral`", inline=False)
-
-		embed.add_field(name="New commands! :bangbang:", value = "`auctions`, `alerts`", inline=False)
-
-		# embed.add_field(name = ":grey_exclamation: Miscellaneous",
-		# 				value = f"\n[Join official server](https://discord.gg/ggUksVN) and use `/claim` for free 7,500{emojis.coin}")
-						# value = "\n[Support](https://www.paypal.me/AutopilotJustin) gambling bot's development or [join support server](https://discord.gg/ggUksVN).")
-		embed.add_field(name = "_ _",
-						value = f"[Join official server](https://discord.gg/ggUksVN) and use `/claim` in the server for free 15,000{emojis.coin}\
-\nAdd this bot to your server - [Click Here](https://discord.com/api/oauth2/authorize?client_id=585235000459264005&permissions=387136&scope=bot)\
-\n[Website](https://justingrah.am/) (WIP)\
-\n[Docs](https://docs.justingrah.am/thecasino/) (WIP)\
-\n[Donate](https://docs.justingrah.am/thecasino/donator)", inline=False)
 		return embed
 
 	@nextcord.slash_command(description="The Casino Help Command")
@@ -151,7 +183,8 @@ class Others(commands.Cog):
 
 		if not option:
 			embed = self.GetHelpMsg()
-			await emojis.SendInteractionWithWave(interaction, embed)
+			view = HelpView()
+			await interaction.send(embed=embed, view=view)
 			return
 
 		embed = nextcord.Embed(color=1768431)
@@ -184,13 +217,13 @@ class Others(commands.Cog):
 			helpMsg = "Invest in your favorite crypto. BTC, LTC, and ETH available"
 			usageMsg = "**/crypto**"
 		elif option == "dond":
-			helpMsg = "Play Deal or No Deal!\n**NOTE: This game is a WIP.**"
+			helpMsg = "Play Deal or No Deal!"
 			usageMsg = "**/dond <bet>**"
 		elif option == "mines":
-			helpMsg = "Play Roobet Mines! Select number of bombs and try finding spaces that don't have one!\n**NOTE: This game is a WIP.**"
+			helpMsg = "Play Roobet Mines! Select number of bombs and try finding spaces that don't have one!"
 			usageMsg = "**/mines <bet>**"
 		elif option == "horse":
-			helpMsg = "Horse racing! Bet on the horse you think will win\n**NOTE: This game is a WIP.**"
+			helpMsg = "Horse racing! Bet on the horse you think will win"
 			usageMsg = "**/horse <bet>**"
 		elif option == "balance":
 			helpMsg = "Look at your balance"
@@ -215,7 +248,8 @@ class Others(commands.Cog):
 			usageMsg = "**/freemoney**"
 		else:
 			embed = self.GetHelpMsg()
-			await emojis.SendInteractionWithWave(interaction, embed)
+			view = HelpView()
+			await interaction.send(embed=embed, view=view)
 			return
 
 		embed.add_field(name = "Help", value=f"{helpMsg}", inline=False)
